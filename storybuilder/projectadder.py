@@ -882,7 +882,7 @@ def _move_to_trash(fname: str) -> bool:
 
 def _renamefile(fname: str, newfname: str) -> bool:
     assert isinstance(fname, str)
-    assert isinstance(newname, str)
+    assert isinstance(newfname, str)
 
     if newfname:
         os.rename(fname, newfname)

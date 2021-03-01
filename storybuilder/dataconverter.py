@@ -13,7 +13,7 @@ from storybuilder.util.filepath import basename_of
 
 
 __all__ = (
-        'conv_action_record_from_story_record',
+        'conv_action_record_from_scene_action',
         'conv_text_from_tag',
         'conv_to_dumpdata_of_yaml',
         'conv_to_story_record',

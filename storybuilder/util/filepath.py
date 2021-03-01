@@ -10,7 +10,7 @@ import os
 __all__ = (
         'add_extention',
         'conv_filenames_from_fullpaths',
-        'conv_only_basename',
+        'basename_of',
         'get_current_path',
         'has_extention',
         'is_exists_path',
@@ -33,7 +33,7 @@ def conv_filenames_from_fullpaths(paths: list) -> list:
     '''
     tmp = []
     for name in paths:
-        tmp.append(conv_only_basename(name))
+        tmp.append(basename_of(name))
     sorted_tmp = sorted(tmp)
     return sorted_tmp
 
