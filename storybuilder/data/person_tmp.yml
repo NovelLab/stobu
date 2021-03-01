@@ -1,0 +1,11 @@
+name: 名前
+fullname: 苗字,名前
+age: 99
+birth: 1/1
+sex: male
+job:
+calling:
+  me: 私
+info:
+note:
+
