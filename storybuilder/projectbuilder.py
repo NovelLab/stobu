@@ -7,9 +7,16 @@ import os
 
 
 # My Modules
+from storybuilder.core.novelbuilder import on_build_novel
+from storybuilder.core.outlinebuilder import on_build_outline
+from storybuilder.core.plotbuilder import on_build_plot
+from storybuilder.core.scriptbuilder import on_build_script
+from storybuilder.core.storydatacreator import get_story_data
 from storybuilder.dataconverter import conv_action_record_from_scene_action, conv_text_from_tag, conv_to_story_record, conv_code_from_action_record
 from storybuilder.datatypes import StoryRecord, OutlineRecord, ContentRecord, PlotRecord, ActionRecord, StoryCode
 from storybuilder.datatypes import CountRecord
+from storybuilder.datatypes import StoryData
+from storybuilder.datatypes import OutputData
 from storybuilder.formatter import format_contents_table_data, format_outline_data, format_plot_data, format_script_data, format_novel_data
 from storybuilder.formatter import format_charcounts_outline, format_charcounts_plot, format_charcounts_script, format_charcounts_novel
 from storybuilder.formatter import get_breakline
@@ -36,15 +43,16 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     tagdb = get_nametag_db()
 
     # get story data
-    story_data = get_story_data()
+    story_data = assertion.is_instance(get_story_data(), StoryData)
 
     # - outline
     if cmdargs.outline:
         logger.debug("Building outline data...")
-        outline_data = build_outline(story_data, tagdb)
+        outline_data = assertion.is_instance(on_build_outline(story_data, tagdb),
+                OutputData)
         if outline_data:
             path = os.path.join(ppath.get_build_dir_path(), "outline.md")
-            if not write_file(path, "".join(outline_data)):
+            if not write_file(path, outline_data.get_serialized_data()):
                 logger.error("...Failed to write the output outline data!")
                 return False
             else:
@@ -56,10 +64,11 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     # - plot
     if cmdargs.plot:
         logger.debug("Building plot data...")
-        plot_data = build_plot(story_data, tagdb)
+        plot_data = assertion.is_instance(on_build_plot(story_data, tagdb),
+                OutputData)
         if plot_data:
             path = os.path.join(ppath.get_build_dir_path(), "plot.md")
-            if not write_file(path, "".join(plot_data)):
+            if not write_file(path, plot_data.get_serialized_data()):
                 logger.error("...Failed to write the output plot data!")
                 return False
             else:
@@ -71,10 +80,11 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     # - script
     if cmdargs.script:
         logger.debug("Building script data...")
-        script_data = build_script(story_data, tagdb)
+        script_data = assertion.is_instance(on_build_script(story_data, tagdb),
+                OutputData)
         if script_data:
             path = os.path.join(ppath.get_build_dir_path(), "script.md")
-            if not write_file(path, "".join(script_data)):
+            if not write_file(path, script_data.get_serialized_data()):
                 logger.error("...Failed to write the output script data!")
                 return False
             else:
@@ -86,10 +96,11 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     # - novel
     if cmdargs.novel:
         logger.debug("Building novel data...")
-        novel_data = build_novel(story_data, tagdb)
+        novel_data = assertion.is_instance(on_build_novel(story_data, tagdb),
+                OutputData)
         if novel_data:
             path = os.path.join(ppath.get_build_dir_path(), "novel.md")
-            if not write_file(path, "".join(novel_data)):
+            if not write_file(path, novel_data.get_serialized_data()):
                 logger.error("...Failed to write the output novel data!")
                 return False
             else:
@@ -99,17 +110,17 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
             return False
 
     # - base data
-    base_data = build_basedata(cmdargs, story_data, tagdb)
-    if base_data:
-        path = os.path.join(ppath.get_build_dir_path(), "data.md")
-        if not write_file(path, "".join(base_data)):
-            logger.error("...Failed to write the output base data!")
-            return False
-        else:
-            logger.debug("...Succeeded to output the base data.")
-    else:
-        logger.error("...Failed to build the output data in base data process!: %s", base_data)
-        return False
+    #base_data = build_basedata(cmdargs, story_data, tagdb)
+    #if base_data:
+    #    path = os.path.join(ppath.get_build_dir_path(), "data.md")
+    #    if not write_file(path, "".join(base_data)):
+    #        logger.error("...Failed to write the output base data!")
+    #        return False
+    #    else:
+    #        logger.debug("...Succeeded to output the base data.")
+    #else:
+    #    logger.error("...Failed to build the output data in base data process!: %s", base_data)
+    #    return False
 
     return True
 
@@ -224,8 +235,6 @@ def build_plot(story_data: list, tags: dict) -> list:
 def build_script(story_data: list, tags: dict) -> list:
     assert isinstance(story_data, list)
     assert isinstance(tags, dict)
-
-    tmp = []
 
     action_data = _get_action_data(story_data)
 
@@ -353,16 +362,6 @@ def get_nametag_db() -> dict:
 
     logger.debug("...Succeeded create name tag DB.")
     return db.tags
-
-
-def get_story_data() -> list:
-    order_data = assertion.is_dict(read_file_as_yaml(ppath.get_order_path()))
-
-    serialized = assertion.is_list(_serialized_file_names_from_order(order_data))
-
-    story_data = assertion.is_list(_get_story_data(serialized))
-
-    return story_data
 
 
 # Private Functions
@@ -532,24 +531,6 @@ def _get_contents_list(story_data: list) -> list:
     return tmp
 
 
-def _get_data_from_ordername(ordername: str) -> dict:
-    assert isinstance(ordername, str)
-
-    category, fname = ordername.split('/')
-
-    if category == 'chapter':
-        tmp = read_file_as_yaml(ppath.get_chapter_path(fname))
-        return tmp
-    elif category == 'episode':
-        tmp = read_file_as_yaml(ppath.get_episode_path(fname))
-        return tmp
-    elif category == 'scene':
-        tmp = read_file_as_markdown(ppath.get_scene_path(fname))
-        return tmp
-    else:
-        return {}
-
-
 def _get_outline_char_counts(level: str, story_data: list, tags: dict) -> list:
     assert isinstance(level, str)
     assert isinstance(story_data, list)
@@ -645,38 +626,4 @@ def _get_story_code_data(action_data: list, is_script_mode: bool) -> list:
             tmp.append(ret)
     return tmp
 
-
-def _get_story_data(serialized: list) -> list:
-    tmp = []
-
-    tmp.append(conv_to_story_record('book/book', read_file_as_yaml(ppath.get_book_path())))
-
-    for fname in serialized:
-        tmp.append(conv_to_story_record(
-            fname,
-            _get_data_from_ordername(fname)))
-    return tmp
-
-
-def _serialized_file_names_from_order(order_data: dict) -> list:
-    assert isinstance(order_data, dict)
-
-    tmp = []
-
-    for ch_record in assertion.is_list(order_data['book']):
-        assert isinstance(ch_record, dict)
-        for key in ch_record.keys():
-            tmp.append(key)
-        for ch_data in ch_record.values():
-            assert isinstance(ch_data, list)
-            for ep_record in ch_data:
-                assert isinstance(ep_record, dict)
-                for key in ep_record.keys():
-                    tmp.append(key)
-                for ep_data in ep_record.values():
-                    assert isinstance(ep_data, list)
-                    for sc_record in ep_data:
-                        assert isinstance(sc_record, str)
-                        tmp.append(sc_record)
-    return tmp
 

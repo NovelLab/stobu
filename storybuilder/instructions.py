@@ -5,21 +5,23 @@
 
 
 # My Modules
-from storybuilder.datatypes import ActionRecord
+from storybuilder.datatypes import ActionData, ActionRecord
 from storybuilder.util.log import logger
 
 
 # Main Functions
-def apply_instruction_to_action_data(action_data: list, is_script_mode: bool=False) -> list:
-    assert isinstance(action_data, list)
+def apply_instruction_to_action_data(action_data: ActionData,
+        is_script_mode: bool=False) -> list:
+    assert isinstance(action_data, ActionData)
     assert isinstance(is_script_mode, bool)
+    logger.debug("Applying instruction to action data...")
 
     tmp = []
     is_br_mode = True
     has_first_indent = False
     alias = {}
 
-    for record in action_data:
+    for record in action_data.get_data():
         assert isinstance(record, ActionRecord)
         if record.type == 'scene-start':
             is_br_mode = True
@@ -76,7 +78,9 @@ def apply_instruction_to_action_data(action_data: list, is_script_mode: bool=Fal
                 tmp.append(_get_br_action())
         else:
             tmp.append(record)
-    return tmp
+
+    logger.debug("...Succeeded apply instructions to action data.")
+    return ActionData(tmp)
 
 
 # Private Functions

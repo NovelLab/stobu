@@ -8,13 +8,16 @@ import yaml
 
 
 # My Modules
-from storybuilder.datatypes import ActionRecord, StoryRecord, StoryCode
+from storybuilder.datatypes import ActionData, ActionRecord
+from storybuilder.datatypes import StoryRecord, StoryCode
 from storybuilder.util.filepath import basename_of
 
 
 __all__ = (
         'conv_action_record_from_scene_action',
         'conv_text_from_tag',
+        'conv_text_in_action_data_by_tags',
+        'conv_text_list_by_tags',
         'conv_to_dumpdata_of_yaml',
         'conv_to_story_record',
         )
@@ -112,6 +115,47 @@ def conv_text_from_tag(text: str, tags: dict, prefix: str='$') -> str:
                     tmp = re.sub(r'\{}{}'.format(prefix, key), val, tmp)
                 else:
                     tmp = re.sub(key, val, tmp)
+    return tmp
+
+
+def conv_text_in_action_data_by_tags(action_data: ActionData, callings: dict,
+        prefix: str='$') -> ActionData:
+    assert isinstance(action_data, ActionData)
+    assert isinstance(callings, dict)
+    assert isinstance(prefix, str)
+
+    tmp = []
+
+    for record in action_data.get_data():
+        assert isinstance(record, ActionRecord)
+        if record.type == 'action':
+            if record.subject in callings:
+                calling = callings[record.subject]
+                calling['S'] = f"{record.subject}"
+                calling['M'] = calling['me'] if 'me' in calling else '私'
+                tmp.append(ActionRecord(
+                    record.type,
+                    record.subject,
+                    record.action,
+                    conv_text_from_tag(record.outline, calling, prefix),
+                    conv_text_from_tag(record.desc, calling, prefix),
+                    record.flags,
+                    conv_text_from_tag(record.note, calling, prefix),
+                    ))
+            else:
+                tmp.append(record)
+        else:
+            tmp.append(record)
+    return ActionData(tmp)
+
+
+def conv_text_list_by_tags(textlist: list, tags: dict) -> list:
+    assert isinstance(textlist, list)
+    assert isinstance(tags, dict)
+
+    tmp = []
+    for text in textlist:
+        tmp.append(conv_text_from_tag(text, tags))
     return tmp
 
 

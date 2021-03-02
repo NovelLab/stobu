@@ -15,6 +15,18 @@ class NameTagDB(object):
     def __init__(self):
         self.tags = {}
 
+    @classmethod
+    def get_calling_tags(cls) -> dict:
+        from storybuilder.util.filepath import basename_of
+        from storybuilder.util.fileio import read_file_as_yaml
+        from storybuilder.projectpathmanager import get_person_file_paths
+        tmp = {}
+        persons = get_person_file_paths()
+
+        for fname in persons:
+            data = read_file_as_yaml(fname)
+            tmp[basename_of(fname)] = data['calling']
+        return tmp
 
     # methods
     def add_item(self, key: str, name: str) -> bool:

@@ -6,8 +6,11 @@
 
 # My Modules
 from storybuilder.dataconverter import conv_text_from_tag
-from storybuilder.datatypes import ContentRecord, OutlineRecord, PlotRecord, StoryCode
 from storybuilder.datatypes import CountRecord
+from storybuilder.datatypes import ContentsData, ContentRecord
+from storybuilder.datatypes import OutlineData, OutlineRecord
+from storybuilder.datatypes import PlotData, PlotRecord
+from storybuilder.datatypes import StoryCode, StoryCodeData
 from storybuilder.util.log import logger
 
 
@@ -203,9 +206,10 @@ def format_charcounts_script(scripts: list) -> list:
     return tmp
 
 
-def format_contents_table_data(contents: list) -> list:
-    assert isinstance(contents, list)
+def format_contents_table_data(contents_data: ContentsData) -> list:
+    assert isinstance(contents_data, ContentsData)
 
+    contents = contents_data.get_data()
     tmp = []
     tmp.append(f"{contents[0].title}\n")
     tmp.append("====\n\n")
@@ -224,13 +228,13 @@ def format_contents_table_data(contents: list) -> list:
     return tmp
 
 
-def format_novel_data(code_data: list, indent_num: int=1) -> list:
-    assert isinstance(code_data, list)
+def format_novel_data(code_data: StoryCodeData, indent_num: int=1) -> list:
+    assert isinstance(code_data, StoryCodeData)
     assert isinstance(indent_num, int)
 
     tmp = []
 
-    for code in code_data:
+    for code in code_data.get_data():
         assert isinstance(code, StoryCode)
         if 'book-title' == code.head:
             tmp.append(f"# {code.body}\n\n")
@@ -264,30 +268,30 @@ def format_novel_data(code_data: list, indent_num: int=1) -> list:
     return tmp
 
 
-def format_outline_data(level: str, outlines: list) -> list:
+def format_outline_data(level: str, outlines: OutlineData) -> list:
     assert isinstance(level, str)
-    assert isinstance(outlines, list)
+    assert isinstance(outlines, OutlineData)
 
     tmp = []
 
     tmp.append(_get_head_by_level(level))
 
-    for record in outlines:
+    for record in outlines.get_data():
         assert isinstance(record, OutlineRecord)
         tmp.append(f"**{record.title}**\n")
         tmp.append(f"    {record.data}\n\n")
     return tmp
 
 
-def format_plot_data(level: str, plots: list) -> list:
+def format_plot_data(level: str, plots: PlotData) -> list:
     assert isinstance(level, str)
-    assert isinstance(plots, list)
+    assert isinstance(plots, PlotData)
 
     tmp = []
 
     tmp.append(_get_head_by_level(level))
 
-    for record in plots:
+    for record in plots.get_data():
         assert isinstance(record, PlotRecord)
         tmp.append(f"**{record.title}**\n")
         tmp.append(f"    {record.setup}\n")
@@ -299,8 +303,8 @@ def format_plot_data(level: str, plots: list) -> list:
     return tmp
 
 
-def format_script_data(code_data: list, tags: dict, indent_num: int=3) -> list:
-    assert isinstance(code_data, list)
+def format_script_data(code_data: StoryCodeData, tags: dict, indent_num: int=3) -> list:
+    assert isinstance(code_data, StoryCodeData)
     assert isinstance(tags, dict)
     assert isinstance(indent_num, int)
 
@@ -313,7 +317,7 @@ def format_script_data(code_data: list, tags: dict, indent_num: int=3) -> list:
             'time': "",
             }
 
-    for code in code_data:
+    for code in code_data.get_data():
         assert isinstance(code, StoryCode)
         if 'book-title' == code.head:
             tmp.append(f"# {code.body}\n\n")
