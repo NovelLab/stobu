@@ -11,11 +11,11 @@ from storybuilder.dataconverter import conv_action_record_from_scene_action, con
 from storybuilder.datatypes import StoryRecord, OutlineRecord, ContentRecord, PlotRecord, ActionRecord, StoryCode
 from storybuilder.datatypes import CountRecord
 from storybuilder.formatter import format_contents_table_data, format_outline_data, format_plot_data, format_script_data, format_novel_data
-from storybuilder.formatter import format_charcounts_outline, format_charcounts_plot, format_charcounts_script
+from storybuilder.formatter import format_charcounts_outline, format_charcounts_plot, format_charcounts_script, format_charcounts_novel
 from storybuilder.formatter import get_breakline
 from storybuilder.instructions import apply_instruction_to_action_data
 from storybuilder.nametagmanager import NameTagDB
-from storybuilder.projectcounter import get_charcounts_script_data
+from storybuilder.projectcounter import get_charcounts_script_data, get_charcounts_novel_data
 import storybuilder.projectpathmanager as ppath
 from storybuilder.util import assertion
 from storybuilder.util.fileio import read_file_as_yaml, read_file_as_markdown, write_file
@@ -132,7 +132,7 @@ def build_basedata(cmdargs: argparse.Namespace, story_data: list, tags: dict) ->
         tmp.extend(get_basedata_script_charcounts(story_data, tags))
     if cmdargs.novel:
         # novel data
-        pass
+        tmp.extend(get_basedata_novel_charcounts(story_data, tags))
 
     contents = _get_contents_list(story_data)
 
@@ -248,6 +248,31 @@ def build_script(story_data: list, tags: dict) -> list:
 
 
 # Functions
+def get_basedata_novel_charcounts(story_data: list, tags: dict) -> list:
+    assert isinstance(story_data, list)
+    assert isinstance(tags, dict)
+
+    tmp = []
+
+    action_data = _get_action_data(story_data)
+
+    action_data_applied = apply_instruction_to_action_data(action_data)
+
+    action_data_tagfixed = _convert_list_from_tag_in_action_data(
+            action_data_applied, _get_calling_tags())
+
+    story_code_data = _get_story_code_data(action_data_tagfixed, False)
+
+    novels = format_novel_data(story_code_data)
+
+    novels_fixed = _convert_list_from_tag(novels, tags)
+
+    novelcounts = get_charcounts_novel_data(novels_fixed)
+
+    output_data = format_charcounts_novel(novelcounts)
+    return output_data
+
+
 def get_basedata_outline_charcounts(story_data: list, tags: dict) -> list:
     assert isinstance(story_data, list)
     assert isinstance(tags, dict)
@@ -291,11 +316,14 @@ def get_basedata_script_charcounts(story_data: list, tags: dict) -> list:
 
     story_code_data = _get_story_code_data(action_data_tagfixed, True)
 
-    formatted = format_script_data(story_code_data, tags)
+    scripts = format_script_data(story_code_data, tags)
 
-    scriptcounts = get_charcounts_script_data(formatted)
+    scripts_fixed = _convert_list_from_tag(scripts, tags)
+
+    scriptcounts = get_charcounts_script_data(scripts_fixed)
 
     output_data = format_charcounts_script(scriptcounts)
+
     return output_data
 
 

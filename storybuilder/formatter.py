@@ -25,6 +25,49 @@ __all__ = (
 
 
 # Main Functions
+def format_charcounts_novel(novels: list) -> list:
+    assert isinstance(novels, list)
+
+    tmp = []
+    tmp.append("## NOVEL count:\n\n")
+
+    for record in novels:
+        assert isinstance(record, CountRecord)
+        if 'book' == record.category:
+            if '_head' == record.title:
+                tmp.append(f"### BOOK count:\n\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"- {record.title}: {record.total}c\n")
+        elif 'chapter' == record.category:
+            if '_head' == record.title:
+                tmp.append(f"### CHAPTER count:\n\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"- {record.title}: {record.total}c\n")
+        elif 'episode' == record.category:
+            if '_head' == record.title:
+                tmp.append(f"### EPISODE count:\n\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"- {record.title}: {record.total}c\n")
+        elif 'scene' == record.category:
+            if '_head' == record.title:
+                tmp.append(f"### SCENE count:\n\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"- {record.title}: {record.total}c\n")
+        else:
+            logger.debug("Unknown CountRecord in script char counts!: %s", record)
+            continue
+
+    return tmp
+
+
 def format_charcounts_outline(outlines: list) -> list:
     assert isinstance(outlines, list)
 
@@ -158,6 +201,7 @@ def format_charcounts_script(scripts: list) -> list:
             continue
 
     return tmp
+
 
 def format_contents_table_data(contents: list) -> list:
     assert isinstance(contents, list)
