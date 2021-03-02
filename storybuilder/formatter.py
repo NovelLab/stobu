@@ -14,6 +14,7 @@ from storybuilder.util.log import logger
 __all__ = (
         'format_charcounts_outline',
         'format_charcounts_plot',
+        'format_charcounts_script',
         'format_contents_table_data',
         'format_novel_data',
         'format_outline_data',
@@ -115,6 +116,48 @@ def format_charcounts_plot(outlines: list) -> list:
             continue
     return tmp
 
+
+def format_charcounts_script(scripts: list) -> list:
+    assert isinstance(scripts, list)
+
+    tmp = []
+    tmp.append("## SCRIPT count:\n\n")
+
+    for record in scripts:
+        assert isinstance(record, CountRecord)
+        if 'book' == record.category:
+            if '_head' == record.title:
+                tmp.append(f"### BOOK count:\n\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"- {record.title}: {record.total}c\n")
+        elif 'chapter' == record.category:
+            if '_head' == record.title:
+                tmp.append(f"### CHAPTER count:\n\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"- {record.title}: {record.total}c\n")
+        elif 'episode' == record.category:
+            if '_head' == record.title:
+                tmp.append(f"### EPISODE count:\n\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"- {record.title}: {record.total}c\n")
+        elif 'scene' == record.category:
+            if '_head' == record.title:
+                tmp.append(f"### SCENE count:\n\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"- {record.title}: {record.total}c\n")
+        else:
+            logger.debug("Unknown CountRecord in script char counts!: %s", record)
+            continue
+
+    return tmp
 
 def format_contents_table_data(contents: list) -> list:
     assert isinstance(contents, list)
