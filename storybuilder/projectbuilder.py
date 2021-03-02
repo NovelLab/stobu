@@ -9,7 +9,9 @@ import os
 # My Modules
 from storybuilder.dataconverter import conv_action_record_from_scene_action, conv_text_from_tag, conv_to_story_record, conv_code_from_action_record
 from storybuilder.datatypes import StoryRecord, OutlineRecord, ContentRecord, PlotRecord, ActionRecord, StoryCode
+from storybuilder.datatypes import CountRecord
 from storybuilder.formatter import format_contents_table_data, format_outline_data, format_plot_data, format_script_data, format_novel_data
+from storybuilder.formatter import format_charcounts_outline
 from storybuilder.formatter import get_breakline
 from storybuilder.instructions import apply_instruction_to_action_data
 from storybuilder.nametagmanager import NameTagDB
@@ -96,7 +98,7 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
             return False
 
     # - base data
-    base_data = build_basedata(story_data, tagdb)
+    base_data = build_basedata(cmdargs, story_data, tagdb)
     if base_data:
         path = os.path.join(ppath.get_build_dir_path(), "data.md")
         if not write_file(path, "".join(base_data)):
@@ -112,14 +114,30 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
 
 
 ## Build Functions
-def build_basedata(story_data: list, tags: dict) -> list:
+def build_basedata(cmdargs: argparse.Namespace, story_data: list, tags: dict) -> list:
     assert isinstance(story_data, list)
     assert isinstance(tags, dict)
+
+    tmp = []
+
+    if cmdargs.outline:
+        # outline data
+        tmp.extend(get_basedata_as_char_counts(story_data, tags))
+    if cmdargs.plot:
+        # plot data
+        pass
+    if cmdargs.script:
+        # script data
+        pass
+    if cmdargs.novel:
+        # novel data
+        pass
 
     contents = _get_contents_list(story_data)
 
     basedata = format_contents_table_data(contents) \
-            + ["\n", get_breakline()]
+            + ['\n', get_breakline()] \
+            + tmp
 
     output_data = _convert_list_from_tag(basedata, tags)
 
@@ -229,6 +247,20 @@ def build_script(story_data: list, tags: dict) -> list:
 
 
 # Functions
+def get_basedata_as_char_counts(story_data: list, tags: dict) -> list:
+    assert isinstance(story_data, list)
+    assert isinstance(tags, dict)
+
+    outline = _get_outline_char_counts('book', story_data, tags) \
+            + _get_outline_char_counts('chapter', story_data, tags) \
+            + _get_outline_char_counts('episode', story_data, tags) \
+            + _get_outline_char_counts('scene', story_data, tags)
+
+    output_data = format_charcounts_outline(outline)
+
+    return output_data
+
+
 def get_nametag_db() -> dict:
     logger.debug("Creating Name tag DB...")
     db = NameTagDB()
@@ -450,6 +482,22 @@ def _get_data_from_ordername(ordername: str) -> dict:
         return tmp
     else:
         return {}
+
+
+def _get_outline_char_counts(level: str, story_data: list, tags: dict) -> list:
+    assert isinstance(level, str)
+    assert isinstance(story_data, list)
+    assert isinstance(tags, dict)
+
+    outline_data = _get_outline_data(level, story_data)
+    tmp = []
+
+    for record in outline_data:
+        assert isinstance(record, OutlineRecord)
+        text = conv_text_from_tag(record.data, tags)
+        tmp.append(CountRecord(level, record.title, len(text)))
+    totalcount = CountRecord(level, "_head", sum([r.total for r in tmp]))
+    return [totalcount] + tmp + [CountRecord(level, "_end", 0)]
 
 
 def _get_outline_data(level: str, story_data: list) -> list:

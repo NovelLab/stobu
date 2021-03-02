@@ -28,6 +28,13 @@ class ContentRecord(object):
 
 
 @dataclass
+class CountRecord(object):
+    category: str
+    title: str
+    total: int
+
+
+@dataclass
 class OutlineRecord(object):
     title: str
     data: str
