@@ -11,7 +11,7 @@ from storybuilder.dataconverter import conv_action_record_from_scene_action, con
 from storybuilder.datatypes import StoryRecord, OutlineRecord, ContentRecord, PlotRecord, ActionRecord, StoryCode
 from storybuilder.datatypes import CountRecord
 from storybuilder.formatter import format_contents_table_data, format_outline_data, format_plot_data, format_script_data, format_novel_data
-from storybuilder.formatter import format_charcounts_outline
+from storybuilder.formatter import format_charcounts_outline, format_charcounts_plot
 from storybuilder.formatter import get_breakline
 from storybuilder.instructions import apply_instruction_to_action_data
 from storybuilder.nametagmanager import NameTagDB
@@ -122,10 +122,10 @@ def build_basedata(cmdargs: argparse.Namespace, story_data: list, tags: dict) ->
 
     if cmdargs.outline:
         # outline data
-        tmp.extend(get_basedata_as_char_counts(story_data, tags))
+        tmp.extend(get_basedata_outline_charcounts(story_data, tags))
     if cmdargs.plot:
         # plot data
-        pass
+        tmp.extend(get_basedata_plot_charcounts(story_data, tags))
     if cmdargs.script:
         # script data
         pass
@@ -247,16 +247,30 @@ def build_script(story_data: list, tags: dict) -> list:
 
 
 # Functions
-def get_basedata_as_char_counts(story_data: list, tags: dict) -> list:
+def get_basedata_outline_charcounts(story_data: list, tags: dict) -> list:
     assert isinstance(story_data, list)
     assert isinstance(tags, dict)
 
-    outline = _get_outline_char_counts('book', story_data, tags) \
+    outlines = _get_outline_char_counts('book', story_data, tags) \
             + _get_outline_char_counts('chapter', story_data, tags) \
             + _get_outline_char_counts('episode', story_data, tags) \
             + _get_outline_char_counts('scene', story_data, tags)
 
-    output_data = format_charcounts_outline(outline)
+    output_data = format_charcounts_outline(outlines)
+
+    return output_data
+
+
+def get_basedata_plot_charcounts(story_data: list, tags: dict) -> list:
+    assert isinstance(story_data, list)
+    assert isinstance(tags, dict)
+
+    plots = _get_plot_char_counts('book', story_data, tags) \
+            + _get_plot_char_counts('chapter', story_data, tags) \
+            + _get_plot_char_counts('episode', story_data, tags) \
+            + _get_plot_char_counts('scene', story_data, tags)
+
+    output_data = format_charcounts_plot(plots)
 
     return output_data
 
@@ -525,6 +539,22 @@ def _get_outline_data(level: str, story_data: list) -> list:
             continue
 
     return tmp
+
+
+def _get_plot_char_counts(level: str, story_data: list, tags: dict) -> list:
+    assert isinstance(level, str)
+    assert isinstance(story_data, list)
+    assert isinstance(tags, dict)
+
+    plot_data = _get_plot_data(level, story_data)
+    tmp = []
+    for record in plot_data:
+        assert isinstance(record, PlotRecord)
+        text = record.setup + record.tp1st + record.develop + record.tp2nd + record.climax + record.resolve
+        text_fixed = conv_text_from_tag(text, tags)
+        tmp.append(CountRecord(level, record.title, len(text_fixed)))
+    totalcount = CountRecord(level, "_head", sum([r.total for r in tmp]))
+    return [totalcount] + tmp + [CountRecord(level, "_end", 0)]
 
 
 def _get_plot_data(level: str, story_data: list) -> list:
