@@ -57,4 +57,3 @@ if __debug__:
     logger.setLevel(logging.DEBUG)
 else:
     logger.setLevel(logging.INFO)
-

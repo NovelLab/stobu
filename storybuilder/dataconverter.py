@@ -63,7 +63,8 @@ def conv_action_record_from_scene_action(actline: str) -> Union[ActionRecord, No
         return None
 
 
-def conv_code_from_action_record(record: ActionRecord, is_script_mode: bool=False) -> Union[StoryCode, None]:
+def conv_code_from_action_record(record: ActionRecord,
+        is_script_mode: bool = False) -> Union[StoryCode, None]:
     assert isinstance(record, ActionRecord)
     assert isinstance(is_script_mode, bool)
 
@@ -100,7 +101,7 @@ def conv_code_from_action_record(record: ActionRecord, is_script_mode: bool=Fals
     return None
 
 
-def conv_text_from_tag(text: str, tags: dict, prefix: str='$') -> str:
+def conv_text_from_tag(text: str, tags: dict, prefix: str = '$') -> str:
     assert isinstance(text, str)
     assert isinstance(tags, dict)
     assert isinstance(prefix, str)
@@ -118,8 +119,8 @@ def conv_text_from_tag(text: str, tags: dict, prefix: str='$') -> str:
     return tmp
 
 
-def conv_text_in_action_data_by_tags(action_data: ActionData, callings: dict,
-        prefix: str='$') -> ActionData:
+def conv_text_in_action_data_by_tags(action_data: ActionData,
+        callings: dict, prefix: str = '$') -> ActionData:
     assert isinstance(action_data, ActionData)
     assert isinstance(callings, dict)
     assert isinstance(prefix, str)
@@ -192,4 +193,3 @@ def _get_category(filename: str) -> str:
 
     category, fname = filename.split('/')
     return category
-

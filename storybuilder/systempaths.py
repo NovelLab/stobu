@@ -14,4 +14,3 @@ USR_CACHE_DIR = os.path.join(HOME, '.cache')
 
 USR_CONFIG_DIR = os.path.join(HOME, '.config')
 """str: path of user config directory."""
-

@@ -7,7 +7,7 @@
 # My Modules
 from storybuilder.dataconverter import conv_code_from_action_record
 from storybuilder.datatypes import ActionData, ActionRecord
-from storybuilder.datatypes import StoryCode, StoryCodeData
+from storybuilder.datatypes import StoryCodeData
 from storybuilder.util.log import logger
 
 
@@ -29,4 +29,3 @@ def get_story_code_data(action_data: ActionData, is_script_mode: bool) -> StoryC
             tmp.append(ret)
 
     return StoryCodeData(tmp)
-

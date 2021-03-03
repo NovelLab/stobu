@@ -108,4 +108,3 @@ def is_tuple(val: tuple) -> tuple:
     """
     assert isinstance(val, tuple), f"Must be a Tuple type value!: {type(val)}"
     return val
-

@@ -10,7 +10,7 @@ from storybuilder.core.charcounter import on_build_novel_charcounts, on_build_ou
 from storybuilder.core.contentscreator import get_contents_list
 from storybuilder.dataconverter import conv_text_list_by_tags
 from storybuilder.datatypes import OutputData
-from storybuilder.datatypes import StoryData, StoryRecord
+from storybuilder.datatypes import StoryData
 from storybuilder.formatter import format_contents_table_data, get_breakline
 from storybuilder.util.log import logger
 
@@ -59,4 +59,3 @@ def on_build_basedata(cmdargs: argparse.Namespace,
     output_data = conv_text_list_by_tags(basedata, tags)
 
     return OutputData(output_data)
-

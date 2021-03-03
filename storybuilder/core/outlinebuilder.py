@@ -72,5 +72,3 @@ def get_outline_data(level: str, story_data: StoryData) -> OutlineData:
             continue
 
     return OutlineData(tmp)
-
-

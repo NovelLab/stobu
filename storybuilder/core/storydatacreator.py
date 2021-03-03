@@ -84,4 +84,3 @@ def _serialized_file_names_from_order(order_data: dict) -> list:
                         assert isinstance(sc_record, str)
                         tmp.append(sc_record)
     return tmp
-

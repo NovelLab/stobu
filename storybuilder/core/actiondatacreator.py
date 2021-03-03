@@ -68,5 +68,3 @@ def _get_action_data_in_scene(record: StoryRecord) -> list:
     tmp.append(ActionRecord('scene-end', ""))
 
     return tmp
-
-

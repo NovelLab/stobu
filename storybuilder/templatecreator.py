@@ -7,7 +7,7 @@ import os
 
 
 # My Modules
-from storybuilder.settings import COPYRIGHT, VERSION, BASE_ENCODING
+from storybuilder.settings import COPYRIGHT, VERSION
 from storybuilder.util.fileio import read_file
 from storybuilder.util.log import logger
 
@@ -74,14 +74,12 @@ class TemplateCreator(object):
         self.plot_tmp = os.path.join(data_path, PLOT_TEMP_FILE)
         logger.debug("...Success initialized.")
 
-
     @classmethod
     def get_instance(cls) -> TemplateCreator:
         """Get the class instance as a singleton."""
         if not cls._singleton:
             cls._singleton = TemplateCreator()
         return cls._singleton
-
 
     # methods
     def get_book_template(self) -> str:
@@ -93,7 +91,6 @@ class TemplateCreator(object):
             logger.error("Missing the book template data!: %s", tmp)
             return ""
 
-
     def get_chapter_template(self) -> str:
         tmp = read_file(self.chapter_tmp)
         plot = read_file(self.plot_tmp)
@@ -102,7 +99,6 @@ class TemplateCreator(object):
         else:
             logger.error("Missing the chapter template data!: %s", tmp)
             return ""
-
 
     def get_episode_template(self) -> str:
         tmp = read_file(self.episode_tmp)
@@ -113,7 +109,6 @@ class TemplateCreator(object):
             logger.error("Missing the episode template data!: %s", tmp)
             return ""
 
-
     def get_item_template(self) -> str:
         tmp = read_file(self.item_tmp)
         if tmp:
@@ -121,7 +116,6 @@ class TemplateCreator(object):
         else:
             logger.error("Missing the item template data!: %s", tmp)
             return ""
-
 
     def get_note_template(self) -> str:
         tmp = read_file(self.note_tmp)
@@ -131,7 +125,6 @@ class TemplateCreator(object):
             logger.error("Missing the note template data!: %s", tmp)
             return ""
 
-
     def get_order_template(self) -> str:
         tmp = read_file(self.order_tmp)
         if tmp:
@@ -139,7 +132,6 @@ class TemplateCreator(object):
         else:
             logger.error("Missing the order template data!: %s", tmp)
             return ""
-
 
     def get_person_template(self) -> str:
         tmp = read_file(self.person_tmp)
@@ -149,15 +141,14 @@ class TemplateCreator(object):
             logger.error("Missing the person template data!: %s", tmp)
             return ""
 
-
     def get_project_template(self) -> str:
         tmp = read_file(self.project_tmp)
         if tmp:
-            return tmp.replace('{VERSION}', VERSION).replace('{COPYRIGHT}', COPYRIGHT)
+            return tmp.replace('{VERSION}', VERSION).replace(
+                    '{COPYRIGHT}', COPYRIGHT)
         else:
             logger.error("Missing the project template data!: %s", tmp)
             return ""
-
 
     def get_scene_template(self) -> str:
         tmp = read_file(self.scene_tmp)
@@ -168,7 +159,6 @@ class TemplateCreator(object):
             logger.error("Missing the scene template data!: %s", tmp)
             return ""
 
-
     def get_stage_template(self) -> str:
         tmp = read_file(self.stage_tmp)
         if tmp:
@@ -177,7 +167,6 @@ class TemplateCreator(object):
             logger.error("Missing the stage template data!: %s", tmp)
             return ""
 
-
     def get_word_template(self) -> str:
         tmp = read_file(self.word_tmp)
         if tmp:
@@ -185,4 +174,3 @@ class TemplateCreator(object):
         else:
             logger.error("Missing the word template data!: %s", tmp)
             return ""
-

@@ -2,8 +2,6 @@
 
 
 # Official Libraries
-import glob
-import os
 import argparse
 
 
@@ -187,4 +185,3 @@ def _show_list(title: str, fnames: list) -> bool:
     print(" ".join(tmp))
 
     return True
-

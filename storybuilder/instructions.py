@@ -65,7 +65,7 @@ def apply_instruction_to_action_data(action_data: ActionData,
                     if not record.desc:
                         continue
             if is_br_mode:
-                if not record.action in ('talk',):
+                if record.action not in ('talk',):
                     tmp.append(_get_indent_action())
             elif not is_br_mode:
                 if not has_first_indent and record.action == 'talk':
@@ -90,4 +90,3 @@ def _get_br_action() -> ActionRecord:
 
 def _get_indent_action() -> ActionRecord:
     return ActionRecord('indent', "")
-

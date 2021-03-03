@@ -40,5 +40,3 @@ def get_contents_list(story_data: StoryData) -> ContentsData:
             logger.error("Invalid StoryRecord data!: %s", record)
 
     return ContentsData(tmp)
-
-

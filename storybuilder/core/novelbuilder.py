@@ -9,10 +9,10 @@ from storybuilder.core.actiondatacreator import get_action_data
 from storybuilder.core.contentscreator import get_contents_list
 from storybuilder.core.storycodecreator import get_story_code_data
 from storybuilder.dataconverter import conv_text_in_action_data_by_tags, conv_text_list_by_tags
-from storybuilder.datatypes import ActionData, ActionRecord
+from storybuilder.datatypes import ActionData
 from storybuilder.datatypes import OutputData
-from storybuilder.datatypes import StoryCode, StoryCodeData
-from storybuilder.datatypes import StoryData, StoryRecord
+from storybuilder.datatypes import StoryCodeData
+from storybuilder.datatypes import StoryData
 from storybuilder.formatter import format_contents_table_data, format_novel_data, get_breakline
 from storybuilder.instructions import apply_instruction_to_action_data
 from storybuilder.nametagmanager import NameTagDB
@@ -65,4 +65,3 @@ def get_story_code_data_from_story_data_as_novel(story_data: StoryData, tags: di
         StoryCodeData)
 
     return story_code_data
-

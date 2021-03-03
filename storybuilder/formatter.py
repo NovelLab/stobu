@@ -38,28 +38,28 @@ def format_charcounts_novel(novels: CountData) -> list:
         assert isinstance(record, CountRecord)
         if 'book' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### BOOK count:\n\n")
+                tmp.append("### BOOK count:\n\n")
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'chapter' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### CHAPTER count:\n\n")
+                tmp.append("### CHAPTER count:\n\n")
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'episode' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### EPISODE count:\n\n")
+                tmp.append("### EPISODE count:\n\n")
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'scene' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### SCENE count:\n\n")
+                tmp.append("### SCENE count:\n\n")
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
@@ -85,11 +85,11 @@ def format_charcounts_outline(outlines: CountData) -> list:
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
-                tmp.append(f"### BOOK count:\n\n")
+                tmp.append("### BOOK count:\n\n")
                 tmp.append(f"- total: {record.total}c\n")
         elif 'chapter' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### CHAPTER count:\n\n")
+                tmp.append("### CHAPTER count:\n\n")
                 tmp.append(f"- total: {record.total}c\n")
             elif '_end' == record.title:
                 tmp.append('\n')
@@ -97,7 +97,7 @@ def format_charcounts_outline(outlines: CountData) -> list:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'episode' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### EPISODE count:\n\n")
+                tmp.append("### EPISODE count:\n\n")
                 tmp.append(f"- total: {record.total}c\n")
             elif '_end' == record.title:
                 tmp.append('\n')
@@ -105,7 +105,7 @@ def format_charcounts_outline(outlines: CountData) -> list:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'scene' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### SCENE count:\n\n")
+                tmp.append("### SCENE count:\n\n")
                 tmp.append(f"- total: {record.total}c\n")
             elif '_end' == record.title:
                 tmp.append('\n')
@@ -131,11 +131,11 @@ def format_charcounts_plot(outlines: CountData) -> list:
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
-                tmp.append(f"### BOOK count:\n\n")
+                tmp.append("### BOOK count:\n\n")
                 tmp.append(f"- total: {record.total}c\n")
         elif 'chapter' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### CHAPTER count:\n\n")
+                tmp.append("### CHAPTER count:\n\n")
                 tmp.append(f"- total: {record.total}c\n")
             elif '_end' == record.title:
                 tmp.append('\n')
@@ -143,7 +143,7 @@ def format_charcounts_plot(outlines: CountData) -> list:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'episode' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### EPISODE count:\n\n")
+                tmp.append("### EPISODE count:\n\n")
                 tmp.append(f"- total: {record.total}c\n")
             elif '_end' == record.title:
                 tmp.append('\n')
@@ -151,7 +151,7 @@ def format_charcounts_plot(outlines: CountData) -> list:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'scene' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### SCENE count:\n\n")
+                tmp.append("### SCENE count:\n\n")
                 tmp.append(f"- total: {record.total}c\n")
             elif '_end' == record.title:
                 tmp.append('\n')
@@ -173,28 +173,28 @@ def format_charcounts_script(scripts: CountData) -> list:
         assert isinstance(record, CountRecord)
         if 'book' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### BOOK count:\n\n")
+                tmp.append("### BOOK count:\n\n")
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'chapter' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### CHAPTER count:\n\n")
+                tmp.append("### CHAPTER count:\n\n")
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'episode' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### EPISODE count:\n\n")
+                tmp.append("### EPISODE count:\n\n")
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
                 tmp.append(f"- {record.title}: {record.total}c\n")
         elif 'scene' == record.category:
             if '_head' == record.title:
-                tmp.append(f"### SCENE count:\n\n")
+                tmp.append("### SCENE count:\n\n")
             elif '_end' == record.title:
                 tmp.append('\n')
             else:
@@ -228,7 +228,7 @@ def format_contents_table_data(contents_data: ContentsData) -> list:
     return tmp
 
 
-def format_novel_data(code_data: StoryCodeData, indent_num: int=1) -> list:
+def format_novel_data(code_data: StoryCodeData, indent_num: int = 1) -> list:
     assert isinstance(code_data, StoryCodeData)
     assert isinstance(indent_num, int)
 
@@ -303,7 +303,7 @@ def format_plot_data(level: str, plots: PlotData) -> list:
     return tmp
 
 
-def format_script_data(code_data: StoryCodeData, tags: dict, indent_num: int=3) -> list:
+def format_script_data(code_data: StoryCodeData, tags: dict, indent_num: int = 3) -> list:
     assert isinstance(code_data, StoryCodeData)
     assert isinstance(tags, dict)
     assert isinstance(indent_num, int)

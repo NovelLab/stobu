@@ -4,7 +4,6 @@
 # Official Libraries
 import argparse
 import copy
-import yaml
 
 
 # My Modules
@@ -24,7 +23,8 @@ __all__ = (
 
 
 # Define Constants
-INPUT_TARGET_FILENAME_WITH_LIST_MESSAGE = "{target_list}\nEnter {target} file name: "
+INPUT_TARGET_FILENAME_WITH_LIST_MESSAGE = \
+        "{target_list}\nEnter {target} file name: "
 """str: message to get the deleting file name."""
 
 START_PUSH_PROCESS_MESSAGE = "Pushing the {target} file..."
@@ -103,7 +103,7 @@ def switch_command_to_reject(cmdargs: argparse.Namespace) -> bool:
 
 
 # Functions
-## Push
+# - Push
 def push_the_chapter(fname: str) -> bool:
     logger.debug(START_PUSH_PROCESS_MESSAGE.format(target="chapter"))
 
@@ -206,7 +206,7 @@ def push_the_scene(fname: str) -> bool:
     return True
 
 
-## Reject
+# - Reject
 def reject_the_chapter(fname: str) -> bool:
     logger.debug(START_REJECT_PROCESS_MESSAGE.format(target="chapter"))
 
@@ -245,7 +245,8 @@ def reject_the_episode(fname: str) -> bool:
         return False
 
     episodes = _get_episode_names_from_order(tmp)
-    _fname = fname if fname else _get_target_filename(fname, "rejectiong episode", episodes)
+    _fname = fname if fname else _get_target_filename(
+            fname, "rejectiong episode", episodes)
 
     if not _is_exists_the_episode_in_order(tmp, _fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
@@ -273,7 +274,8 @@ def reject_the_scene(fname: str) -> bool:
         return False
 
     scenes = _get_scene_names_from_order(tmp)
-    _fname = fname if fname else _get_target_filename(fname, "rejecting scene", scenes)
+    _fname = fname if fname else _get_target_filename(
+            fname, "rejecting scene", scenes)
 
     if not _is_exists_the_scene_in_order(tmp, _fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
@@ -360,7 +362,8 @@ def _get_target_filename(fname: str, msg: str, targets: list) -> str:
         tmp.append(f"{idx}:{t}")
         idx += 1
     _fname = assertion.is_str(fname) if fname else get_input_filename(
-            INPUT_TARGET_FILENAME_WITH_LIST_MESSAGE.format(target=msg, target_list=" ".join(tmp)))
+            INPUT_TARGET_FILENAME_WITH_LIST_MESSAGE.format(
+                target=msg, target_list=" ".join(tmp)))
     if _fname.isnumeric():
         if 0 <= int(_fname) < len(targets):
             return targets[int(_fname)]
@@ -442,12 +445,13 @@ def _push_chapter_to_book(orderdata: dict, fname: str) -> bool:
     assert isinstance(orderdata, dict)
     assert isinstance(fname, str)
 
-    assertion.is_list(orderdata['book']).append({_chaptername_of(fname):[]})
+    assertion.is_list(orderdata['book']).append({_chaptername_of(fname): []})
 
     return True
 
 
-def _push_episode_to_chapter(orderdata: dict, fname: str, ch_name:str) -> bool:
+def _push_episode_to_chapter(
+        orderdata: dict, fname: str, ch_name: str) -> bool:
     assert isinstance(orderdata, dict)
     assert isinstance(fname, str)
     assert isinstance(ch_name, str)
@@ -457,7 +461,8 @@ def _push_episode_to_chapter(orderdata: dict, fname: str, ch_name:str) -> bool:
     for ch_record in orderdata['book']:
         assert isinstance(ch_record, dict)
         if _ch_name in ch_record.keys():
-            assertion.is_list(ch_record[_ch_name]).append({_episodename_of(fname):[]})
+            assertion.is_list(ch_record[_ch_name]).append(
+                    {_episodename_of(fname): []})
             return True
     return False
 
@@ -476,7 +481,8 @@ def _push_scene_to_episode(orderdata: dict, fname: str, ep_name: str) -> bool:
             for ep_record in ch_data:
                 assert isinstance(ep_record, dict)
                 if _ep_name in ep_record.keys():
-                    assertion.is_list(ep_record[_ep_name]).append(_scenename_of(fname))
+                    assertion.is_list(ep_record[_ep_name]).append(
+                            _scenename_of(fname))
                     return True
     return False
 
@@ -490,7 +496,7 @@ def _reject_chapter_from_order(orderdata: dict, fname: str) -> bool:
 
     for ch_record in assertion.is_list(orderdata['book']):
         assert isinstance(ch_record, dict)
-        if not _ch_name in ch_record.keys():
+        if _ch_name not in ch_record.keys():
             tmp.append(ch_record)
     orderdata['book'] = tmp
     return True
@@ -509,7 +515,7 @@ def _reject_episode_from_order(orderdata: dict, fname: str) -> bool:
             tmp = []
             for ep_record in ch_data:
                 assert isinstance(ep_record, dict)
-                if not _ep_name in ep_record.keys():
+                if _ep_name not in ep_record.keys():
                     tmp.append(ep_record)
             for key in ch_record.keys():
                 ch_record[key] = tmp
@@ -553,4 +559,3 @@ def _validate_order_book(orderdata: dict) -> bool:
         orderdata['book'] = []
 
     return True
-

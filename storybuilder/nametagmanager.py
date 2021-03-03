@@ -19,7 +19,6 @@ class NameTagDB(object):
     def __init__(self):
         self.tags = {}
 
-
     # class Methods
     @classmethod
     def get_calling_tags(cls) -> dict:
@@ -42,7 +41,6 @@ class NameTagDB(object):
         return self._add_name_to_tagdb(key, name) \
                 and self._add_name_to_tagdb(self._add_prefix_name('i_', key), name)
 
-
     def add_person(self, key: str, name: str, fullname: str) -> bool:
         assert isinstance(key, str)
         assert isinstance(name, str)
@@ -55,14 +53,12 @@ class NameTagDB(object):
                 and self._add_name_to_tagdb(self._add_prefix_name('full_', key), name) \
                 and self._add_name_to_tagdb(self._add_prefix_name('efull_', key), name)
 
-
     def add_stage(self, key: str, name: str) -> bool:
         assert isinstance(key, str)
         assert isinstance(name, str)
 
         return self._add_name_to_tagdb(key, name) \
                 and self._add_name_to_tagdb(self._add_prefix_name('t_', key), name)
-
 
     def add_word(self, key: str, name: str) -> bool:
         assert isinstance(key, str)
@@ -71,11 +67,9 @@ class NameTagDB(object):
         return self._add_name_to_tagdb(key, name) \
                 and self._add_name_to_tagdb(self._add_prefix_name('w_', key), name)
 
-
     def sort_db(self) -> bool:
         self.tags = dict(sorted(self.tags.items()))
         return True
-
 
     # private methods
     def _add_name_to_tagdb(self, key: str, name: str) -> bool:
@@ -84,7 +78,6 @@ class NameTagDB(object):
 
         self.tags[key] = name
         return True
-
 
     def _add_prefix_name(self, prefix: str, key: str) -> str:
         assert isinstance(prefix, str)
@@ -161,4 +154,3 @@ def _create_nametags_from_word_files(db: NameTagDB) -> bool:
             logger.error("Failed to add a word name to tag DB!")
             return False
     return True
-

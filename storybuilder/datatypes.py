@@ -59,11 +59,11 @@ class ActionData(_BaseData):
 class ActionRecord(object):
     type: str
     subject: str
-    action: str=""
-    outline: str=""
-    desc: str=""
-    flags: list=field(default_factory=list)
-    note: str=""
+    action: str = ""
+    outline: str = ""
+    desc: str = ""
+    flags: list = field(default_factory=list)
+    note: str = ""
 
 
 class ContentsData(_BaseData):
@@ -90,6 +90,9 @@ class CountRecord(object):
     category: str
     title: str
     total: int
+    space: int
+    lines: float
+    papers: float
 
 
 class OutlineData(_BaseData):
@@ -135,7 +138,7 @@ class PlotRecord(object):
 class StoryCode(object):
     head: str
     body: str
-    foot: Any=None
+    foot: Any = None
 
 
 class StoryCodeData(_BaseData):
@@ -154,5 +157,4 @@ class StoryData(_BaseData):
 class StoryRecord(object):
     category: str
     filename: str
-    data: dict=field(default_factory=dict)
-
+    data: dict = field(default_factory=dict)

@@ -2,7 +2,6 @@
 
 
 # Official Libraries
-import os
 
 
 # My Modules
@@ -19,7 +18,7 @@ VERSION = __version__
 COPYRIGHT = "(c)2020,2021 N.T.WORKS"
 """str: application copyright."""
 
-AUTHORS = ["N.T.WORKS",]
+AUTHORS = ["N.T.WORKS"]
 """list[str]: application authors."""
 
 
@@ -98,4 +97,3 @@ BASE_ENCODING = 'utf-8'
 
 EDITOR = 'vim'
 """str: editor for the application."""
-

@@ -3,17 +3,20 @@
 
 # Official Libraries
 import os
-from typing import Union
 
 
 # My Modules
 from storybuilder.commandlineparser import get_project_commands
-from storybuilder.projectadder import switch_command_to_add, switch_command_to_copy, switch_command_to_delete, switch_command_to_rename
+from storybuilder.projectadder import switch_command_to_add
+from storybuilder.projectadder import switch_command_to_copy
+from storybuilder.projectadder import switch_command_to_delete
+from storybuilder.projectadder import switch_command_to_rename
 from storybuilder.projectbuilder import switch_command_to_build
 from storybuilder.projecteditor import switch_command_to_edit
 from storybuilder.projectfilechecker import exists_project_file
 from storybuilder.projectinitializer import init_project
-from storybuilder.projectpusher import switch_command_to_push, switch_command_to_reject
+from storybuilder.projectpusher import switch_command_to_push
+from storybuilder.projectpusher import switch_command_to_reject
 from storybuilder.projectviewer import switch_command_to_list
 from storybuilder.util.log import logger
 
@@ -30,13 +33,14 @@ class Application(object):
         # base setting
         logger.debug("Initialized the Application.")
 
-
     # main method
     def run(self) -> EXIT_CODE:
         logger.debug("Starting the Application...")
 
         is_succeeded = True
-        """bool: if True is successfull result to proceed, False is any failure in process."""
+        """bool: if True is successfull result to proceed, False is any
+            failure in process.
+        """
 
         # pre process
         cmdargs = get_project_commands()
@@ -47,7 +51,7 @@ class Application(object):
 
         logger.debug("Success get the command-line arguments: %s", cmdargs)
 
-        ## check if command is init
+        # check if command is init
         if cmdargs.cmd in ('i', 'init'):
             logger.debug("INIT project starting...")
             is_succeeded = init_project()
@@ -57,13 +61,13 @@ class Application(object):
             else:
                 return os.EX_OK
 
-        ## check if project exists
+        # check if project exists
         if not exists_project_file():
             logger.error("Missing the project file!")
             return os.EX_OSFILE
 
         # main process
-        ##  command switch
+        # - command switch
         is_succeeded = False
 
         if cmdargs.cmd in ('b', 'build'):
@@ -94,4 +98,3 @@ class Application(object):
             return os.EX_SOFTWARE
 
         return os.EX_OK
-
