@@ -7,6 +7,7 @@
 # My Modules
 from stobu.core.actiondatacreator import get_action_data
 from stobu.core.contentscreator import get_contents_list
+from stobu.core.rubibuilder import apply_rubi_convert
 from stobu.core.storycodecreator import get_story_code_data
 from stobu.dataconverter import conv_text_in_action_data_by_tags, conv_text_list_by_tags
 from stobu.datatypes import ActionData
@@ -27,9 +28,10 @@ __all__ = (
 
 
 # Main Function
-def on_build_novel(story_data: StoryData, tags: dict) -> OutputData:
+def on_build_novel(story_data: StoryData, tags: dict, is_rubi: bool) -> OutputData:
     assert isinstance(story_data, StoryData)
     assert isinstance(tags, dict)
+    assert isinstance(is_rubi, bool)
 
     contents = get_contents_list(story_data)
 
@@ -43,7 +45,8 @@ def on_build_novel(story_data: StoryData, tags: dict) -> OutputData:
 
     output_data = conv_text_list_by_tags(novels, tags)
 
-    return OutputData(output_data)
+    return OutputData(
+            apply_rubi_convert(output_data) if is_rubi else output_data)
 
 
 # Functions

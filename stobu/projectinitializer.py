@@ -7,7 +7,7 @@ import os
 
 # My Modules
 import stobu.projectfilechecker as checker
-from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME
+from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME, RUBI_FILENAME
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT, PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from stobu.settings import BUILD_DIR, CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR, PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR, TRASH_DIR
 from stobu.templatecreator import TemplateCreator
@@ -59,6 +59,7 @@ def check_and_create_default_files(creator: TemplateCreator) -> bool:
 
     if not check_and_create_book_file(creator) \
             or not check_and_create_order_file(creator) \
+            or not check_and_create_rubi_file(creator) \
             or not check_and_create_a_chapter_file(creator) \
             or not check_and_create_a_episode_file(creator) \
             or not check_and_create_a_scene_file(creator) \
@@ -388,6 +389,27 @@ def check_and_create_person_dir() -> bool:
     return True
 
 
+def check_and_create_rubi_file(creator: TemplateCreator) -> bool:
+    logger.debug("Checking and Creating a rubi file...")
+
+    if has_rubi_file():
+        logger.debug("Already the rubi file exists. Succeeded.")
+        return True
+
+    path = os.path.join(get_current_path(), RUBI_FILENAME)
+    template_data = creator.get_rubi_template()
+    if not template_data:
+        logger.error("Missing the rubi template data!: %s", template_data)
+        return False
+
+    if not write_file(path, template_data):
+        logger.error("Failed write the rubi template data!: %s", path)
+        return False
+
+    logger.debug("...Succeeded check and create the rubi file.")
+    return True
+
+
 def check_and_create_scene_dir() -> bool:
     logger.debug("Checking and Creating scene directory...")
 
@@ -468,6 +490,11 @@ def get_project_file_path() -> str:
     return os.path.join(get_current_path(), PROJECT_FILENAME)
 
 
+def get_rubi_file_path() -> str:
+    """Get a rubi file path."""
+    return os.path.join(get_current_path(), RUBI_FILENAME)
+
+
 def has_book_file() -> bool:
     """Check if a book file exists."""
     return is_exists_path(get_book_file_path())
@@ -481,6 +508,11 @@ def has_order_file() -> bool:
 def has_project_file() -> bool:
     """Check if a project file exists."""
     return is_exists_path(get_project_file_path())
+
+
+def has_rubi_file() -> bool:
+    """Check if a rubi file exists."""
+    return is_exists_path(get_rubi_file_path())
 
 
 def safe_create_directory(dirname: str) -> bool:

@@ -38,6 +38,9 @@ BOOK_FILENAME = f"book.{YAML_EXT}"
 ORDER_FILENAME = f"order.{YAML_EXT}"
 """str: file name of order file."""
 
+RUBI_FILENAME = f"rubi.{YAML_EXT}"
+"""str: file name of rubi file."""
+
 CHAPTER_DIR = 'chapters'
 """str: directory name for chapter files."""
 
