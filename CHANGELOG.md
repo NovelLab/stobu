@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - manupaper count feature
 ### Changed
 - build core tools
+- repository name change
 
 ## [0.0.1] - 2021-03-01
 ### Added
