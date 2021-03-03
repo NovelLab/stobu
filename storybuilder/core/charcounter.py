@@ -17,7 +17,10 @@ from storybuilder.datatypes import PlotData, PlotRecord
 from storybuilder.datatypes import StoryCodeData
 from storybuilder.datatypes import StoryData
 from storybuilder.formatter import format_charcounts_novel, format_charcounts_outline, format_charcounts_plot, format_charcounts_script, format_novel_data, format_script_data
+from storybuilder import projectpathmanager as ppath
 from storybuilder.util import assertion
+from storybuilder.util.counttool import count_white_space, count_line_by_columns
+from storybuilder.util.fileio import read_file_as_yaml
 from storybuilder.util.log import logger
 
 
@@ -41,7 +44,10 @@ def on_build_novel_charcounts(story_data: StoryData, tags: dict) -> OutputData:
 
     novels_fixed = conv_text_list_by_tags(novels, tags)
 
-    novelcounts = assertion.is_instance(get_charcounts_novel_data(novels_fixed),
+    rows, columns = _get_rows_and_columns_from_bookdata()
+
+    novelcounts = assertion.is_instance(
+            _get_novel_char_counts(novels_fixed, rows, columns),
             CountData)
 
     output_data = format_charcounts_novel(novelcounts)
@@ -53,10 +59,12 @@ def on_build_outline_charcounts(story_data: StoryData, tags: dict) -> OutputData
     assert isinstance(story_data, StoryData)
     assert isinstance(tags, dict)
 
-    outlines = _get_outline_char_counts('book', story_data, tags) \
-            + _get_outline_char_counts('chapter', story_data, tags) \
-            + _get_outline_char_counts('episode', story_data, tags) \
-            + _get_outline_char_counts('scene', story_data, tags)
+    rows, columns = _get_rows_and_columns_from_bookdata()
+
+    outlines = _get_outline_char_counts('book', story_data, tags, rows, columns) \
+            + _get_outline_char_counts('chapter', story_data, tags, rows, columns) \
+            + _get_outline_char_counts('episode', story_data, tags, rows, columns) \
+            + _get_outline_char_counts('scene', story_data, tags, rows, columns)
 
     output_data = format_charcounts_outline(outlines)
 
@@ -67,10 +75,12 @@ def on_build_plot_charcounts(story_data: StoryData, tags: dict) -> OutputData:
     assert isinstance(story_data, StoryData)
     assert isinstance(tags, dict)
 
-    plots = _get_plot_char_counts('book', story_data, tags) \
-            + _get_plot_char_counts('chapter', story_data, tags) \
-            + _get_plot_char_counts('episode', story_data, tags) \
-            + _get_plot_char_counts('scene', story_data, tags)
+    rows, columns = _get_rows_and_columns_from_bookdata()
+
+    plots = _get_plot_char_counts('book', story_data, tags, rows, columns) \
+            + _get_plot_char_counts('chapter', story_data, tags, rows, columns) \
+            + _get_plot_char_counts('episode', story_data, tags, rows, columns) \
+            + _get_plot_char_counts('scene', story_data, tags, rows, columns)
 
     output_data = format_charcounts_plot(plots)
 
@@ -88,7 +98,10 @@ def on_build_script_charcounts(story_data: StoryData, tags: dict) -> OutputData:
 
     scripts_fixed = conv_text_list_by_tags(scripts, tags)
 
-    scriptcounts = assertion.is_instance(get_charcounts_script_data(scripts_fixed),
+    rows, columns = _get_rows_and_columns_from_bookdata()
+
+    scriptcounts = assertion.is_instance(
+            _get_script_char_counts(scripts_fixed, rows, columns),
             CountData)
 
     output_data = format_charcounts_script(scriptcounts)
@@ -97,61 +110,22 @@ def on_build_script_charcounts(story_data: StoryData, tags: dict) -> OutputData:
 
 
 # Private Functions
-def _get_outline_char_counts(level: str, story_data: StoryData, tags: dict) -> CountData:
+def _get_count_record_end(level: str) -> CountRecord:
     assert isinstance(level, str)
-    assert isinstance(story_data, StoryData)
-    assert isinstance(tags, dict)
 
-    outline_data = assertion.is_instance(get_outline_data(level, story_data),
-            OutlineData)
-    tmp = []
-
-    for record in outline_data.get_data():
-        assert isinstance(record, OutlineRecord)
-        text = conv_text_from_tag(record.data, tags)
-        space = 0
-        lines = 0.0
-        papers = 0.0
-        tmp.append(
-                CountRecord(level,
-                    record.title,
-                    len(text),
-                    space,
-                    lines,
-                    papers,
-                    ))
-    totalcount = CountRecord(level, "_head",
-            sum([r.total for r in tmp]),
-            0,
-            0.0, 0.0)
-
-    return CountData([totalcount] + tmp + [CountRecord(level, "_end", 0, 0, 0.0, 0.0)])
+    return CountRecord(level, '_end', 0, 0, 0.0, 0.0)
 
 
-def _get_plot_char_counts(level: str, story_data: StoryData, tags: dict) -> CountData:
+def _get_count_record_head(level: str) -> CountRecord:
     assert isinstance(level, str)
-    assert isinstance(story_data, StoryData)
-    assert isinstance(tags, dict)
 
-    plot_data = assertion.is_instance(get_plot_data(level, story_data), PlotData)
-
-    tmp = []
-    for record in plot_data.get_data():
-        assert isinstance(record, PlotRecord)
-        text = record.setup + record.tp1st + record.develop + record.tp2nd + record.climax + record.resolve
-        text_fixed = conv_text_from_tag(text, tags)
-        space = 0
-        lines = 0.0
-        papers = 0.0
-        tmp.append(CountRecord(level, record.title, len(text_fixed), space, lines, papers))
-    totalcount = CountRecord(level, "_head", sum([r.total for r in tmp]),
-            0, 0.0, 0.0)
-
-    return CountData([totalcount] + tmp + [CountRecord(level, "_end", 0, 0, 0.0, 0.0)])
+    return CountRecord(level, '_head', 0, 0, 0.0, 0.0)
 
 
-def get_charcounts_novel_data(formatted: list) -> CountData:
+def _get_novel_char_counts(formatted: list, rows: int, columns: int) -> CountData:
     assert isinstance(formatted, list)
+    assert isinstance(rows, int)
+    assert isinstance(columns, int)
 
     tmp = []
 
@@ -194,42 +168,129 @@ def get_charcounts_novel_data(formatted: list) -> CountData:
             episodes[ep_idx] += line
             scenes[sc_idx] += line
 
-    space = 0
-    lines = 0.0
-    papers = 0.0
     book_idx = 1
-    tmp.append(CountRecord('book', '_head', 0, space, lines, papers))
+    tmp.append(_get_count_record_head('book'))
     for book, title in zip(books[1:], book_titles[1:]):
-        tmp.append(CountRecord('book', title, len(books[book_idx]), space, lines, papers))
+        text = books[book_idx]
+        lines = count_line_by_columns(text, columns)
+        tmp.append(CountRecord('book', title, len(text),
+            count_white_space(text), lines, lines / rows))
         book_idx += 1
-    tmp.append(CountRecord('book', '_end', 0, space, lines, papers))
+    tmp.append(_get_count_record_end('book'))
 
     ch_idx = 1
-    tmp.append(CountRecord('chapter', '_head', 0, space, lines, papers))
+    tmp.append(_get_count_record_head('chapter'))
     for chapter, title in zip(chapters[1:], ch_titles[1:]):
-        tmp.append(CountRecord('chapter', title, len(chapters[ch_idx]), space, lines, papers))
+        text = chapters[ch_idx]
+        lines = count_line_by_columns(text, columns)
+        tmp.append(CountRecord('chapter', title, len(text),
+            count_white_space(text), lines, lines / rows))
         ch_idx += 1
-    tmp.append(CountRecord('chapter', '_end', 0, space, lines, papers))
+    tmp.append(_get_count_record_end('chapter'))
 
     ep_idx = 1
-    tmp.append(CountRecord('episode', '_head', 0, space, lines, papers))
+    tmp.append(_get_count_record_head('episode'))
     for episode, title in zip(episodes[1:], ep_titles[1:]):
-        tmp.append(CountRecord('episode', title, len(episodes[ep_idx]), space, lines, papers))
+        text = episodes[ep_idx]
+        lines = count_line_by_columns(text, columns)
+        tmp.append(CountRecord('episode', title, len(text),
+            count_white_space(text), lines, lines / rows))
         ep_idx += 1
-    tmp.append(CountRecord('episode', '_end', 0, space, lines, papers))
+    tmp.append(_get_count_record_end('episode'))
 
     sc_idx = 1
-    tmp.append(CountRecord('scene', '_head', 0, space, lines, papers))
+    tmp.append(_get_count_record_head('scene'))
     for scene, title in zip(scenes[1:], sc_titles[1:]):
-        tmp.append(CountRecord('scene', title, len(scenes[sc_idx]), space, lines, papers))
+        text = scenes[sc_idx]
+        lines = count_line_by_columns(text, rows)
+        tmp.append(CountRecord('scene', title, len(text),
+            count_white_space(text), lines, lines / rows))
         sc_idx += 1
-    tmp.append(CountRecord('scene', '_end', 0, space, lines, papers))
+    tmp.append(_get_count_record_end('scene'))
 
     return CountData(tmp)
 
 
-def get_charcounts_script_data(formatted: list) -> CountData:
+def _get_outline_char_counts(level: str, story_data: StoryData, tags: dict,
+        rows: int, columns: int) -> CountData:
+    assert isinstance(level, str)
+    assert isinstance(story_data, StoryData)
+    assert isinstance(tags, dict)
+    assert isinstance(rows, int)
+    assert isinstance(columns, int)
+
+    outline_data = assertion.is_instance(get_outline_data(level, story_data),
+            OutlineData)
+    tmp = []
+    full_text = ""
+
+    for record in outline_data.get_data():
+        assert isinstance(record, OutlineRecord)
+        text = conv_text_from_tag(record.data, tags)
+        lines = count_line_by_columns(text, columns)
+        tmp.append(
+                CountRecord(level,
+                    record.title,
+                    len(text),
+                    count_white_space(text),
+                    lines,
+                    lines /rows,
+                    ))
+        full_text += text
+    full_lines = count_line_by_columns(full_text, columns)
+    totalcount = CountRecord(level, "_head",
+            sum([r.total for r in tmp]),
+            count_white_space(full_text),
+            full_lines,
+            full_lines / rows,
+            )
+
+    return CountData([totalcount] + tmp + [_get_count_record_end(level)])
+
+
+def _get_plot_char_counts(level: str, story_data: StoryData, tags: dict,
+        rows: int, columns: int) -> CountData:
+    assert isinstance(level, str)
+    assert isinstance(story_data, StoryData)
+    assert isinstance(tags, dict)
+    assert isinstance(rows, int)
+    assert isinstance(columns, int)
+
+    plot_data = assertion.is_instance(get_plot_data(level, story_data), PlotData)
+
+    tmp = []
+    full_text = ""
+    for record in plot_data.get_data():
+        assert isinstance(record, PlotRecord)
+        text = record.setup + record.tp1st + record.develop + record.tp2nd + record.climax + record.resolve
+        text_fixed = conv_text_from_tag(text, tags)
+        lines = count_line_by_columns(text_fixed, columns)
+        tmp.append(CountRecord(level,
+            record.title,
+            len(text_fixed),
+            count_white_space(text_fixed),
+            lines,
+            lines / rows))
+        full_text += text_fixed
+    full_lines = count_line_by_columns(full_text, columns)
+    totalcount = CountRecord(level, "_head", sum([r.total for r in tmp]),
+            count_white_space(full_text),
+            full_lines,
+            full_lines / rows)
+
+    return CountData([totalcount] + tmp + [_get_count_record_end(level)])
+
+
+def _get_rows_and_columns_from_bookdata() -> tuple:
+    bookdata = assertion.is_dict(read_file_as_yaml(ppath.get_book_path()))
+
+    return (bookdata['rows'], bookdata['columns'])
+
+
+def _get_script_char_counts(formatted: list, rows: int, columns: int) -> CountData:
     assert isinstance(formatted, list)
+    assert isinstance(rows, int)
+    assert isinstance(columns, int)
 
     tmp = []
 
@@ -275,35 +336,44 @@ def get_charcounts_script_data(formatted: list) -> CountData:
             episodes[ep_idx] += line
             scenes[sc_idx] += line
 
-    space = 0
-    lines = 0.0
-    papers = 0.0
     book_idx = 1
-    tmp.append(CountRecord('book', '_head', 0, space, lines, papers))
+    tmp.append(_get_count_record_head('book'))
     for book, title in zip(books[1:], book_titles[1:]):
-        tmp.append(CountRecord('book', title, len(books[book_idx]), space, lines, papers))
+        text = books[book_idx]
+        lines = count_line_by_columns(text, columns)
+        tmp.append(CountRecord('book', title, len(text),
+            count_white_space(text), lines, lines / rows))
         book_idx += 1
-    tmp.append(CountRecord('book', '_end', 0, space, lines, papers))
+    tmp.append(_get_count_record_end('book'))
 
     ch_idx = 1
-    tmp.append(CountRecord('chapter', '_head', 0, space, lines, papers))
+    tmp.append(_get_count_record_head('chapter'))
     for chapter, title in zip(chapters[1:], ch_titles[1:]):
-        tmp.append(CountRecord('chapter', title, len(chapters[ch_idx]), space, lines, papers))
+        text = chapters[ch_idx]
+        lines = count_line_by_columns(text, columns)
+        tmp.append(CountRecord('chapter', title, len(text),
+            count_white_space(text), lines, lines / rows))
         ch_idx += 1
-    tmp.append(CountRecord('chapter', '_end', 0, space, lines, papers))
+    tmp.append(_get_count_record_end('chapter'))
 
     ep_idx = 1
-    tmp.append(CountRecord('episode', '_head', 0, space, lines, papers))
+    tmp.append(_get_count_record_head('episode'))
     for episode, title in zip(episodes[1:], ep_titles[1:]):
-        tmp.append(CountRecord('episode', title, len(episodes[ep_idx]), space, lines, papers))
+        text = episodes[ep_idx]
+        lines = count_line_by_columns(text, columns)
+        tmp.append(CountRecord('episode', title, len(text),
+            count_white_space(text), lines, lines / rows))
         ep_idx += 1
-    tmp.append(CountRecord('episode', '_end', 0, space, lines, papers))
+    tmp.append(_get_count_record_end('episode'))
 
     sc_idx = 1
-    tmp.append(CountRecord('scene', '_head', 0, space, lines, papers))
+    tmp.append(_get_count_record_head('scene'))
     for scene, title in zip(scenes[1:], sc_titles[1:]):
-        tmp.append(CountRecord('scene', title, len(scenes[sc_idx]), space, lines, papers))
+        text = scenes[sc_idx]
+        lines = count_line_by_columns(text, columns)
+        tmp.append(CountRecord('scene', title, len(text),
+            count_white_space(text), lines, lines / rows))
         sc_idx += 1
-    tmp.append(CountRecord('scene', '_end', 0, space, lines, papers))
+    tmp.append(_get_count_record_end('scene'))
 
     return CountData(tmp)
