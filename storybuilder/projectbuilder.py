@@ -7,6 +7,7 @@ import os
 
 
 # My Modules
+from storybuilder.core.basedatabuilder import on_build_basedata
 from storybuilder.core.novelbuilder import on_build_novel
 from storybuilder.core.outlinebuilder import on_build_outline
 from storybuilder.core.plotbuilder import on_build_plot
@@ -38,6 +39,7 @@ __all__ = (
 # Main Functions
 def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     assert cmdargs.cmd in ('b', 'build')
+    logger.debug("Starting command 'Build'...")
 
     # create tag db
     tagdb = get_nametag_db()
@@ -110,17 +112,18 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
             return False
 
     # - base data
-    #base_data = build_basedata(cmdargs, story_data, tagdb)
-    #if base_data:
-    #    path = os.path.join(ppath.get_build_dir_path(), "data.md")
-    #    if not write_file(path, "".join(base_data)):
-    #        logger.error("...Failed to write the output base data!")
-    #        return False
-    #    else:
-    #        logger.debug("...Succeeded to output the base data.")
-    #else:
-    #    logger.error("...Failed to build the output data in base data process!: %s", base_data)
-    #    return False
+    base_data = assertion.is_instance(on_build_basedata(cmdargs, story_data, tagdb),
+            OutputData)
+    if base_data:
+        path = os.path.join(ppath.get_build_dir_path(), "data.md")
+        if not write_file(path, base_data.get_serialized_data()):
+            logger.error("...Failed to write the output base data!")
+            return False
+        else:
+            logger.debug("...Succeeded to output the base data.")
+    else:
+        logger.error("...Failed to build the output data in base data process!: %s", base_data)
+        return False
 
     return True
 

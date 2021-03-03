@@ -6,7 +6,7 @@
 
 # My Modules
 from storybuilder.dataconverter import conv_text_from_tag
-from storybuilder.datatypes import CountRecord
+from storybuilder.datatypes import CountData, CountRecord
 from storybuilder.datatypes import ContentsData, ContentRecord
 from storybuilder.datatypes import OutlineData, OutlineRecord
 from storybuilder.datatypes import PlotData, PlotRecord
@@ -28,13 +28,13 @@ __all__ = (
 
 
 # Main Functions
-def format_charcounts_novel(novels: list) -> list:
-    assert isinstance(novels, list)
+def format_charcounts_novel(novels: CountData) -> list:
+    assert isinstance(novels, CountData)
 
     tmp = []
     tmp.append("## NOVEL count:\n\n")
 
-    for record in novels:
+    for record in novels.get_data():
         assert isinstance(record, CountRecord)
         if 'book' == record.category:
             if '_head' == record.title:
@@ -71,13 +71,13 @@ def format_charcounts_novel(novels: list) -> list:
     return tmp
 
 
-def format_charcounts_outline(outlines: list) -> list:
-    assert isinstance(outlines, list)
+def format_charcounts_outline(outlines: CountData) -> list:
+    assert isinstance(outlines, CountData)
 
     tmp = []
     tmp.append("## OUTLINE count:\n\n")
 
-    for record in outlines:
+    for record in outlines.get_data():
         assert isinstance(record, CountRecord)
         if 'book' == record.category:
             if '_head' == record.title:
@@ -117,13 +117,13 @@ def format_charcounts_outline(outlines: list) -> list:
     return tmp
 
 
-def format_charcounts_plot(outlines: list) -> list:
-    assert isinstance(outlines, list)
+def format_charcounts_plot(outlines: CountData) -> list:
+    assert isinstance(outlines, CountData)
 
     tmp = []
     tmp.append("## PLOT count:\n\n")
 
-    for record in outlines:
+    for record in outlines.get_data():
         assert isinstance(record, CountRecord)
         if 'book' == record.category:
             if '_head' == record.title:
@@ -163,13 +163,13 @@ def format_charcounts_plot(outlines: list) -> list:
     return tmp
 
 
-def format_charcounts_script(scripts: list) -> list:
-    assert isinstance(scripts, list)
+def format_charcounts_script(scripts: CountData) -> list:
+    assert isinstance(scripts, CountData)
 
     tmp = []
     tmp.append("## SCRIPT count:\n\n")
 
-    for record in scripts:
+    for record in scripts.get_data():
         assert isinstance(record, CountRecord)
         if 'book' == record.category:
             if '_head' == record.title:

@@ -22,11 +22,31 @@ from storybuilder.util.log import logger
 
 __all__ = (
         'on_build_script',
+        'get_story_code_data_from_story_data_as_script',
         )
 
 
 # Main Function
 def on_build_script(story_data: StoryData, tags: dict) -> OutputData:
+    assert isinstance(story_data, StoryData)
+    assert isinstance(tags, dict)
+
+    contents = get_contents_list(story_data)
+
+    story_code_data = assertion.is_instance(
+            get_story_code_data_from_story_data_as_script(story_data, tags), StoryCodeData)
+
+    scripts = format_contents_table_data(contents) \
+            + ["\n", get_breakline()] \
+            + format_script_data(story_code_data, tags)
+
+    output_data = conv_text_list_by_tags(scripts, tags)
+
+    return OutputData(output_data)
+
+
+# Functions
+def get_story_code_data_from_story_data_as_script(story_data: StoryData, tags: dict) -> StoryCodeData:
     assert isinstance(story_data, StoryData)
     assert isinstance(tags, dict)
 
@@ -43,14 +63,5 @@ def on_build_script(story_data: StoryData, tags: dict) -> OutputData:
     story_code_data = assertion.is_instance(get_story_code_data(action_data_tagfixed, True),
             StoryCodeData)
 
-    contents = get_contents_list(story_data)
-
-    scripts = format_contents_table_data(contents) \
-            + ["\n", get_breakline()] \
-            + format_script_data(story_code_data, tags)
-
-    output_data = conv_text_list_by_tags(scripts, tags)
-
-    return OutputData(output_data)
-
+    return story_code_data
 

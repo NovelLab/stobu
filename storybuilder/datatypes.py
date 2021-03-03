@@ -1,5 +1,7 @@
 """Define Data types for storybuilder project."""
 
+# annotation magic
+from __future__ import annotations
 
 # Official Libraries
 from dataclasses import dataclass, field
@@ -15,6 +17,7 @@ __all__ = (
         'ActionRecord',
         'ContentsData',
         'ContentRecord',
+        'CountData',
         'CountRecord',
         'OutlineData',
         'OutlineRecord',
@@ -28,17 +31,28 @@ __all__ = (
         )
 
 
-class ActionData(object):
+class _BaseData(object):
 
-    def __init__(self, data: list):
+    def __init__(self, data: list, rec_type: Any):
         assert isinstance(data, list)
-        tmp = []
-        for record in data:
-            tmp.append(assertion.is_instance(record, ActionRecord))
-        self.data = tmp
+        self.data = [assertion.is_instance(r, rec_type) for r in data]
 
     def get_data(self) -> list:
         return self.data
+
+    def __add__(self, another: Any) -> _BaseData:
+        if isinstance(another, type(self)):
+            self.data = self.data + another.data
+            return self
+        else:
+            TypeError("Invalid type!")
+            return self
+
+
+class ActionData(_BaseData):
+
+    def __init__(self, data: list):
+        super().__init__(data, ActionRecord)
 
 
 @dataclass
@@ -52,16 +66,10 @@ class ActionRecord(object):
     note: str=""
 
 
-class ContentsData(object):
+class ContentsData(_BaseData):
 
     def __init__(self, data: list):
-        tmp = []
-        for record in data:
-            tmp.append(assertion.is_instance(record, ContentRecord))
-        self.data = tmp
-
-    def get_data(self) -> list:
-        return self.data
+        super().__init__(data, ContentRecord)
 
 
 @dataclass
@@ -71,6 +79,12 @@ class ContentRecord(object):
     index: int
 
 
+class CountData(_BaseData):
+
+    def __init__(self, data: list):
+        super().__init__(data, CountRecord)
+
+
 @dataclass
 class CountRecord(object):
     category: str
@@ -78,17 +92,10 @@ class CountRecord(object):
     total: int
 
 
-class OutlineData(object):
+class OutlineData(_BaseData):
 
     def __init__(self, data: list):
-        assert isinstance(data, list)
-        tmp = []
-        for record in data:
-            tmp.append(assertion.is_instance(record, OutlineRecord))
-        self.data = tmp
-
-    def get_data(self) -> list:
-        return self.data
+        super().__init__(data, OutlineRecord)
 
 
 @dataclass
@@ -97,34 +104,20 @@ class OutlineRecord(object):
     data: str
 
 
-class OutputData(object):
+class OutputData(_BaseData):
 
     def __init__(self, data: list):
+        super().__init__(data, str)
         assert isinstance(data, list)
-
-        tmp = []
-        for line in data:
-            tmp.append(assertion.is_str(line))
-        self.data = tmp
-
-    def get_data(self) -> list:
-        return self.data
 
     def get_serialized_data(self) -> str:
         return "".join(self.data)
 
 
-class PlotData(object):
+class PlotData(_BaseData):
 
     def __init__(self, data: list):
-        assert isinstance(data, list)
-        tmp = []
-        for record in data:
-            tmp.append(assertion.is_instance(record, PlotRecord))
-        self.data = tmp
-
-    def get_data(self) -> list:
-        return self.data
+        super().__init__(data, PlotRecord)
 
 
 @dataclass
@@ -145,30 +138,16 @@ class StoryCode(object):
     foot: Any=None
 
 
-class StoryCodeData(object):
+class StoryCodeData(_BaseData):
 
     def __init__(self, data: list):
-        assert isinstance(data, list)
-        tmp = []
-        for record in data:
-            tmp.append(assertion.is_instance(record, StoryCode))
-        self.data = tmp
-
-    def get_data(self) -> list:
-        return self.data
+        super().__init__(data, StoryCode)
 
 
-class StoryData(object):
+class StoryData(_BaseData):
 
     def __init__(self, data: list):
-        assert isinstance(data, list)
-        tmp = []
-        for record in data:
-            tmp.append(assertion.is_instance(record, StoryRecord))
-        self.data = tmp
-
-    def get_data(self) -> list:
-        return self.data
+        super().__init__(data, StoryRecord)
 
 
 @dataclass

@@ -5,7 +5,7 @@
 
 
 # My Modules
-from storybuilder.datatypes import CountRecord
+from storybuilder.datatypes import CountData, CountRecord
 from storybuilder.util.log import logger
 
 
@@ -16,7 +16,7 @@ __all__ = (
 
 
 # Main Functions
-def get_charcounts_novel_data(formatted: list) -> list:
+def get_charcounts_novel_data(formatted: list) -> CountData:
     assert isinstance(formatted, list)
 
     tmp = []
@@ -88,10 +88,10 @@ def get_charcounts_novel_data(formatted: list) -> list:
         sc_idx += 1
     tmp.append(CountRecord('scene', '_end', 0))
 
-    return tmp
+    return CountData(tmp)
 
 
-def get_charcounts_script_data(formatted: list) -> list:
+def get_charcounts_script_data(formatted: list) -> CountData:
     assert isinstance(formatted, list)
 
     tmp = []
@@ -166,5 +166,5 @@ def get_charcounts_script_data(formatted: list) -> list:
         sc_idx += 1
     tmp.append(CountRecord('scene', '_end', 0))
 
-    return tmp
+    return CountData(tmp)
 

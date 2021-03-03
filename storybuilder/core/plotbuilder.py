@@ -16,16 +16,22 @@ from storybuilder.util import assertion
 from storybuilder.util.log import logger
 
 
+__all__ = (
+        'on_build_plot',
+        'get_plot_data',
+        )
+
+
 # Main Function
 def on_build_plot(story_data: StoryData, tags: dict) -> OutputData:
     assert isinstance(story_data, StoryData)
     assert isinstance(tags, dict)
 
     contents = assertion.is_instance(get_contents_list(story_data), ContentsData)
-    books = assertion.is_instance(_get_plot_data('book', story_data), PlotData)
-    chapters = assertion.is_instance(_get_plot_data('chapter', story_data), PlotData)
-    episodes = assertion.is_instance(_get_plot_data('episode', story_data), PlotData)
-    scenes = assertion.is_instance(_get_plot_data('scene', story_data), PlotData)
+    books = assertion.is_instance(get_plot_data('book', story_data), PlotData)
+    chapters = assertion.is_instance(get_plot_data('chapter', story_data), PlotData)
+    episodes = assertion.is_instance(get_plot_data('episode', story_data), PlotData)
+    scenes = assertion.is_instance(get_plot_data('scene', story_data), PlotData)
 
     plots = format_contents_table_data(contents) \
             + ["\n", get_breakline()] \
@@ -42,8 +48,8 @@ def on_build_plot(story_data: StoryData, tags: dict) -> OutputData:
     return OutputData(output_data)
 
 
-# Private Functions
-def _get_plot_data(level: str, story_data: StoryData) -> PlotData:
+# Functions
+def get_plot_data(level: str, story_data: StoryData) -> PlotData:
     assert isinstance(level, str)
     assert isinstance(story_data, StoryData)
 

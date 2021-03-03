@@ -14,16 +14,22 @@ from storybuilder.util import assertion
 from storybuilder.util.log import logger
 
 
+__all__ = (
+        'on_build_outline',
+        'get_outline_data',
+        )
+
+
 # Main Function
 def on_build_outline(story_data: StoryData, tags: dict) -> OutputData:
     assert isinstance(story_data, StoryData)
     assert isinstance(tags, dict)
 
     contents = assertion.is_instance(get_contents_list(story_data), ContentsData)
-    books = assertion.is_instance(_get_outline_data('book', story_data), OutlineData)
-    chapters = assertion.is_instance(_get_outline_data('chapter', story_data), OutlineData)
-    episodes = assertion.is_instance(_get_outline_data('episode', story_data), OutlineData)
-    scenes = assertion.is_instance(_get_outline_data('scene', story_data), OutlineData)
+    books = assertion.is_instance(get_outline_data('book', story_data), OutlineData)
+    chapters = assertion.is_instance(get_outline_data('chapter', story_data), OutlineData)
+    episodes = assertion.is_instance(get_outline_data('episode', story_data), OutlineData)
+    scenes = assertion.is_instance(get_outline_data('scene', story_data), OutlineData)
 
     outlines = format_contents_table_data(contents) \
             + ["\n", get_breakline()] \
@@ -40,8 +46,8 @@ def on_build_outline(story_data: StoryData, tags: dict) -> OutputData:
     return OutputData(output_data)
 
 
-# Private Functions
-def _get_outline_data(level: str, story_data: StoryData) -> OutlineData:
+# Functions
+def get_outline_data(level: str, story_data: StoryData) -> OutlineData:
     assert isinstance(level, str)
     assert isinstance(story_data, StoryData)
 
