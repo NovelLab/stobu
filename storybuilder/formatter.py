@@ -6,11 +6,19 @@
 
 # My Modules
 from storybuilder.dataconverter import conv_text_from_tag
-from storybuilder.datatypes import ContentRecord, OutlineRecord, PlotRecord, StoryCode
+from storybuilder.datatypes import CountData, CountRecord
+from storybuilder.datatypes import ContentsData, ContentRecord
+from storybuilder.datatypes import OutlineData, OutlineRecord
+from storybuilder.datatypes import PlotData, PlotRecord
+from storybuilder.datatypes import StoryCode, StoryCodeData
+from storybuilder.util import assertion
 from storybuilder.util.log import logger
 
 
 __all__ = (
+        'format_charcounts_outline',
+        'format_charcounts_plot',
+        'format_charcounts_script',
         'format_contents_table_data',
         'format_novel_data',
         'format_outline_data',
@@ -21,9 +29,188 @@ __all__ = (
 
 
 # Main Functions
-def format_contents_table_data(contents: list) -> list:
-    assert isinstance(contents, list)
+def format_charcounts_novel(novels: CountData) -> list:
+    assert isinstance(novels, CountData)
 
+    tmp = []
+    tmp.append("## NOVEL count:\n\n")
+
+    for record in novels.get_data():
+        assert isinstance(record, CountRecord)
+        if 'book' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('book', 'count'))
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record, 'total')}\n")
+        elif 'chapter' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('chapter', 'count'))
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'episode' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('episode', 'count'))
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'scene' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('scene', 'count'))
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        else:
+            logger.debug("Unknown CountRecord in script char counts!: %s", record)
+            continue
+
+    return tmp
+
+
+def format_charcounts_outline(outlines: CountData) -> list:
+    assert isinstance(outlines, CountData)
+
+    tmp = []
+    tmp.append("## OUTLINE count:\n\n")
+
+    for record in outlines.get_data():
+        assert isinstance(record, CountRecord)
+        if 'book' == record.category:
+            if '_head' == record.title:
+                continue
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(_get_head_by_level('book', 'count'))
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'chapter' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('chapter', 'count'))
+                tmp.append(f"{_get_charcounts_elemenet(record, 'total')}\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'episode' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('episode', 'count'))
+                tmp.append(f"{_get_charcounts_elemenet(record, 'total')}\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'scene' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('scene', 'count'))
+                tmp.append(f"{_get_charcounts_elemenet(record, 'total')}\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        else:
+            logger.debug("Unknown CountRecord in outline char counts!: %s", record)
+            continue
+    return tmp
+
+
+def format_charcounts_plot(outlines: CountData) -> list:
+    assert isinstance(outlines, CountData)
+
+    tmp = []
+    tmp.append("## PLOT count:\n\n")
+
+    for record in outlines.get_data():
+        assert isinstance(record, CountRecord)
+        if 'book' == record.category:
+            if '_head' == record.title:
+                continue
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(_get_head_by_level('book', 'count'))
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'chapter' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('chapter', 'count'))
+                tmp.append(f"{_get_charcounts_elemenet(record, 'total')}\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'episode' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('episode', 'count'))
+                tmp.append(f"{_get_charcounts_elemenet(record, 'total')}\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'scene' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('scene', 'count'))
+                tmp.append(f"{_get_charcounts_elemenet(record, 'total')}\n")
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        else:
+            logger.debug("Unknown CountRecord in plot char counts!: %s", record)
+            continue
+    return tmp
+
+
+def format_charcounts_script(scripts: CountData) -> list:
+    assert isinstance(scripts, CountData)
+
+    tmp = []
+    tmp.append("## SCRIPT count:\n\n")
+
+    for record in scripts.get_data():
+        assert isinstance(record, CountRecord)
+        if 'book' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('book', 'count'))
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'chapter' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('chapter', 'count'))
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'episode' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('episode', 'count'))
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        elif 'scene' == record.category:
+            if '_head' == record.title:
+                tmp.append(_get_head_by_level('scene', 'count'))
+            elif '_end' == record.title:
+                tmp.append('\n')
+            else:
+                tmp.append(f"{_get_charcounts_elemenet(record)}\n")
+        else:
+            logger.debug("Unknown CountRecord in script char counts!: %s", record)
+            continue
+
+    return tmp
+
+
+def format_contents_table_data(contents_data: ContentsData) -> list:
+    assert isinstance(contents_data, ContentsData)
+
+    contents = contents_data.get_data()
     tmp = []
     tmp.append(f"{contents[0].title}\n")
     tmp.append("====\n\n")
@@ -42,13 +229,13 @@ def format_contents_table_data(contents: list) -> list:
     return tmp
 
 
-def format_novel_data(code_data: list, indent_num: int=1) -> list:
-    assert isinstance(code_data, list)
+def format_novel_data(code_data: StoryCodeData, indent_num: int = 1) -> list:
+    assert isinstance(code_data, StoryCodeData)
     assert isinstance(indent_num, int)
 
     tmp = []
 
-    for code in code_data:
+    for code in code_data.get_data():
         assert isinstance(code, StoryCode)
         if 'book-title' == code.head:
             tmp.append(f"# {code.body}\n\n")
@@ -82,30 +269,30 @@ def format_novel_data(code_data: list, indent_num: int=1) -> list:
     return tmp
 
 
-def format_outline_data(level: str, outlines: list) -> list:
+def format_outline_data(level: str, outlines: OutlineData) -> list:
     assert isinstance(level, str)
-    assert isinstance(outlines, list)
+    assert isinstance(outlines, OutlineData)
 
     tmp = []
 
-    tmp.append(_get_head_by_level(level))
+    tmp.append(_get_head_by_level(level, 'outline'))
 
-    for record in outlines:
+    for record in outlines.get_data():
         assert isinstance(record, OutlineRecord)
         tmp.append(f"**{record.title}**\n")
         tmp.append(f"    {record.data}\n\n")
     return tmp
 
 
-def format_plot_data(level: str, plots: list) -> list:
+def format_plot_data(level: str, plots: PlotData) -> list:
     assert isinstance(level, str)
-    assert isinstance(plots, list)
+    assert isinstance(plots, PlotData)
 
     tmp = []
 
-    tmp.append(_get_head_by_level(level))
+    tmp.append(_get_head_by_level(level, 'plot'))
 
-    for record in plots:
+    for record in plots.get_data():
         assert isinstance(record, PlotRecord)
         tmp.append(f"**{record.title}**\n")
         tmp.append(f"    {record.setup}\n")
@@ -117,8 +304,8 @@ def format_plot_data(level: str, plots: list) -> list:
     return tmp
 
 
-def format_script_data(code_data: list, tags: dict, indent_num: int=3) -> list:
-    assert isinstance(code_data, list)
+def format_script_data(code_data: StoryCodeData, tags: dict, indent_num: int = 3) -> list:
+    assert isinstance(code_data, StoryCodeData)
     assert isinstance(tags, dict)
     assert isinstance(indent_num, int)
 
@@ -131,7 +318,7 @@ def format_script_data(code_data: list, tags: dict, indent_num: int=3) -> list:
             'time': "",
             }
 
-    for code in code_data:
+    for code in code_data.get_data():
         assert isinstance(code, StoryCode)
         if 'book-title' == code.head:
             tmp.append(f"# {code.body}\n\n")
@@ -182,16 +369,30 @@ def get_breakline() -> str:
 
 
 # Private Functions
-def _get_head_by_level(level: str) -> str:
+def _get_head_by_level(level: str, title: str) -> str:
     assert isinstance(level, str)
+    assert isinstance(title, str)
 
     if level == 'book':
-        return "## BOOK outline\n\n"
+        return f"### BOOK {title}\n\n"
     elif level == 'chapter':
-        return "## CHAPTER outlines\n\n"
+        return f"### CHAPTER {title}\n\n"
     elif level == 'episode':
-        return "## EPISODE outlines\n\n"
+        return f"### EPISODE {title}\n\n"
     elif level == 'scene':
-        return "## SCENE outlines\n\n"
+        return f"### SCENE {title}\n\n"
     else:
-        return "## outlines\n\n"
+        return f"### {title}\n\n"
+
+
+def _get_charcounts_elemenet(record: CountRecord, title: str = None) -> str:
+    assert isinstance(record, CountRecord)
+
+    title = assertion.is_str(title) if title else record.title
+    total = record.total
+    space = record.space
+    real = total - space
+    lines = round(record.lines, 3)
+    papers = round(record.papers, 3)
+
+    return f"- {title}: {papers}p/{lines}n [{total}c ({real}/{space})c]"

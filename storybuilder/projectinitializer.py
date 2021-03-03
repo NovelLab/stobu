@@ -11,7 +11,7 @@ from storybuilder.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAM
 from storybuilder.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT, PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from storybuilder.settings import BUILD_DIR, CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR, PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR, TRASH_DIR
 from storybuilder.templatecreator import TemplateCreator
-from storybuilder.util.fileio import read_file, write_file
+from storybuilder.util.fileio import write_file
 from storybuilder.util.filepath import get_current_path, is_exists_path
 from storybuilder.util.log import logger
 
@@ -440,8 +440,6 @@ def create_project_file(creator: TemplateCreator) -> bool:
     logger.debug("Creating the project file...")
     assert isinstance(creator, TemplateCreator)
 
-    path = get_project_file_path()
-
     template_data = creator.get_project_template()
     if not template_data:
         logger.error("Missing a project template data!: %s", template_data)
@@ -492,4 +490,3 @@ def safe_create_directory(dirname: str) -> bool:
         os.makedirs(dirname)
 
     return True
-

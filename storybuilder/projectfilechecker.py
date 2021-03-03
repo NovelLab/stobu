@@ -7,9 +7,6 @@ import os
 
 
 # My Modules
-from storybuilder.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME
-from storybuilder.settings import CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR
-from storybuilder.settings import PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR
 from storybuilder.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
 from storybuilder.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 import storybuilder.projectpathmanager as ppath
@@ -124,4 +121,3 @@ def _exists_any_file(dirname: str, ext: str) -> bool:
 
 def _is_exists_file(filepath: str) -> bool:
     return os.path.exists(filepath)
-

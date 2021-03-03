@@ -177,7 +177,7 @@ def switch_command_to_delete(cmdargs: argparse.Namespace) -> bool:
     return True
 
 
-def switch_command_to_rename(cmdargs: argparse.Namespace)-> bool:
+def switch_command_to_rename(cmdargs: argparse.Namespace) -> bool:
     assert cmdargs.cmd in ('r', 'rename')
 
     is_succeeded = False
@@ -211,7 +211,7 @@ def switch_command_to_rename(cmdargs: argparse.Namespace)-> bool:
 
 
 # Functions
-## Add
+# - Add
 def add_new_chapter(fname: str) -> bool:
     logger.debug(START_ADD_PROCESS_MESSAGE.format(target="chapter"))
 
@@ -364,7 +364,7 @@ def add_new_word(fname: str) -> bool:
     return edit_the_word(_fname)
 
 
-## Copy
+# - Copy
 def copy_the_chapter(fname: str) -> bool:
     logger.debug(START_COPY_PROCESS_MESSAGE.format(target="chapter"))
 
@@ -517,7 +517,7 @@ def copy_the_word(fname: str) -> bool:
     return True
 
 
-## Delete
+# - Delete
 def delete_the_chapter(fname: str) -> bool:
     logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="chapter"))
 
@@ -662,7 +662,7 @@ def delete_the_word(fname: str) -> bool:
     return True
 
 
-## Rename
+# - Rename
 def rename_the_chapter(fname: str) -> bool:
     logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="chapter"))
 
@@ -889,4 +889,3 @@ def _renamefile(fname: str, newfname: str) -> bool:
         return True
     else:
         return False
-

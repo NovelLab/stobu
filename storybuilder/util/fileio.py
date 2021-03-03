@@ -2,7 +2,6 @@
 
 
 # Official Libraries
-import os
 import yaml
 
 
@@ -90,4 +89,3 @@ def write_file(fname: str, contents: str, encoding: str=DEFAULT_ENCODING) -> boo
         file.write(contents)
 
     return True
-

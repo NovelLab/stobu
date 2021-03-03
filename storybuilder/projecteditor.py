@@ -3,7 +3,6 @@
 
 # Official Libraries
 import argparse
-import os
 import subprocess
 
 
@@ -77,7 +76,6 @@ def switch_command_to_edit(cmdargs: argparse.Namespace) -> bool:
 
 
 # Functions
-## Edit
 def edit_the_book() -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="book"))
 
@@ -276,4 +274,3 @@ def _get_target_filename(fname: str, msg: str, targets: list) -> str:
             return _fname
     else:
         return _fname
-

@@ -5,21 +5,23 @@
 
 
 # My Modules
-from storybuilder.datatypes import ActionRecord
+from storybuilder.datatypes import ActionData, ActionRecord
 from storybuilder.util.log import logger
 
 
 # Main Functions
-def apply_instruction_to_action_data(action_data: list, is_script_mode: bool=False) -> list:
-    assert isinstance(action_data, list)
+def apply_instruction_to_action_data(action_data: ActionData,
+        is_script_mode: bool=False) -> list:
+    assert isinstance(action_data, ActionData)
     assert isinstance(is_script_mode, bool)
+    logger.debug("Applying instruction to action data...")
 
     tmp = []
     is_br_mode = True
     has_first_indent = False
     alias = {}
 
-    for record in action_data:
+    for record in action_data.get_data():
         assert isinstance(record, ActionRecord)
         if record.type == 'scene-start':
             is_br_mode = True
@@ -63,7 +65,7 @@ def apply_instruction_to_action_data(action_data: list, is_script_mode: bool=Fal
                     if not record.desc:
                         continue
             if is_br_mode:
-                if not record.action in ('talk',):
+                if record.action not in ('talk',):
                     tmp.append(_get_indent_action())
             elif not is_br_mode:
                 if not has_first_indent and record.action == 'talk':
@@ -76,7 +78,9 @@ def apply_instruction_to_action_data(action_data: list, is_script_mode: bool=Fal
                 tmp.append(_get_br_action())
         else:
             tmp.append(record)
-    return tmp
+
+    logger.debug("...Succeeded apply instructions to action data.")
+    return ActionData(tmp)
 
 
 # Private Functions
@@ -86,4 +90,3 @@ def _get_br_action() -> ActionRecord:
 
 def _get_indent_action() -> ActionRecord:
     return ActionRecord('indent', "")
-
