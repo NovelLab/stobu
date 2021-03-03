@@ -75,5 +75,5 @@ jobs:
         run: python setup.py install
 
       # Runs application
-      - name: Run storybuilder
-        run: storybuilder init
+      - name: Run stobu
+        run: stobu init
