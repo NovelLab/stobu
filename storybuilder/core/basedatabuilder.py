@@ -32,15 +32,23 @@ def on_build_basedata(cmdargs: argparse.Namespace,
     if cmdargs.outline:
         # outline data
         tmp.extend(on_build_outline_charcounts(story_data, tags).get_data())
+        tmp.append('\n')
+        tmp.append(get_breakline())
     if cmdargs.plot:
         # plot data
         tmp.extend(on_build_plot_charcounts(story_data, tags).get_data())
+        tmp.append('\n')
+        tmp.append(get_breakline())
     if cmdargs.script:
         # script data
         tmp.extend(on_build_script_charcounts(story_data, tags).get_data())
+        tmp.append('\n')
+        tmp.append(get_breakline())
     if cmdargs.novel:
         # novel data
         tmp.extend(on_build_novel_charcounts(story_data, tags).get_data())
+        tmp.append('\n')
+        tmp.append(get_breakline())
 
     contents = get_contents_list(story_data)
 

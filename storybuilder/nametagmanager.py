@@ -5,6 +5,10 @@
 
 
 # My Modules
+from storybuilder import projectpathmanager as ppath
+from storybuilder.util import assertion
+from storybuilder.util.fileio import read_file_as_yaml
+from storybuilder.util.filepath import basename_of
 from storybuilder.util.log import logger
 
 
@@ -15,6 +19,8 @@ class NameTagDB(object):
     def __init__(self):
         self.tags = {}
 
+
+    # class Methods
     @classmethod
     def get_calling_tags(cls) -> dict:
         from storybuilder.util.filepath import basename_of
@@ -85,4 +91,74 @@ class NameTagDB(object):
         assert isinstance(key, str)
 
         return f"{prefix}{key}"
+
+
+# Functions
+def get_nametag_db() -> dict:
+    logger.debug("Creating Name tag DB...")
+    db = NameTagDB()
+
+    logger.debug("> word names to DB")
+    if not _create_nametags_from_word_files(db):
+        return {}
+
+    logger.debug("> item names to DB")
+    if not _create_nametags_from_item_files(db):
+        return {}
+
+    logger.debug("> stage names to DB")
+    if not _create_nametags_from_stage_files(db):
+        return {}
+
+    logger.debug("> person names to DB")
+    if not _create_nametags_from_person_files(db):
+        return {}
+
+    if not db.sort_db():
+        logger.error("Failed to sort DB!")
+        return {}
+
+    logger.debug("...Succeeded create name tag DB.")
+    return db.tags
+
+
+# Private Functions
+def _create_nametags_from_item_files(db: NameTagDB) -> bool:
+    items = ppath.get_item_file_paths()
+    for fname in assertion.is_list(items):
+        data = assertion.is_dict(read_file_as_yaml(fname))
+        if not db.add_item(basename_of(fname), data['name']):
+            logger.error("Failed to add an item name to tag DB!")
+            return False
+    return True
+
+
+def _create_nametags_from_person_files(db: NameTagDB) -> bool:
+    persons = ppath.get_person_file_paths()
+    for fname in assertion.is_list(persons):
+        data = assertion.is_dict(read_file_as_yaml(fname))
+        if not db.add_person(basename_of(fname), data['name'], data['fullname']):
+            logger.error("Failed to add a person name to tag DB!")
+            return False
+    return True
+
+
+def _create_nametags_from_stage_files(db: NameTagDB) -> bool:
+    stages = ppath.get_stage_file_paths()
+    for fname in assertion.is_list(stages):
+        data = assertion.is_dict(read_file_as_yaml(fname))
+        if not db.add_stage(basename_of(fname), data['name']):
+            logger.error("Failed to add a stage name to tag DB!")
+            return False
+    return True
+
+
+def _create_nametags_from_word_files(db: NameTagDB) -> bool:
+    words = ppath.get_word_file_paths()
+    for fname in assertion.is_list(words):
+        data = assertion.is_dict(read_file_as_yaml(fname))
+        if not db.add_word(basename_of(fname), data['name']):
+            logger.error("Failed to add a word name to tag DB!")
+            return False
+    return True
 
