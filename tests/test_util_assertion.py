@@ -3,7 +3,7 @@
 import pytest
 
 # my modules
-from storybuilder.util.assertion import is_dict, is_int, is_list, is_str, is_instance
+from stobu.util.assertion import is_dict, is_int, is_list, is_str, is_instance
 
 
 # test "is_dict"

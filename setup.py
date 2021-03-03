@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 from setuptools import setup, find_packages
 
-from storybuilder import __version__ as VERSION
+from stobu import __version__ as VERSION
 
 
 # Define constants
-PACKAGE_NAME = 'storybuilder'
+PACKAGE_NAME = 'stobu'
 LICENSE = 'MIT'
 AUTHOR = 'N.T.WORKS'
 EMAIL = 'nagisc007@yahoo.co.jp'
@@ -19,13 +19,13 @@ setup(
         license=LICENSE,
         author=AUTHOR,
         author_email=EMAIL,
-        scripts=['bin/storybuilder'],
+        scripts=['bin/stobu'],
         install_requires=[
             "PyYAML",
         ],
         description=SHORT_DESCRIPTION,
         long_description=LONG_DESCRITPYION,
-        package_data={'storybuilder': ['data/*.yml', 'data/*.md']},
+        package_data={'stobu': ['data/*.yml', 'data/*.md']},
         packages=find_packages(),
         tests_require=['pytest'],
 )
