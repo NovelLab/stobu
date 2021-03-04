@@ -66,6 +66,9 @@ def _get_data_from_ordername(ordername: str) -> dict:
 def _serialized_file_names_from_order(order_data: dict) -> list:
     assert isinstance(order_data, dict)
 
+    if not order_data['book']:
+        return []
+
     tmp = []
 
     for ch_record in assertion.is_list(order_data['book']):

@@ -73,7 +73,8 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     # - script
     if cmdargs.script:
         logger.debug("Building script data...")
-        script_data = assertion.is_instance(on_build_script(story_data, tagdb),
+        script_data = assertion.is_instance(
+                on_build_script(story_data, tagdb, cmdargs.rubi),
                 OutputData)
         if script_data:
             path = os.path.join(ppath.get_build_dir_path(), "script.md")
@@ -89,7 +90,8 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     # - novel
     if cmdargs.novel:
         logger.debug("Building novel data...")
-        novel_data = assertion.is_instance(on_build_novel(story_data, tagdb),
+        novel_data = assertion.is_instance(
+                on_build_novel(story_data, tagdb, cmdargs.rubi),
                 OutputData)
         if novel_data:
             path = os.path.join(ppath.get_build_dir_path(), "novel.md")

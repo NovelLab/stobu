@@ -49,6 +49,9 @@ WORD_TEMP_FILE = 'word_tmp.yml'
 PLOT_TEMP_FILE = 'plot_tmp.yml'
 """str: file name of plot template."""
 
+RUBI_TEMP_FILE = 'rubi_tmp.yml'
+"""str: file name of rubi template."""
+
 
 class TemplateCreator(object):
 
@@ -72,6 +75,7 @@ class TemplateCreator(object):
         self.item_tmp = os.path.join(data_path, ITEM_TEMP_FILE)
         self.word_tmp = os.path.join(data_path, WORD_TEMP_FILE)
         self.plot_tmp = os.path.join(data_path, PLOT_TEMP_FILE)
+        self.rubi_tmp = os.path.join(data_path, RUBI_TEMP_FILE)
         logger.debug("...Success initialized.")
 
     @classmethod
@@ -148,6 +152,14 @@ class TemplateCreator(object):
                     '{COPYRIGHT}', COPYRIGHT)
         else:
             logger.error("Missing the project template data!: %s", tmp)
+            return ""
+
+    def get_rubi_template(self) -> str:
+        tmp = read_file(self.rubi_tmp)
+        if tmp:
+            return tmp
+        else:
+            logger.error("Missing the rubi template data!: %s", tmp)
             return ""
 
     def get_scene_template(self) -> str:
