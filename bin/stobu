@@ -10,9 +10,13 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append('stobu')
 
 
-def main():
+def main(argv: list):
+    is_debug = True if [v for v in argv if v == '--debug'] else False
+
     # setup logger
-    from stobu.util.log import logger
+    from stobu.util.log import logger, logging
+    if is_debug:
+        logger.setLevel(logging.DEBUG)
     logger.debug("Initialized Logger.")
 
     # application initialize
@@ -24,4 +28,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))
