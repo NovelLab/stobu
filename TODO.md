@@ -8,3 +8,4 @@ ToDo List
 * Omit chapter, episode, scene
 * Show comments
 * Search file by hashtag
+* Show Initialized message
