@@ -76,4 +76,4 @@ jobs:
 
       # Runs application
       - name: Run stobu
-        run: stobu init
+        run: stobu init --debug
