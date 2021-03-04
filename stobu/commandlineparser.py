@@ -57,6 +57,7 @@ def init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
     parser.add_argument('-s', '--script', help='script output', action='store_true')
     parser.add_argument('-n', '--novel', help='novel output', action='store_true')
     parser.add_argument('-r', '--rubi', help='output with rubi', action='store_true')
+    parser.add_argument('--part', type=str, help='select ouput part')
     parser.add_argument('--debug', help='set debug flag', action='store_true')
 
     logger.debug("Initialized the ArgumentParser.")
