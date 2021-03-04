@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- nothing output_part bug
+
 ## [0.0.2] - 2021-03-04
 ### Added
 - char count feature
