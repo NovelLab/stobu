@@ -21,11 +21,10 @@ __all__ = (
 # Main Function
 def get_story_data(output_part: str) -> StoryData:
     logger.debug("Creating the story data...")
-    logger.info(">> %s", output_part)
 
     order_data = assertion.is_dict(read_file_as_yaml(ppath.get_order_path()))
 
-    part_data = _get_part_output(output_part)
+    part_data = _get_part_output(output_part if output_part else "")
 
     serialized = assertion.is_list(
             _serialized_file_names_from_order(
@@ -149,5 +148,4 @@ def _serialized_file_names_from_order(order_data: dict,
                             sc_idx += 1
                             continue
                         tmp.append(sc_record)
-    logger.info("## %s", tmp)
     return tmp
