@@ -1,4 +1,4 @@
 storybuilder:
     verison: {VERSION}
     copyright: "{COPYRIGHT}"
-
+    editor: vim
