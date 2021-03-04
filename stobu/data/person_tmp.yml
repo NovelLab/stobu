@@ -3,9 +3,8 @@ fullname: 苗字,名前
 age: 99
 birth: 1/1
 sex: male
-job:
+job: 無職
 calling:
   me: 私
-info:
-note:
-
+info: 紹介
+note: 備考

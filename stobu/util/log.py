@@ -53,7 +53,4 @@ logger.addHandler(console_handler)
 
 
 # Set the debug level for this application.
-if __debug__:
-    logger.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.INFO)
+logger.setLevel(logging.INFO)

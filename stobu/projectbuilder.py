@@ -36,7 +36,7 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     tagdb = get_nametag_db()
 
     # get story data
-    story_data = assertion.is_instance(get_story_data(), StoryData)
+    story_data = assertion.is_instance(get_story_data(cmdargs.part), StoryData)
 
     # - outline
     if cmdargs.outline:
