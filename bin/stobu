@@ -19,6 +19,12 @@ def main(argv: list):
         logger.setLevel(logging.DEBUG)
     logger.debug("Initialized Logger.")
 
+    # check version
+    from stobu import __version__
+    if [v for v in argv if v in ('-v', '--version')]:
+        print(f"Stobu v{__version__}")
+        return os.EX_OK
+
     # application initialize
     from stobu.application import Application
     app = Application()
