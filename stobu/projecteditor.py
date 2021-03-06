@@ -7,8 +7,8 @@ import subprocess
 
 
 # My Modules
-from stobu import projectfilechecker as checker
 from stobu.settings import EDITOR
+from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
 from stobu.util.filepath import get_input_filename

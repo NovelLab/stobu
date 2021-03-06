@@ -8,7 +8,7 @@ import copy
 
 # My Modules
 from stobu.dataconverter import conv_to_dumpdata_of_yaml
-from stobu import projectfilechecker as checker
+from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
 from stobu.util.fileio import read_file_as_yaml, write_file
