@@ -16,7 +16,7 @@ from stobu.core.storydatacreator import get_story_data
 from stobu.datatypes import StoryData
 from stobu.datatypes import OutputData
 from stobu.nametagmanager import get_nametag_db
-import stobu.projectpathmanager as ppath
+from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
 from stobu.util.fileio import write_file
 from stobu.util.log import logger

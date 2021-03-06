@@ -17,7 +17,7 @@ from stobu.datatypes import PlotData, PlotRecord
 from stobu.datatypes import StoryCodeData
 from stobu.datatypes import StoryData
 from stobu.formatter import format_charcounts_novel, format_charcounts_outline, format_charcounts_plot, format_charcounts_script, format_novel_data, format_script_data
-from stobu import projectpathmanager as ppath
+from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
 from stobu.util.counttool import count_white_space, count_line_by_columns
 from stobu.util.fileio import read_file_as_yaml

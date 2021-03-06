@@ -5,7 +5,7 @@
 
 
 # My Modules
-from stobu import projectpathmanager as ppath
+from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
 from stobu.util.fileio import read_file_as_yaml
 from stobu.util.filepath import basename_of

@@ -7,7 +7,7 @@ import argparse
 
 # My Modules
 from stobu.dataconverter import conv_to_dumpdata_of_yaml
-import stobu.projectpathmanager as ppath
+from stobu.tools import pathmanager as ppath
 from stobu.util.fileio import read_file_as_yaml
 from stobu.util.filepath import basename_of
 from stobu.util.log import logger

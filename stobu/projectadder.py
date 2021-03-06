@@ -8,11 +8,11 @@ import shutil
 
 
 # My Modules
-import stobu.projectfilechecker as checker
-import stobu.projectpathmanager as ppath
+from stobu import projectfilechecker as checker
 from stobu.projecteditor import edit_the_chapter, edit_the_episode, edit_the_scene, edit_the_note
 from stobu.projecteditor import edit_the_person, edit_the_stage, edit_the_item, edit_the_word
 from stobu.templatecreator import TemplateCreator
+from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
 from stobu.util.fileio import write_file
 from stobu.util.filepath import get_input_filename
