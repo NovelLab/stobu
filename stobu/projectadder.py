@@ -61,6 +61,9 @@ FINISH_RENAME_PROCESS_MESSAGE = "...Succeeded rename the {target}."
 ERR_MESSAGE_DUPLICATED = "Already the {target} file exists!: %s"
 """str: error message when the file already exists."""
 
+ERR_MESSAGE_INVALID_FILENAME = "Invalid the file name!: %s"
+"""str: error message when the file name is invalid."""
+
 ERR_MESSAGE_MISSING_FILE = "Not Found the {target} file!: %s"
 """str: error message when the file not found."""
 
@@ -217,6 +220,10 @@ def add_new_chapter(fname: str) -> bool:
 
     _fname = _get_new_filename(fname, "new chapter")
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if checker.is_exists_the_chapter(_fname):
         logger.error(ERR_MESSAGE_DUPLICATED.format(target="chapter"), _fname)
         return False
@@ -235,6 +242,10 @@ def add_new_episode(fname: str) -> bool:
     logger.debug(START_ADD_PROCESS_MESSAGE.format(target="episode"))
 
     _fname = _get_new_filename(fname, "new episode")
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if checker.is_exists_the_episode(_fname):
         logger.error(ERR_MESSAGE_DUPLICATED.format(target="episode"), _fname)
@@ -255,6 +266,10 @@ def add_new_item(fname: str) -> bool:
 
     _fname = _get_new_filename(fname, "new item")
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if checker.is_exists_the_item(_fname):
         logger.error(ERR_MESSAGE_DUPLICATED.format(target="item"), _fname)
         return False
@@ -273,6 +288,10 @@ def add_new_note(fname: str) -> bool:
     logger.debug(START_ADD_PROCESS_MESSAGE.format(target="note"))
 
     _fname = _get_new_filename(fname, "new note")
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if checker.is_exists_the_note(_fname):
         logger.error(ERR_MESSAGE_DUPLICATED.format(target="note"), _fname)
@@ -293,6 +312,10 @@ def add_new_person(fname: str) -> bool:
 
     _fname = _get_new_filename(fname, "new person")
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if checker.is_exists_the_person(_fname):
         logger.error(ERR_MESSAGE_DUPLICATED.format(target="person"), _fname)
         return False
@@ -311,6 +334,10 @@ def add_new_scene(fname: str) -> bool:
     logger.debug(START_ADD_PROCESS_MESSAGE.format(target="scene"))
 
     _fname = _get_new_filename(fname, "new scene")
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if checker.is_exists_the_scene(_fname):
         logger.error(ERR_MESSAGE_DUPLICATED.format(target="scene"), _fname)
@@ -331,6 +358,10 @@ def add_new_stage(fname: str) -> bool:
 
     _fname = _get_new_filename(fname, "new stage")
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if checker.is_exists_the_stage(_fname):
         logger.error(ERR_MESSAGE_DUPLICATED.format(target="stage"), _fname)
         return False
@@ -349,6 +380,10 @@ def add_new_word(fname: str) -> bool:
     logger.debug(START_ADD_PROCESS_MESSAGE.format(target="word"))
 
     _fname = _get_new_filename(fname, "new word")
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if checker.is_exists_the_word(_fname):
         logger.error(ERR_MESSAGE_DUPLICATED.format(target="word"), _fname)
@@ -371,6 +406,10 @@ def copy_the_chapter(fname: str) -> bool:
     chapters = ppath.get_chapter_file_names()
     _fname = _get_target_filename(fname, "copying chapter", chapters)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_chapter(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
         return False
@@ -389,6 +428,10 @@ def copy_the_episode(fname: str) -> bool:
 
     episodes = ppath.get_episode_file_names()
     _fname = _get_target_filename(fname, "copying episode", episodes)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_episode(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
@@ -409,6 +452,10 @@ def copy_the_scene(fname: str) -> bool:
     scenes = ppath.get_scene_file_names()
     _fname = _get_target_filename(fname, "copying scene", scenes)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_scene(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
         return False
@@ -427,6 +474,10 @@ def copy_the_note(fname: str) -> bool:
 
     notes = ppath.get_note_file_names()
     _fname = _get_target_filename(fname, "copying note", notes)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_note(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
@@ -447,6 +498,10 @@ def copy_the_person(fname: str) -> bool:
     persons = ppath.get_person_file_names()
     _fname = _get_target_filename(fname, "copying person", persons)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_person(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
         return False
@@ -465,6 +520,10 @@ def copy_the_stage(fname: str) -> bool:
 
     stages = ppath.get_stage_file_names()
     _fname = _get_target_filename(fname, "copying stage", stages)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_stage(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
@@ -485,6 +544,10 @@ def copy_the_item(fname: str) -> bool:
     items = ppath.get_item_file_names()
     _fname = _get_target_filename(fname, "copying item", items)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_item(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
         return False
@@ -503,6 +566,10 @@ def copy_the_word(fname: str) -> bool:
 
     words = ppath.get_word_file_names()
     _fname = _get_target_filename(fname, "copying word", words)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_word(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
@@ -524,6 +591,10 @@ def delete_the_chapter(fname: str) -> bool:
     chapters = ppath.get_chapter_file_names()
     _fname = _get_target_filename(fname, "deleting chapter", chapters)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_chapter(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
         return False
@@ -541,6 +612,10 @@ def delete_the_episode(fname: str) -> bool:
 
     episodes = ppath.get_episode_file_names()
     _fname = _get_target_filename(fname, "deleting episode", episodes)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_episode(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
@@ -560,6 +635,10 @@ def delete_the_scene(fname: str) -> bool:
     scenes = ppath.get_scene_file_names()
     _fname = _get_target_filename(fname, "deleting scene", scenes)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_scene(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
         return False
@@ -577,6 +656,10 @@ def delete_the_note(fname: str) -> bool:
 
     notes = ppath.get_note_file_names()
     _fname = _get_target_filename(fname, "deleting note", notes)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_note(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
@@ -596,6 +679,10 @@ def delete_the_person(fname: str) -> bool:
     persons = ppath.get_person_file_names()
     _fname = _get_target_filename(fname, "deleting person", persons)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_person(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
         return False
@@ -613,6 +700,10 @@ def delete_the_stage(fname: str) -> bool:
 
     stages = ppath.get_stage_file_names()
     _fname = _get_target_filename(fname, "deleting stage", stages)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_stage(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
@@ -632,6 +723,10 @@ def delete_the_item(fname: str) -> bool:
     items = ppath.get_item_file_names()
     _fname = _get_target_filename(fname, "deleting item", items)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_item(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
         return False
@@ -649,6 +744,10 @@ def delete_the_word(fname: str) -> bool:
 
     words = ppath.get_word_file_names()
     _fname = _get_target_filename(fname, "deleting word", words)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_word(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
@@ -668,6 +767,10 @@ def rename_the_chapter(fname: str) -> bool:
 
     chapters = ppath.get_chapter_file_names()
     _fname = _get_target_filename(fname, "renaming chapter", chapters)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_chapter(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
@@ -692,6 +795,10 @@ def rename_the_episode(fname: str) -> bool:
     episodes = ppath.get_episode_file_names()
     _fname = _get_target_filename(fname, "renaming episode", episodes)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_episode(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
         return False
@@ -714,6 +821,10 @@ def rename_the_scene(fname: str) -> bool:
 
     scenes = ppath.get_scene_file_names()
     _fname = _get_target_filename(fname, "renaming scene", scenes)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_scene(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
@@ -738,6 +849,10 @@ def rename_the_note(fname: str) -> bool:
     notes = ppath.get_note_file_names()
     _fname = _get_target_filename(fname, "renaming note", notes)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_note(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
         return False
@@ -760,6 +875,10 @@ def rename_the_person(fname: str) -> bool:
 
     persons = ppath.get_person_file_names()
     _fname = _get_target_filename(fname, "renaming person", persons)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_person(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
@@ -784,6 +903,10 @@ def rename_the_stage(fname: str) -> bool:
     stages = ppath.get_stage_file_names()
     _fname = _get_target_filename(fname, "renaming stage", stages)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_stage(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
         return False
@@ -806,6 +929,10 @@ def rename_the_item(fname: str) -> bool:
 
     items = ppath.get_item_file_names()
     _fname = _get_target_filename(fname, "renaming item", items)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
 
     if not checker.is_exists_the_item(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
@@ -830,6 +957,10 @@ def rename_the_word(fname: str) -> bool:
     words = ppath.get_word_file_names()
     _fname = _get_target_filename(fname, "renaming word", words)
 
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
     if not checker.is_exists_the_word(_fname):
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
         return False
@@ -849,16 +980,24 @@ def rename_the_word(fname: str) -> bool:
 
 # Private Functions
 def _copyfile(fname: str, newname: str) -> bool:
-    shutil.copyfile(fname, newname)
-    return True
+    if not fname or not newname:
+        return False
+    else:
+        shutil.copyfile(fname, newname)
+        return True
 
 
 def _get_new_filename(fname: str, msg: str) -> str:
+    assert isinstance(msg, str)
+
     return assertion.is_str(fname) if fname else get_input_filename(
             INPUT_TARGET_FILENAME_MESSAGE.format(target=msg))
 
 
 def _get_target_filename(fname: str, msg: str, targets: list) -> str:
+    assert isinstance(msg, str)
+    assert isinstance(targets, list)
+
     tmp = []
     idx = 0
     for t in targets:
@@ -876,8 +1015,11 @@ def _get_target_filename(fname: str, msg: str, targets: list) -> str:
 
 
 def _move_to_trash(fname: str) -> bool:
-    shutil.move(fname, ppath.get_trash_dir_path())
-    return True
+    if not fname:
+        return False
+    else:
+        shutil.move(fname, ppath.get_trash_dir_path())
+        return True
 
 
 def _renamefile(fname: str, newfname: str) -> bool:
