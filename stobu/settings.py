@@ -98,5 +98,5 @@ WORD_EXT = YAML_EXT
 BASE_ENCODING = 'utf-8'
 """str: basic file encoding type."""
 
-EDITOR = 'vim'
+DEFAULT_EDITOR = 'vim'
 """str: editor for the application."""

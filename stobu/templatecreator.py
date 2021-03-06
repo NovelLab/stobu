@@ -7,7 +7,7 @@ import os
 
 
 # My Modules
-from stobu.settings import COPYRIGHT, VERSION
+from stobu.settings import COPYRIGHT, VERSION, DEFAULT_EDITOR
 from stobu.util.fileio import read_file
 from stobu.util.log import logger
 
@@ -149,7 +149,8 @@ class TemplateCreator(object):
         tmp = read_file(self.project_tmp)
         if tmp:
             return tmp.replace('{VERSION}', VERSION).replace(
-                    '{COPYRIGHT}', COPYRIGHT)
+                    '{COPYRIGHT}', COPYRIGHT).replace(
+                            '{EDITOR}', DEFAULT_EDITOR)
         else:
             logger.error("Missing the project template data!: %s", tmp)
             return ""
