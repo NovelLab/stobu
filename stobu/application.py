@@ -6,7 +6,6 @@ import os
 
 
 # My Modules
-from stobu.commandlineparser import get_project_commands
 from stobu.projectadder import switch_command_to_add
 from stobu.projectadder import switch_command_to_copy
 from stobu.projectadder import switch_command_to_delete
@@ -17,6 +16,7 @@ from stobu.projectinitializer import init_project
 from stobu.projectpusher import switch_command_to_push
 from stobu.projectpusher import switch_command_to_reject
 from stobu.projectviewer import switch_command_to_list
+from stobu.tools.commandlineparser import get_project_commands
 from stobu.tools.filechecker import exists_project_file
 from stobu.util.log import logger
 
