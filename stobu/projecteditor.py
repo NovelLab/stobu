@@ -7,17 +7,19 @@ import subprocess
 
 
 # My Modules
+from stobu.dataconverter import conv_to_dumpdata_of_yaml
 from stobu.settings import DEFAULT_EDITOR
 from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
-from stobu.util.fileio import read_file_as_yaml
+from stobu.util.fileio import read_file_as_yaml, write_file
 from stobu.util.filepath import get_input_filename
 from stobu.util.log import logger
 
 
 __all__ = (
         'switch_command_to_edit',
+        'switch_command_to_set_editor',
         )
 
 
@@ -75,6 +77,21 @@ def switch_command_to_edit(cmdargs: argparse.Namespace) -> bool:
         return False
 
     logger.debug("...Succeeded command edit.")
+    return True
+
+
+def switch_command_to_set_editor(cmdargs: argparse.Namespace) -> bool:
+    assert cmdargs.cmd == 'set_editor'
+    logger.debug("Setting the project Editor...")
+
+    editor = cmdargs.arg0 if cmdargs.arg0 else input("Please set the Editor name: ")
+    proj_data = read_file_as_yaml(ppath.get_project_path())
+    proj_data['storybuilder']['editor'] = editor
+
+    if not write_file(ppath.get_project_path(), conv_to_dumpdata_of_yaml(proj_data)):
+        logger.error("...Failed to set the editor!: %s", editor)
+        return False
+
     return True
 
 

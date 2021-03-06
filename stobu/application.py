@@ -11,7 +11,7 @@ from stobu.projectadder import switch_command_to_copy
 from stobu.projectadder import switch_command_to_delete
 from stobu.projectadder import switch_command_to_rename
 from stobu.projectbuilder import switch_command_to_build
-from stobu.projecteditor import switch_command_to_edit
+from stobu.projecteditor import switch_command_to_edit, switch_command_to_set_editor
 from stobu.projectinitializer import init_project
 from stobu.projectpusher import switch_command_to_push
 from stobu.projectpusher import switch_command_to_reject
@@ -88,6 +88,8 @@ class Application(object):
             is_succeeded = switch_command_to_push(cmdargs)
         elif cmdargs.cmd in ('j', 'reject'):
             is_succeeded = switch_command_to_reject(cmdargs)
+        elif cmdargs.cmd == 'set_editor':
+            is_succeeded = switch_command_to_set_editor(cmdargs)
         else:
             logger.error("Unknown command!: %s", cmdargs.cmd)
             return os.EX_SOFTWARE
