@@ -1,7 +1,8 @@
 ToDo List
 ====
 
-* Editor select feature.
+## Features
+
 * Description analysis using MeCab lib.
 * Reorder chapter, episode, scene
 * Omit Action
@@ -10,3 +11,7 @@ ToDo List
 * Search file by hashtag
 * Show Initialized message
 * Work log feature
+
+## Bugs
+
+* nothing name add file

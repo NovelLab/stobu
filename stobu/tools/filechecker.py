@@ -15,6 +15,7 @@ from stobu.tools import pathmanager as ppath
 __all__ = (
         'exists_any_chapter', 'exists_any_episode', 'exists_any_scene', 'exists_any_note',
         'exists_any_person', 'exists_any_stage', 'exists_any_item', 'exists_any_word',
+        'is_invalid_filename',
         )
 
 
@@ -112,6 +113,14 @@ def is_exists_the_stage(fname: str) -> bool:
 def is_exists_the_word(fname: str) -> bool:
     """Check if the word file exists."""
     return _is_exists_file(ppath.get_word_path(fname))
+
+
+def is_invalid_filename(fname: str) -> bool:
+    """Check if the filaname is safe."""
+    if not fname:
+        return True
+    else:
+        return not isinstance(fname, str)
 
 
 # Private Functions

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - sort when list shows
 ### Fixed
 - nothing output_part bug
+- no name file added
 
 ## [0.0.2] - 2021-03-04
 ### Added
