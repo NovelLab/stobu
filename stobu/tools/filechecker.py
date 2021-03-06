@@ -9,7 +9,7 @@ import os
 # My Modules
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
 from stobu.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
-import stobu.projectpathmanager as ppath
+from stobu.tools import pathmanager as ppath
 
 
 __all__ = (

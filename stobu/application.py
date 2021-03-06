@@ -13,11 +13,11 @@ from stobu.projectadder import switch_command_to_delete
 from stobu.projectadder import switch_command_to_rename
 from stobu.projectbuilder import switch_command_to_build
 from stobu.projecteditor import switch_command_to_edit
-from stobu.projectfilechecker import exists_project_file
 from stobu.projectinitializer import init_project
 from stobu.projectpusher import switch_command_to_push
 from stobu.projectpusher import switch_command_to_reject
 from stobu.projectviewer import switch_command_to_list
+from stobu.tools.filechecker import exists_project_file
 from stobu.util.log import logger
 
 

@@ -9,3 +9,5 @@ ToDo List
 * Show comments
 * Search file by hashtag
 * Show Initialized message
+* Work log feature
+* Sort list whe show

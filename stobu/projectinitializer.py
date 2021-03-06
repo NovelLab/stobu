@@ -6,11 +6,11 @@ import os
 
 
 # My Modules
-import stobu.projectfilechecker as checker
 from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME, RUBI_FILENAME
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT, PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from stobu.settings import BUILD_DIR, CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR, PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR, TRASH_DIR
 from stobu.templatecreator import TemplateCreator
+from stobu.tools import filechecker as checker
 from stobu.util.fileio import write_file
 from stobu.util.filepath import get_current_path, is_exists_path
 from stobu.util.log import logger
