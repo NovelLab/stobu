@@ -131,7 +131,7 @@ def edit_the_chapter(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_the_episode(editor: str, fnae: str) -> bool:
+def edit_the_episode(editor: str, fname: str) -> bool:
     assert isinstance(editor, str)
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="episode"))
 
