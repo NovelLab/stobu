@@ -209,4 +209,4 @@ def get_word_path(fname: str) -> str:
 
 # Private Functions
 def _get_any_file_paths(dirname: str, ext: str) -> list:
-    return glob.glob(os.path.join(dirname, f"*.{ext}"))
+    return sorted(glob.glob(os.path.join(dirname, f"*.{ext}")))
