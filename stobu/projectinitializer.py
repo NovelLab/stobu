@@ -449,7 +449,7 @@ def check_and_create_todo_file(creator: TemplateCreator) -> bool:
         return False
 
     if not write_file(ppath.get_todo_path(), template_data):
-        logger.error("Failed write the todo template data!: %s", path)
+        logger.error("Failed write the todo template data!")
         return False
 
     logger.debug("...Succeeded check and create todo file.")

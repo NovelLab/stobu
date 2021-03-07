@@ -15,7 +15,7 @@ from stobu.util.log import logger
 
 __all__ = (
         'add_todo',
-        'show_list_todo',
+        'show_list_of_todo',
         )
 
 
