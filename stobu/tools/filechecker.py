@@ -15,7 +15,7 @@ from stobu.tools import pathmanager as ppath
 __all__ = (
         'exists_any_chapter', 'exists_any_episode', 'exists_any_scene', 'exists_any_note',
         'exists_any_person', 'exists_any_stage', 'exists_any_item', 'exists_any_word',
-        'exists_projcet_file',
+        'exists_project_file',
         'exists_book_file',
         'exists_order_file',
         'exists_rubi_file',
