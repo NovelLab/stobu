@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - show current version
 - set editor
 - sort when list shows
+- todo list
 ### Fixed
 - nothing output_part bug
 - no name file added
