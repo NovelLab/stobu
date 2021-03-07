@@ -11,7 +11,7 @@ ToDo List
 * Search file by hashtag
 * Show Initialized message
 * Work log feature
+* Todo list feature
 
 ## Bugs
 
-* nothing name add file
