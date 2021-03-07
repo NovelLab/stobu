@@ -11,6 +11,7 @@ import shutil
 from stobu.projecteditor import edit_the_chapter, edit_the_episode, edit_the_scene, edit_the_note
 from stobu.projecteditor import edit_the_person, edit_the_stage, edit_the_item, edit_the_word
 from stobu.templatecreator import TemplateCreator
+from stobu import todomanager as todom
 from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
@@ -102,6 +103,8 @@ def switch_command_to_add(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = add_new_item(cmdargs.arg1)
     elif cmdargs.arg0 in ('w', 'word'):
         is_succeeded = add_new_word(cmdargs.arg1)
+    elif cmdargs.arg0 in ('d', 'todo'):
+        is_succeeded = todom.add_todo(cmdargs.arg1)
     else:
         logger.error("Unknown add command argument!: %s", cmdargs.arg0)
         return False

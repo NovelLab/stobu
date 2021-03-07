@@ -7,6 +7,7 @@ import argparse
 
 # My Modules
 from stobu.dataconverter import conv_to_dumpdata_of_yaml
+from stobu.todomanager import show_list_of_todo
 from stobu.tools import pathmanager as ppath
 from stobu.util.fileio import read_file_as_yaml
 from stobu.util.filepath import basename_of
@@ -56,6 +57,8 @@ def switch_command_to_list(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = show_list_of_items()
     elif cmdargs.arg0 in ('w', 'word'):
         is_succeeded = show_list_of_words()
+    elif cmdargs.arg0 in ('d', 'todo'):
+        is_succeeded = show_list_of_todo()
     else:
         logger.error("Unknown add command argument!: %s", cmdargs.arg0)
         return False

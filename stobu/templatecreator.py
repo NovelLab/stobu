@@ -52,6 +52,14 @@ PLOT_TEMP_FILE = 'plot_tmp.yml'
 RUBI_TEMP_FILE = 'rubi_tmp.yml'
 """str: file name of rubi template."""
 
+TODO_TEMP_FILE = 'todo_tmp.md'
+"""str: file name of todo template."""
+
+
+# Error Messages
+ERR_MESSAGE_NOT_FOUND_DATA = "Not found the {target} template data!: %s"
+"""str: error message when the file not found."""
+
 
 class TemplateCreator(object):
 
@@ -76,6 +84,7 @@ class TemplateCreator(object):
         self.word_tmp = os.path.join(data_path, WORD_TEMP_FILE)
         self.plot_tmp = os.path.join(data_path, PLOT_TEMP_FILE)
         self.rubi_tmp = os.path.join(data_path, RUBI_TEMP_FILE)
+        self.todo_tmp = os.path.join(data_path, TODO_TEMP_FILE)
         logger.debug("...Success initialized.")
 
     @classmethod
@@ -92,7 +101,7 @@ class TemplateCreator(object):
         if tmp and plot:
             return tmp.replace('{PLOT}', plot.rstrip('\n\r'))
         else:
-            logger.error("Missing the book template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="book"), tmp)
             return ""
 
     def get_chapter_template(self) -> str:
@@ -101,7 +110,7 @@ class TemplateCreator(object):
         if tmp and plot:
             return tmp.replace('{PLOT}', plot.rstrip('\n\r'))
         else:
-            logger.error("Missing the chapter template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="chapter"), tmp)
             return ""
 
     def get_episode_template(self) -> str:
@@ -110,7 +119,7 @@ class TemplateCreator(object):
         if tmp and plot:
             return tmp.replace('{PLOT}', plot.rstrip('\n\r'))
         else:
-            logger.error("Missing the episode template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="episode"), tmp)
             return ""
 
     def get_item_template(self) -> str:
@@ -118,7 +127,7 @@ class TemplateCreator(object):
         if tmp:
             return tmp
         else:
-            logger.error("Missing the item template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="item"), tmp)
             return ""
 
     def get_note_template(self) -> str:
@@ -126,7 +135,7 @@ class TemplateCreator(object):
         if tmp:
             return tmp
         else:
-            logger.error("Missing the note template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="note"), tmp)
             return ""
 
     def get_order_template(self) -> str:
@@ -134,7 +143,7 @@ class TemplateCreator(object):
         if tmp:
             return tmp
         else:
-            logger.error("Missing the order template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="order"), tmp)
             return ""
 
     def get_person_template(self) -> str:
@@ -142,7 +151,7 @@ class TemplateCreator(object):
         if tmp:
             return tmp
         else:
-            logger.error("Missing the person template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="person"), tmp)
             return ""
 
     def get_project_template(self) -> str:
@@ -152,7 +161,7 @@ class TemplateCreator(object):
                     '{COPYRIGHT}', COPYRIGHT).replace(
                             '{EDITOR}', DEFAULT_EDITOR)
         else:
-            logger.error("Missing the project template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="project"), tmp)
             return ""
 
     def get_rubi_template(self) -> str:
@@ -160,7 +169,7 @@ class TemplateCreator(object):
         if tmp:
             return tmp
         else:
-            logger.error("Missing the rubi template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="rubi"), tmp)
             return ""
 
     def get_scene_template(self) -> str:
@@ -169,7 +178,7 @@ class TemplateCreator(object):
         if tmp and plot:
             return tmp.replace('{PLOT}', plot.rstrip('\n\r'))
         else:
-            logger.error("Missing the scene template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="scene"), tmp)
             return ""
 
     def get_stage_template(self) -> str:
@@ -177,7 +186,15 @@ class TemplateCreator(object):
         if tmp:
             return tmp
         else:
-            logger.error("Missing the stage template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="stage"), tmp)
+            return ""
+
+    def get_todo_template(self) -> str:
+        tmp = read_file(self.todo_tmp)
+        if tmp:
+            return tmp
+        else:
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="todo"), tmp)
             return ""
 
     def get_word_template(self) -> str:
@@ -185,5 +202,5 @@ class TemplateCreator(object):
         if tmp:
             return tmp
         else:
-            logger.error("Missing the word template data!: %s", tmp)
+            logger.error(ERR_MESSAGE_NOT_FOUND_DATA.format(target="word"), tmp)
             return ""

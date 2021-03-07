@@ -15,6 +15,11 @@ from stobu.tools import pathmanager as ppath
 __all__ = (
         'exists_any_chapter', 'exists_any_episode', 'exists_any_scene', 'exists_any_note',
         'exists_any_person', 'exists_any_stage', 'exists_any_item', 'exists_any_word',
+        'exists_project_file',
+        'exists_book_file',
+        'exists_order_file',
+        'exists_rubi_file',
+        'exists_todo_file',
         'is_invalid_filename',
         )
 
@@ -73,6 +78,16 @@ def exists_order_file() -> bool:
 def exists_project_file() -> bool:
     """Check if project file exists."""
     return _is_exists_file(ppath.get_project_path())
+
+
+def exists_rubi_file() -> bool:
+    """Check if rubi file exists."""
+    return _is_exists_file(ppath.get_rubi_path())
+
+
+def exists_todo_file() -> bool:
+    """Check if todo file exists."""
+    return _is_exists_file(ppath.get_todo_path())
 
 
 def is_exists_the_chapter(fname: str) -> bool:

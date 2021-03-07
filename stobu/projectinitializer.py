@@ -11,6 +11,7 @@ from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT, PERSON
 from stobu.settings import BUILD_DIR, CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR, PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR, TRASH_DIR
 from stobu.templatecreator import TemplateCreator
 from stobu.tools import filechecker as checker
+from stobu.tools import pathmanager as ppath
 from stobu.util.fileio import write_file
 from stobu.util.filepath import get_current_path, is_exists_path
 from stobu.util.log import logger
@@ -60,6 +61,7 @@ def check_and_create_default_files(creator: TemplateCreator) -> bool:
     if not check_and_create_book_file(creator) \
             or not check_and_create_order_file(creator) \
             or not check_and_create_rubi_file(creator) \
+            or not check_and_create_todo_file(creator) \
             or not check_and_create_a_chapter_file(creator) \
             or not check_and_create_a_episode_file(creator) \
             or not check_and_create_a_scene_file(creator) \
@@ -434,6 +436,26 @@ def check_and_create_stage_dir() -> bool:
     return True
 
 
+def check_and_create_todo_file(creator: TemplateCreator) -> bool:
+    logger.debug("Checking and Creating todo file...")
+
+    if checker.exists_todo_file():
+        logger.debug("Already exists the todo file!")
+        return True
+
+    template_data = creator.get_todo_template()
+    if not template_data:
+        logger.error("Missing the todo template data!: %s", template_data)
+        return False
+
+    if not write_file(ppath.get_todo_path(), template_data):
+        logger.error("Failed write the todo template data!")
+        return False
+
+    logger.debug("...Succeeded check and create todo file.")
+    return True
+
+
 def check_and_create_trash_dir() -> bool:
     logger.debug("Checking and Creating trash directory...")
 
@@ -493,6 +515,10 @@ def get_project_file_path() -> str:
 def get_rubi_file_path() -> str:
     """Get a rubi file path."""
     return os.path.join(get_current_path(), RUBI_FILENAME)
+
+
+def get_todo_file_path() -> str:
+    return ppath.get_todo_path()
 
 
 def has_book_file() -> bool:

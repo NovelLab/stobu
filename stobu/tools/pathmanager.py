@@ -8,7 +8,7 @@ import os
 
 # My Modules
 from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME
-from stobu.settings import RUBI_FILENAME
+from stobu.settings import RUBI_FILENAME, TODO_FILENAME
 from stobu.settings import CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR
 from stobu.settings import PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
@@ -19,7 +19,11 @@ from stobu.util.filepath import basename_of
 
 __all__ = (
         'get_current_path',
-        'get_book_path', 'get_order_path', 'get_project_path',
+        'get_book_path',
+        'get_order_path',
+        'get_project_path',
+        'get_rubi_path',
+        'get_todo_path',
         'get_build_dir_path',
         'get_trash_dir_path', 'get_trash_file_paths', 'get_trash_file_names',
         'get_chapter_path', 'get_chapter_dir_path', 'get_chapter_file_paths', 'get_chapter_file_names',
@@ -175,6 +179,10 @@ def get_stage_file_paths() -> list:
 def get_stage_path(fname: str) -> str:
     return os.path.join(get_stage_dir_path(),
                         f"{basename_of(fname)}.{STAGE_EXT}")
+
+
+def get_todo_path() -> str:
+    return os.path.join(get_current_path(), TODO_FILENAME)
 
 
 def get_trash_dir_path() -> str:
