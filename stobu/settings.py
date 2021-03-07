@@ -41,6 +41,9 @@ ORDER_FILENAME = f"order.{YAML_EXT}"
 RUBI_FILENAME = f"rubi.{YAML_EXT}"
 """str: file name of rubi file."""
 
+TODO_FILENAME = f"todo.{MARKDOWN_EXT}"
+"""str: file name of todo file."""
+
 CHAPTER_DIR = 'chapters'
 """str: directory name for chapter files."""
 
