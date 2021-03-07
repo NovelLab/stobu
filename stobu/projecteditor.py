@@ -68,6 +68,8 @@ def switch_command_to_edit(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = edit_the_item(editor, cmdargs.arg1)
     elif cmdargs.arg0 in ('w', 'word'):
         is_succeeded = edit_the_word(editor, cmdargs.arg1)
+    elif cmdargs.arg0 in ('d', 'todo'):
+        is_succeeded = edit_todo(editor)
     else:
         logger.error("Unknown edit command argument!: %s", cmdargs.arg0)
         return False
@@ -277,6 +279,18 @@ def edit_the_word(editor: str, fname: str) -> bool:
         return False
 
     logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="word"))
+    return True
+
+
+def edit_todo(editor: str) -> bool:
+    assert isinstance(editor, str)
+    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="todo"))
+
+    if _edit_the_file(editor, ppath.get_todo_path()):
+        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="todo"), "")
+        return False
+
+    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="todo"))
     return True
 
 
