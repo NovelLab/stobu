@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - set editor
 - sort when list shows
 - todo list
+- plan
+- outline
 ### Fixed
 - nothing output_part bug
 - no name file added
