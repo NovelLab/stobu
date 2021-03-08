@@ -56,6 +56,12 @@ SCENE_DIR = 'scenes'
 NOTE_DIR = 'notes'
 """str: directory name for note files."""
 
+PLAN_DIR = 'plans'
+"""str: directory name for plan files."""
+
+OUTLINE_DIR = 'outlines'
+"""str: directory name for outline files."""
+
 PERSON_DIR = 'persons'
 """str: directory name for person files."""
 
@@ -85,6 +91,12 @@ SCENE_EXT = MARKDOWN_EXT
 
 NOTE_EXT = MARKDOWN_EXT
 """str: extention of note files."""
+
+PLAN_EXT = MARKDOWN_EXT
+"""str: extention of plan files."""
+
+OUTLINE_EXT = MARKDOWN_EXT
+"""str: extention of outline files."""
 
 PERSON_EXT = YAML_EXT
 """str: extention of person files."""

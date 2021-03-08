@@ -14,6 +14,8 @@ from stobu.settings import PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
 from stobu.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from stobu.settings import TRASH_DIR, BUILD_DIR
+from stobu.settings import PLAN_DIR, OUTLINE_DIR
+from stobu.settings import PLAN_EXT, OUTLINE_EXT
 from stobu.util.filepath import basename_of
 
 
@@ -26,6 +28,8 @@ __all__ = (
         'get_todo_path',
         'get_build_dir_path',
         'get_trash_dir_path', 'get_trash_file_paths', 'get_trash_file_names',
+        'get_plan_path', 'get_plan_dir_path', 'get_plan_file_paths', 'get_plan_file_names',
+        'get_outline_path', 'get_outline_dir_path', 'get_outline_file_paths', 'get_outline_file_names',
         'get_chapter_path', 'get_chapter_dir_path', 'get_chapter_file_paths', 'get_chapter_file_names',
         'get_episode_path', 'get_episode_dir_path', 'get_episode_file_paths', 'get_episode_file_names',
         'get_scene_path', 'get_scene_dir_path', 'get_scene_file_paths', 'get_scene_file_names',
@@ -122,6 +126,23 @@ def get_order_path() -> str:
     return os.path.join(get_current_path(), ORDER_FILENAME)
 
 
+def get_outline_dir_path() -> str:
+    return os.path.join(get_current_path(), OUTLINE_DIR)
+
+
+def get_outline_file_names() -> list:
+    return [basename_of(name) for name in get_outline_file_paths()]
+
+
+def get_outline_file_paths() -> list:
+    return _get_any_file_paths(get_outline_dir_path(), OUTLINE_EXT)
+
+
+def get_outline_path(fname: str) -> str:
+    return os.path.join(get_outline_dir_path(),
+                        f"{basename_of(fname)}.{OUTLINE_EXT}")
+
+
 def get_person_dir_path() -> str:
     return os.path.join(get_current_path(), PERSON_DIR)
 
@@ -138,6 +159,21 @@ def get_person_path(fname: str) -> str:
     return os.path.join(get_person_dir_path(),
                         f"{basename_of(fname)}.{PERSON_EXT}")
 
+def get_plan_dir_path() -> str:
+    return os.path.join(get_current_path(), PLAN_DIR)
+
+
+def get_plan_file_names() -> list:
+    return [basename_of(name) for name in get_plan_file_paths()]
+
+
+def get_plan_file_paths() -> list:
+    return _get_any_file_paths(get_plan_dir_path(), PLAN_EXT)
+
+
+def get_plan_path(fname: str) -> str:
+    return os.path.join(get_plan_dir_path(),
+                        f"{basename_of(fname)}.{PLAN_EXT}")
 
 def get_project_path() -> str:
     return os.path.join(get_current_path(), PROJECT_FILENAME)
