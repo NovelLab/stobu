@@ -9,6 +9,7 @@ import os
 from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME, RUBI_FILENAME
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT, PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from stobu.settings import BUILD_DIR, CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR, PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR, TRASH_DIR
+from stobu.settings import PLAN_DIR, OUTLINE_DIR
 from stobu.templatecreator import TemplateCreator
 from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
@@ -46,6 +47,8 @@ def check_and_create_default_dirs() -> bool:
             or not check_and_create_item_dir() \
             or not check_and_create_word_dir() \
             or not check_and_create_trash_dir() \
+            or not check_and_create_plan_dir() \
+            or not check_and_create_outline_dir() \
             or not check_and_create_build_dir():
         logger.error("Failed check and create default dirs!")
         return False
@@ -66,6 +69,8 @@ def check_and_create_default_files(creator: TemplateCreator) -> bool:
             or not check_and_create_a_episode_file(creator) \
             or not check_and_create_a_scene_file(creator) \
             or not check_and_create_a_note_file(creator) \
+            or not check_and_create_a_plan_file(creator) \
+            or not check_and_create_a_outline_file(creator) \
             or not check_and_create_a_person_file(creator) \
             or not check_and_create_a_stage_file(creator) \
             or not check_and_create_a_item_file(creator) \
@@ -189,6 +194,26 @@ def check_and_create_a_note_file(creator: TemplateCreator) -> bool:
     return True
 
 
+def check_and_create_a_outline_file(creator: TemplateCreator) -> bool:
+    logger.debug("Checking and Creating a outline file...")
+
+    if checker.exists_any_outline():
+        logger.debug("Already exists any outline file. Succeeded.")
+        return True
+
+    template_data = creator.get_outline_template()
+    if not template_data:
+        logger.error("Missing the outline template data!: %s", template_data)
+        return False
+
+    if not write_file(ppath.get_outline_path('main'), template_data):
+        logger.error("Failed write the outline template data!: %s", 'main')
+        return False
+
+    logger.debug("...Succeeded check and create a outline file.")
+    return True
+
+
 def check_and_create_a_person_file(creator: TemplateCreator) -> bool:
     logger.debug("Checking and Creating a person file...")
 
@@ -209,6 +234,27 @@ def check_and_create_a_person_file(creator: TemplateCreator) -> bool:
 
     logger.debug("...Succeeded check and create a person file.")
     return True
+
+
+def check_and_create_a_plan_file(creator: TemplateCreator) -> bool:
+    logger.debug("Checking and Creating a plan file...")
+
+    if checker.exists_any_plan():
+        logger.debug("Already exists any plan file. Succeeded.")
+        return True
+
+    template_data = creator.get_plan_template()
+    if not template_data:
+        logger.error("Missing the plan template data!: %s", template_data)
+        return False
+
+    if not write_file(ppath.get_plan_path('main'), template_data):
+        logger.error("Failed write the plan template data!: %s", 'main')
+        return False
+
+    logger.debug("...Succeeded check and create a plan file.")
+    return True
+
 
 
 def check_and_create_a_scene_file(creator: TemplateCreator) -> bool:
@@ -358,6 +404,18 @@ def check_and_create_note_dir() -> bool:
     return True
 
 
+def check_and_create_outline_dir() -> bool:
+    logger.debug("Checking and Creating outline directory...")
+
+    path = ppath.get_outline_dir_path()
+    if not safe_create_directory(path):
+        logger.error("Failed check or create note directory!: %s", path)
+        return False
+
+    logger.debug("...Succeeded check and create outline directory.")
+    return True
+
+
 def check_and_create_order_file(creator: TemplateCreator) -> bool:
     logger.debug("Checking and Creating order file...")
 
@@ -388,6 +446,18 @@ def check_and_create_person_dir() -> bool:
         return False
 
     logger.debug("...Succeeded check and create person dir.")
+    return True
+
+
+def check_and_create_plan_dir() -> bool:
+    logger.debug("Checking and Creating plan directory...")
+
+    path = ppath.get_plan_dir_path()
+    if not safe_create_directory(path):
+        logger.error("Failed check or create the directory!: %s", path)
+        return False
+
+    logger.debug("...Succeeded check and create plan dir.")
     return True
 
 

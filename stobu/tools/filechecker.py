@@ -9,12 +9,14 @@ import os
 # My Modules
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
 from stobu.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
+from stobu.settings import PLAN_EXT, OUTLINE_EXT
 from stobu.tools import pathmanager as ppath
 
 
 __all__ = (
         'exists_any_chapter', 'exists_any_episode', 'exists_any_scene', 'exists_any_note',
         'exists_any_person', 'exists_any_stage', 'exists_any_item', 'exists_any_word',
+        'exists_any_plan', 'exists_any_outline',
         'exists_project_file',
         'exists_book_file',
         'exists_order_file',
@@ -45,9 +47,19 @@ def exists_any_note() -> bool:
     return _exists_any_file(ppath.get_note_dir_path(), NOTE_EXT)
 
 
+def exists_any_outline() -> bool:
+    """Check if any outline file exists."""
+    return _exists_any_file(ppath.get_outline_dir_path(), OUTLINE_EXT)
+
+
 def exists_any_person() -> bool:
     """Check if any person file exists."""
     return _exists_any_file(ppath.get_person_dir_path(), PERSON_EXT)
+
+
+def exists_any_plan() -> bool:
+    """Check if any plan file exists."""
+    return _exists_any_file(ppath.get_plan_dir_path(), PLAN_EXT)
 
 
 def exists_any_scene() -> bool:
@@ -110,9 +122,19 @@ def is_exists_the_note(fname: str) -> bool:
     return _is_exists_file(ppath.get_note_path(fname))
 
 
+def is_exists_the_outline(fname: str) -> bool:
+    """Check if the outline file exists."""
+    return _is_exists_file(ppath.get_outline_path(fname))
+
+
 def is_exists_the_person(fname: str) -> bool:
     """Check if the person file exists."""
     return _is_exists_file(ppath.get_person_path(fname))
+
+
+def is_exists_the_plan(fname: str) -> bool:
+    """Check if the plan file exists."""
+    return _is_exists_file(ppath.get_plan_path(fname))
 
 
 def is_exists_the_scene(fname: str) -> bool:
