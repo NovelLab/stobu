@@ -98,16 +98,16 @@ PLAN_EXT = MARKDOWN_EXT
 OUTLINE_EXT = MARKDOWN_EXT
 """str: extention of outline files."""
 
-PERSON_EXT = YAML_EXT
+PERSON_EXT = MARKDOWN_EXT
 """str: extention of person files."""
 
-STAGE_EXT = YAML_EXT
+STAGE_EXT = MARKDOWN_EXT
 """str: extention of stage files."""
 
-ITEM_EXT = YAML_EXT
+ITEM_EXT = MARKDOWN_EXT
 """str: extention of item files."""
 
-WORD_EXT = YAML_EXT
+WORD_EXT = MARKDOWN_EXT
 """str: extention of word files."""
 
 BASE_ENCODING = 'utf-8'

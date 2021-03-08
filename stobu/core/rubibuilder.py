@@ -8,7 +8,7 @@ import re
 # My Modules
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
-from stobu.util.fileio import read_file_as_yaml
+from stobu.util.fileio import read_file_as_auto
 
 
 __all__ = (
@@ -20,7 +20,7 @@ __all__ = (
 def apply_rubi_convert(output_data: list) -> list:
     assert isinstance(output_data, list)
 
-    rubi = assertion.is_dict(read_file_as_yaml(ppath.get_rubi_path()))
+    rubi = assertion.is_dict(read_file_as_auto(ppath.get_rubi_path()))
 
     tmp = []
     discards = []

@@ -9,7 +9,7 @@ from stobu.dataconverter import conv_to_story_record
 from stobu.datatypes import StoryData
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
-from stobu.util.fileio import read_file_as_markdown, read_file_as_yaml
+from stobu.util.fileio import read_file_as_auto
 from stobu.util.log import logger
 
 
@@ -22,7 +22,7 @@ __all__ = (
 def get_story_data(output_part: str) -> StoryData:
     logger.debug("Creating the story data...")
 
-    order_data = assertion.is_dict(read_file_as_yaml(ppath.get_order_path()))
+    order_data = assertion.is_dict(read_file_as_auto(ppath.get_order_path()))
 
     part_data = _get_part_output(output_part if output_part else "")
 
@@ -46,7 +46,7 @@ def get_story_data(output_part: str) -> StoryData:
 def _conv_story_data_from_serialized_order_data(serialized: list) -> list:
     tmp = []
 
-    tmp.append(conv_to_story_record('book/book', read_file_as_yaml(ppath.get_book_path())))
+    tmp.append(conv_to_story_record('book/book', read_file_as_auto(ppath.get_book_path())))
 
     for fname in serialized:
         tmp.append(conv_to_story_record(
@@ -61,13 +61,13 @@ def _get_data_from_ordername(ordername: str) -> dict:
     category, fname = ordername.split('/')
 
     if category == 'chapter':
-        tmp = read_file_as_yaml(ppath.get_chapter_path(fname))
+        tmp = read_file_as_auto(ppath.get_chapter_path(fname))
         return tmp
     elif category == 'episode':
-        tmp = read_file_as_yaml(ppath.get_episode_path(fname))
+        tmp = read_file_as_auto(ppath.get_episode_path(fname))
         return tmp
     elif category == 'scene':
-        tmp = read_file_as_markdown(ppath.get_scene_path(fname))
+        tmp = read_file_as_auto(ppath.get_scene_path(fname))
         return tmp
     else:
         return {}

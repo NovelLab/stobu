@@ -6,10 +6,12 @@ import yaml
 
 
 # My Modules
+from stobu.settings import MARKDOWN_EXT, YAML_EXT
 
 
 __all__ = (
         'read_file',
+        'read_file_as_markdown', 'read_file_as_yaml', 'read_file_as_auto',
         'write_file',
         )
 
@@ -29,6 +31,17 @@ def read_file(fname: str, encoding: str=DEFAULT_ENCODING) -> str:
         contents = file.read()
 
     return contents
+
+
+def read_file_as_auto(fname: str, encoding: str=DEFAULT_ENCODING) -> dict:
+    """Get the file contents as both type of markdown and yaml."""
+    assert isinstance(fname, str)
+    assert isinstance(encoding, str)
+
+    if YAML_EXT in fname:
+        return read_file_as_yaml(fname, encoding)
+    else:
+        return read_file_as_markdown(fname, encoding)
 
 
 def read_file_as_markdown(fname: str, encoding: str=DEFAULT_ENCODING) -> dict:

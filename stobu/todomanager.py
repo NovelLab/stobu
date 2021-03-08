@@ -9,7 +9,7 @@ import re
 from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
-from stobu.util.fileio import read_file_as_markdown, write_file
+from stobu.util.fileio import read_file_as_auto, write_file
 from stobu.util.log import logger
 
 
@@ -104,7 +104,7 @@ def _construct_todo_data(data: dict) -> str:
 
 
 def _get_todo_data() -> dict:
-    data = assertion.is_dict(read_file_as_markdown(ppath.get_todo_path()))
+    data = assertion.is_dict(read_file_as_auto(ppath.get_todo_path()))
     todos = {
             'users': [],
             'contents': [],
