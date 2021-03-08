@@ -59,6 +59,10 @@ def switch_command_to_list(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = show_list_of_words()
     elif cmdargs.arg0 in ('d', 'todo'):
         is_succeeded = show_list_of_todo()
+    elif cmdargs.arg0 in ('l', 'plan'):
+        is_succeeded = show_list_of_plans()
+    elif cmdargs.arg0 in ('out', 'outline'):
+        is_succeeded = show_list_of_outlines()
     else:
         logger.error("Unknown add command argument!: %s", cmdargs.arg0)
         return False
@@ -129,6 +133,17 @@ def show_list_of_orders() -> bool:
     return True
 
 
+def show_list_of_outlines() -> bool:
+    logger.debug(START_LIST_PROCESS_MESSAGE.format(target="outline"))
+
+    if not _show_list("> Outline list:", ppath.get_outline_file_names()):
+        logger.error(ERR_MESSAGE_CANNOT_SHOW_LIST.format(target="outline"))
+        return False
+
+    logger.debug(FINISH_LIST_PROCESS_MESSAGE.format(target="outline"))
+    return True
+
+
 def show_list_of_persons() -> bool:
     logger.debug(START_LIST_PROCESS_MESSAGE.format(target="person"))
 
@@ -137,6 +152,17 @@ def show_list_of_persons() -> bool:
         return False
 
     logger.debug(FINISH_LIST_PROCESS_MESSAGE.format(target="person"))
+    return True
+
+
+def show_list_of_plans() -> bool:
+    logger.debug(START_LIST_PROCESS_MESSAGE.format(target="plan"))
+
+    if not _show_list("> Plan list:", ppath.get_plan_file_names()):
+        logger.error(ERR_MESSAGE_CANNOT_SHOW_LIST.format(target="plan"))
+        return False
+
+    logger.debug(FINISH_LIST_PROCESS_MESSAGE.format(target="plan"))
     return True
 
 

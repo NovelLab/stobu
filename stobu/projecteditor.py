@@ -46,30 +46,33 @@ def switch_command_to_edit(cmdargs: argparse.Namespace) -> bool:
 
     is_succeeded = False
 
-    editor = assertion.is_str(_get_editor())
 
     if cmdargs.arg0 in ('b', 'book'):
-        is_succeeded = edit_the_book(editor)
+        is_succeeded = edit_the_book()
     elif cmdargs.arg0 in ('o', 'order'):
-        is_succeeded = edit_the_order(editor)
+        is_succeeded = edit_the_order()
     elif cmdargs.arg0 in ('c', 'chapter'):
-        is_succeeded = edit_the_chapter(editor, cmdargs.arg1)
+        is_succeeded = edit_the_chapter(cmdargs.arg1)
     elif cmdargs.arg0 in ('e', 'episode'):
-        is_succeeded = edit_the_episode(editor, cmdargs.arg1)
+        is_succeeded = edit_the_episode(cmdargs.arg1)
     elif cmdargs.arg0 in ('s', 'scene'):
-        is_succeeded = edit_the_scene(editor, cmdargs.arg1)
+        is_succeeded = edit_the_scene(cmdargs.arg1)
     elif cmdargs.arg0 in ('n', 'note'):
-        is_succeeded = edit_the_note(editor, cmdargs.arg1)
+        is_succeeded = edit_the_note(cmdargs.arg1)
     elif cmdargs.arg0 in ('p', 'person'):
-        is_succeeded = edit_the_person(editor, cmdargs.arg1)
+        is_succeeded = edit_the_person(cmdargs.arg1)
     elif cmdargs.arg0 in ('t', 'stage'):
-        is_succeeded = edit_the_stage(editor, cmdargs.arg1)
+        is_succeeded = edit_the_stage(cmdargs.arg1)
     elif cmdargs.arg0 in ('i', 'item'):
-        is_succeeded = edit_the_item(editor, cmdargs.arg1)
+        is_succeeded = edit_the_item(cmdargs.arg1)
     elif cmdargs.arg0 in ('w', 'word'):
-        is_succeeded = edit_the_word(editor, cmdargs.arg1)
+        is_succeeded = edit_the_word(cmdargs.arg1)
     elif cmdargs.arg0 in ('d', 'todo'):
-        is_succeeded = edit_todo(editor)
+        is_succeeded = edit_todo()
+    elif cmdargs.arg0 in ('l', 'plan'):
+        is_succeeded = edit_the_plan(cmdargs.arg1)
+    elif cmdargs.arg0 in ('o', 'outline'):
+        is_succeeded = edit_the_outline(cmdargs.arg1)
     else:
         logger.error("Unknown edit command argument!: %s", cmdargs.arg0)
         return False
@@ -98,15 +101,14 @@ def switch_command_to_set_editor(cmdargs: argparse.Namespace) -> bool:
 
 
 # Functions
-def edit_the_book(editor: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_book() -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="book"))
 
     if not checker.exists_book_file():
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="book"), "")
         return False
 
-    if not _edit_the_file(editor, ppath.get_book_path()):
+    if not _edit_the_file(ppath.get_book_path()):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="book"), "")
         return False
 
@@ -114,8 +116,7 @@ def edit_the_book(editor: str) -> bool:
     return True
 
 
-def edit_the_chapter(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_chapter(fname: str) -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="chapter"))
 
     chapters = ppath.get_chapter_file_names()
@@ -125,7 +126,7 @@ def edit_the_chapter(editor: str, fname: str) -> bool:
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
         return False
 
-    if not _edit_the_file(editor, ppath.get_chapter_path(_fname)):
+    if not _edit_the_file(ppath.get_chapter_path(_fname)):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="chapter"), _fname)
         return False
 
@@ -133,8 +134,7 @@ def edit_the_chapter(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_the_episode(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_episode(fname: str) -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="episode"))
 
     episodes = ppath.get_episode_file_names()
@@ -144,7 +144,7 @@ def edit_the_episode(editor: str, fname: str) -> bool:
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
         return False
 
-    if not _edit_the_file(editor, ppath.get_episode_path(_fname)):
+    if not _edit_the_file(ppath.get_episode_path(_fname)):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="episode"), _fname)
         return False
 
@@ -152,8 +152,7 @@ def edit_the_episode(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_the_item(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_item(fname: str) -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="item"))
 
     items = ppath.get_item_file_names()
@@ -163,7 +162,7 @@ def edit_the_item(editor: str, fname: str) -> bool:
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
         return False
 
-    if not _edit_the_file(editor, ppath.get_item_path(_fname)):
+    if not _edit_the_file(ppath.get_item_path(_fname)):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="item"), _fname)
         return False
 
@@ -171,8 +170,7 @@ def edit_the_item(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_the_note(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_note(fname: str) -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="note"))
 
     notes = ppath.get_note_file_names()
@@ -182,7 +180,7 @@ def edit_the_note(editor: str, fname: str) -> bool:
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
         return False
 
-    if not _edit_the_file(editor, ppath.get_note_path(_fname)):
+    if not _edit_the_file(ppath.get_note_path(_fname)):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="note"), _fname)
         return False
 
@@ -190,15 +188,14 @@ def edit_the_note(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_the_order(editor: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_order() -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="order"))
 
     if not checker.exists_order_file():
         logger.error(ERR_MESSAGE_MISSING_FILE.format("order"), "")
         return False
 
-    if not _edit_the_file(editor, ppath.get_order_path()):
+    if not _edit_the_file(ppath.get_order_path()):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="order"), "")
         return False
 
@@ -206,8 +203,24 @@ def edit_the_order(editor: str) -> bool:
     return True
 
 
-def edit_the_person(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_outline(fname: str) -> bool:
+    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="outline"))
+    outlines = ppath.get_outline_file_names()
+    _fname = _get_target_filename(fname, "editing outline", outlines)
+
+    if not checker.is_exists_the_outline(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="outline"), _fname)
+        return False
+
+    if not _edit_the_file(ppath.get_outline_path(_fname)):
+        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="outline"), _fname)
+        return False
+
+    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="outline"))
+    return True
+
+
+def edit_the_person(fname: str) -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="person"))
 
     persons = ppath.get_person_file_names()
@@ -217,7 +230,7 @@ def edit_the_person(editor: str, fname: str) -> bool:
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
         return False
 
-    if not _edit_the_file(editor, ppath.get_person_path(_fname)):
+    if not _edit_the_file(ppath.get_person_path(_fname)):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="person"), _fname)
         return False
 
@@ -225,8 +238,25 @@ def edit_the_person(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_the_scene(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_plan(fname: str) -> bool:
+    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="plan"))
+
+    plans = ppath.get_plan_file_names()
+    _fname = _get_target_filename(fname, "editing plan", plans)
+
+    if not checker.is_exists_the_plan(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="plan"), _fname)
+        return False
+
+    if not _edit_the_file(ppath.get_plan_path(_fname)):
+        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="plan"), _fname)
+        return False
+
+    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="plan"))
+    return True
+
+
+def edit_the_scene(fname: str) -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="scene"))
 
     scenes = ppath.get_scene_file_names()
@@ -236,7 +266,7 @@ def edit_the_scene(editor: str, fname: str) -> bool:
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
         return False
 
-    if not _edit_the_file(editor, ppath.get_scene_path(_fname)):
+    if not _edit_the_file(ppath.get_scene_path(_fname)):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="scene"), _fname)
         return False
 
@@ -244,8 +274,7 @@ def edit_the_scene(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_the_stage(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_stage(fname: str) -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="stage"))
 
     stages = ppath.get_stage_file_names()
@@ -255,7 +284,7 @@ def edit_the_stage(editor: str, fname: str) -> bool:
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
         return False
 
-    if not _edit_the_file(editor, ppath.get_stage_path(_fname)):
+    if not _edit_the_file(ppath.get_stage_path(_fname)):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="stage"), _fname)
         return False
 
@@ -263,8 +292,7 @@ def edit_the_stage(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_the_word(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def edit_the_word(fname: str) -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="word"))
 
     words = ppath.get_word_file_names()
@@ -274,7 +302,7 @@ def edit_the_word(editor: str, fname: str) -> bool:
         logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
         return False
 
-    if not _edit_the_file(editor, ppath.get_word_path(_fname)):
+    if not _edit_the_file(ppath.get_word_path(_fname)):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="word"), _fname)
         return False
 
@@ -282,11 +310,10 @@ def edit_the_word(editor: str, fname: str) -> bool:
     return True
 
 
-def edit_todo(editor: str) -> bool:
-    assert isinstance(editor, str)
+def edit_todo() -> bool:
     logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="todo"))
 
-    if _edit_the_file(editor, ppath.get_todo_path()):
+    if _edit_the_file(ppath.get_todo_path()):
         logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="todo"), "")
         return False
 
@@ -295,10 +322,10 @@ def edit_todo(editor: str) -> bool:
 
 
 # Private Functions
-def _edit_the_file(editor: str, fname: str) -> bool:
-    assert isinstance(editor, str)
+def _edit_the_file(fname: str) -> bool:
     assert isinstance(fname, str)
 
+    editor = assertion.is_str(_get_editor())
     proc = subprocess.run([editor, fname])
     if proc.returncode != 0:
         logger.error("Subprocess Error!: %s", proc.returncode)

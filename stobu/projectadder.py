@@ -10,6 +10,7 @@ import shutil
 # My Modules
 from stobu.projecteditor import edit_the_chapter, edit_the_episode, edit_the_scene, edit_the_note
 from stobu.projecteditor import edit_the_person, edit_the_stage, edit_the_item, edit_the_word
+from stobu.projecteditor import edit_the_plan, edit_the_outline
 from stobu.templatecreator import TemplateCreator
 from stobu import todomanager as todom
 from stobu.tools import filechecker as checker
@@ -105,6 +106,10 @@ def switch_command_to_add(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = add_new_word(cmdargs.arg1)
     elif cmdargs.arg0 in ('d', 'todo'):
         is_succeeded = todom.add_todo(cmdargs.arg1)
+    elif cmdargs.arg0 in ('l', 'plan'):
+        is_succeeded = add_new_plan(cmdargs.arg1)
+    elif cmdargs.arg0 in ('o', 'outline'):
+        is_succeeded = add_new_outline(cmdargs.arg1)
     else:
         logger.error("Unknown add command argument!: %s", cmdargs.arg0)
         return False
@@ -138,6 +143,10 @@ def switch_command_to_copy(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = copy_the_item(cmdargs.arg1)
     elif cmdargs.arg0 in ('w', 'word'):
         is_succeeded = copy_the_word(cmdargs.arg1)
+    elif cmdargs.arg0 in ('l', 'plan'):
+        is_succeeded = copy_the_plan(cmdargs.arg1)
+    elif cmdargs.arg0 in ('o', 'outline'):
+        is_succeeded = copy_the_outline(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -171,6 +180,10 @@ def switch_command_to_delete(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = delete_the_item(cmdargs.arg1)
     elif cmdargs.arg0 in ('w', 'word'):
         is_succeeded = delete_the_word(cmdargs.arg1)
+    elif cmdargs.arg0 in ('l', 'plan'):
+        is_succeeded = delete_the_plan(cmdargs.arg1)
+    elif cmdargs.arg0 in ('o', 'outline'):
+        is_succeeded = delete_the_outline(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -204,6 +217,10 @@ def switch_command_to_rename(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = rename_the_item(cmdargs.arg1)
     elif cmdargs.arg0 in ('w', 'word'):
         is_succeeded = rename_the_word(cmdargs.arg1)
+    elif cmdargs.arg0 in ('l', 'plan'):
+        is_succeeded = rename_the_plan(cmdargs.arg1)
+    elif cmdargs.arg0 in ('o', 'outline'):
+        is_succeeded = rename_the_outline(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -310,6 +327,28 @@ def add_new_note(fname: str) -> bool:
     return edit_the_note(_fname)
 
 
+def add_new_outline(fname: str) -> bool:
+    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="outline"))
+
+    _fname = _get_new_filename(fname, "new outline")
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if checker.is_exists_the_outline(_fname):
+        logger.error(ERR_MESSAGE_DUPLICATED.format(target="outline"), _fname)
+        return False
+
+    template_data = TemplateCreator.get_instance().get_outline_template()
+    if not write_file(ppath.get_outline_path(_fname), template_data):
+        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="outline"), _fname)
+        return False
+
+    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="outline"))
+    return edit_the_outline(_fname)
+
+
 def add_new_person(fname: str) -> bool:
     logger.debug(START_ADD_PROCESS_MESSAGE.format(target="person"))
 
@@ -331,6 +370,28 @@ def add_new_person(fname: str) -> bool:
     logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="person"))
 
     return edit_the_person(_fname)
+
+
+def add_new_plan(fname: str) -> bool:
+    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="plan"))
+
+    _fname = _get_new_filename(fname, "new plan")
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if checker.is_exists_the_plan(_fname):
+        logger.error(ERR_MESSAGE_DUPLICATED.format(target="plan"), _fname)
+        return False
+
+    template_data = TemplateCreator.get_instance().get_plan_template()
+    if not write_file(ppath.get_plan_path(_fname), template_data):
+        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="plan"), _fname)
+        return False
+
+    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="plan"))
+    return edit_the_plan(_fname)
 
 
 def add_new_scene(fname: str) -> bool:
@@ -495,6 +556,25 @@ def copy_the_note(fname: str) -> bool:
     return True
 
 
+def copy_the_outline(fname: str) -> bool:
+    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="outline"))
+
+    outlines = ppath.get_outline_file_names()
+    _fname = _get_target_filename(fname, "copying outline", outlines)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    _new = f"{_fname}_"
+    if not _copyfile(ppath.get_outline_path(_fname), ppath.get_outline_path(_new)):
+        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="outline"), _fname)
+        return False
+
+    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="outline"))
+    return True
+
+
 def copy_the_person(fname: str) -> bool:
     logger.debug(START_COPY_PROCESS_MESSAGE.format(target="person"))
 
@@ -515,6 +595,25 @@ def copy_the_person(fname: str) -> bool:
         return False
 
     logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="person"))
+    return True
+
+
+def copy_the_plan(fname: str) -> bool:
+    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="plan"))
+
+    plans = ppath.get_plan_file_names()
+    _fname = _get_target_filename(fname, "copying plan", plans)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    _new = f"{_fname}_"
+    if not _copyfile(ppath.get_plan_path(_fname), ppath.get_plan_path(_new)):
+        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="plan"), _fname)
+        return False
+
+    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="plan"))
     return True
 
 
@@ -676,6 +775,24 @@ def delete_the_note(fname: str) -> bool:
     return True
 
 
+def delete_the_outline(fname: str) -> bool:
+    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="outline"))
+
+    outlines = ppath.get_outline_file_names()
+    _fname = _get_target_filename(fname, "deleting outline", outlines)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not _move_to_trash(ppath.get_outline_path(_fname)):
+        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="outline"), _fname)
+        return False
+
+    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="outline"))
+    return True
+
+
 def delete_the_person(fname: str) -> bool:
     logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="person"))
 
@@ -695,6 +812,24 @@ def delete_the_person(fname: str) -> bool:
         return False
 
     logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="person"))
+    return True
+
+
+def delete_the_plan(fname: str) -> bool:
+    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="plan"))
+
+    plans = ppath.get_plan_file_names()
+    _fname = _get_target_filename(fname, "deleting plan", plans)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not _move_to_trash(ppath.get_plan_path(_fname)):
+        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="plan"), _fname)
+        return False
+
+    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="plan"))
     return True
 
 
@@ -873,6 +1008,33 @@ def rename_the_note(fname: str) -> bool:
     return True
 
 
+def rename_the_outline(fname: str) -> bool:
+    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="outline"))
+
+    outlines = ppath.get_outline_file_names()
+    _fname = _get_target_filename(fname, "renaming outline", outlines)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not checker.is_exists_the_outline(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="outline"), _fname)
+        return False
+
+    _new = _get_new_filename("", "new outline")
+    if checker.is_exists_the_outline(_new):
+        logger.error(ERR_MESSAGE_DUPLICATED.format(target="outline"), _new)
+        return False
+
+    if not _renamefile(ppath.get_outline_path(_fname), ppath.get_outline_path(_new)):
+        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="outline"), _fname, _new)
+        return False
+
+    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="outline"))
+    return True
+
+
 def rename_the_person(fname: str) -> bool:
     logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="person"))
 
@@ -897,6 +1059,33 @@ def rename_the_person(fname: str) -> bool:
         return False
 
     logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="person"))
+    return True
+
+
+def rename_the_plan(fname: str) -> bool:
+    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="plan"))
+
+    plans = ppath.get_plan_file_names()
+    _fname = _get_target_filename(fname, "renaming plan", plans)
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not checker.is_exists_the_plan(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="plan"), _fname)
+        return False
+
+    _new = _get_new_filename("", "new plan")
+    if checker.is_exists_the_plan(_new):
+        logger.error(ERR_MESSAGE_DUPLICATED.format(target="plan"), _fname)
+        return False
+
+    if not _renamefile(ppath.get_plan_path(_fname), ppath.get_plan_path(_new)):
+        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="plan"), _fname, _new)
+        return False
+
+    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="plan"))
     return True
 
 
