@@ -11,6 +11,10 @@ ToDo List
 * Search file by hashtag
 * Show Initialized message
 * Work log feature
+* Plan dir and file
+* Outline dir and file
+* Show note by filtering Category
+* Update file and systems by version
 
 ## Bugs
 
