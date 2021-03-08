@@ -9,7 +9,7 @@ import argparse
 from stobu.dataconverter import conv_to_dumpdata_of_yaml
 from stobu.todomanager import show_list_of_todo
 from stobu.tools import pathmanager as ppath
-from stobu.util.fileio import read_file_as_yaml
+from stobu.util.fileio import read_file_as_auto
 from stobu.util.filepath import basename_of
 from stobu.util.log import logger
 
@@ -123,7 +123,7 @@ def show_list_of_notes() -> bool:
 def show_list_of_orders() -> bool:
     logger.debug(START_LIST_PROCESS_MESSAGE.format(target="order"))
 
-    order_data = read_file_as_yaml(ppath.get_order_path())
+    order_data = read_file_as_auto(ppath.get_order_path())
 
     # NOTE: format を考える
     print("> Order data:")

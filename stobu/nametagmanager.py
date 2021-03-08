@@ -7,7 +7,7 @@
 # My Modules
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
-from stobu.util.fileio import read_file_as_yaml
+from stobu.util.fileio import read_file_as_auto
 from stobu.util.filepath import basename_of
 from stobu.util.log import logger
 
@@ -22,14 +22,11 @@ class NameTagDB(object):
     # class Methods
     @classmethod
     def get_calling_tags(cls) -> dict:
-        from stobu.util.filepath import basename_of
-        from stobu.util.fileio import read_file_as_yaml
-        from stobu.projectpathmanager import get_person_file_paths
         tmp = {}
-        persons = get_person_file_paths()
+        persons = ppath.get_person_file_paths()
 
         for fname in persons:
-            data = read_file_as_yaml(fname)
+            data = read_file_as_auto(fname)
             tmp[basename_of(fname)] = data['calling']
         return tmp
 
@@ -119,7 +116,7 @@ def get_nametag_db() -> dict:
 def _create_nametags_from_item_files(db: NameTagDB) -> bool:
     items = ppath.get_item_file_paths()
     for fname in assertion.is_list(items):
-        data = assertion.is_dict(read_file_as_yaml(fname))
+        data = assertion.is_dict(read_file_as_auto(fname))
         if not db.add_item(basename_of(fname), data['name']):
             logger.error("Failed to add an item name to tag DB!")
             return False
@@ -129,7 +126,7 @@ def _create_nametags_from_item_files(db: NameTagDB) -> bool:
 def _create_nametags_from_person_files(db: NameTagDB) -> bool:
     persons = ppath.get_person_file_paths()
     for fname in assertion.is_list(persons):
-        data = assertion.is_dict(read_file_as_yaml(fname))
+        data = assertion.is_dict(read_file_as_auto(fname))
         if not db.add_person(basename_of(fname), data['name'], data['fullname']):
             logger.error("Failed to add a person name to tag DB!")
             return False
@@ -139,7 +136,7 @@ def _create_nametags_from_person_files(db: NameTagDB) -> bool:
 def _create_nametags_from_stage_files(db: NameTagDB) -> bool:
     stages = ppath.get_stage_file_paths()
     for fname in assertion.is_list(stages):
-        data = assertion.is_dict(read_file_as_yaml(fname))
+        data = assertion.is_dict(read_file_as_auto(fname))
         if not db.add_stage(basename_of(fname), data['name']):
             logger.error("Failed to add a stage name to tag DB!")
             return False
@@ -149,7 +146,7 @@ def _create_nametags_from_stage_files(db: NameTagDB) -> bool:
 def _create_nametags_from_word_files(db: NameTagDB) -> bool:
     words = ppath.get_word_file_paths()
     for fname in assertion.is_list(words):
-        data = assertion.is_dict(read_file_as_yaml(fname))
+        data = assertion.is_dict(read_file_as_auto(fname))
         if not db.add_word(basename_of(fname), data['name']):
             logger.error("Failed to add a word name to tag DB!")
             return False

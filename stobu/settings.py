@@ -80,10 +80,10 @@ TRASH_DIR = '.trash'
 BUILD_DIR = 'build'
 """str: directory name for build."""
 
-CHAPTER_EXT = YAML_EXT
+CHAPTER_EXT = MARKDOWN_EXT
 """str: extention of chapter files."""
 
-EPISODE_EXT = YAML_EXT
+EPISODE_EXT = MARKDOWN_EXT
 """str: extention of episode files."""
 
 SCENE_EXT = MARKDOWN_EXT
@@ -98,16 +98,16 @@ PLAN_EXT = MARKDOWN_EXT
 OUTLINE_EXT = MARKDOWN_EXT
 """str: extention of outline files."""
 
-PERSON_EXT = YAML_EXT
+PERSON_EXT = MARKDOWN_EXT
 """str: extention of person files."""
 
-STAGE_EXT = YAML_EXT
+STAGE_EXT = MARKDOWN_EXT
 """str: extention of stage files."""
 
-ITEM_EXT = YAML_EXT
+ITEM_EXT = MARKDOWN_EXT
 """str: extention of item files."""
 
-WORD_EXT = YAML_EXT
+WORD_EXT = MARKDOWN_EXT
 """str: extention of word files."""
 
 BASE_ENCODING = 'utf-8'

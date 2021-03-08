@@ -20,7 +20,7 @@ from stobu.formatter import format_charcounts_novel, format_charcounts_outline, 
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
 from stobu.util.counttool import count_white_space, count_line_by_columns
-from stobu.util.fileio import read_file_as_yaml
+from stobu.util.fileio import read_file_as_auto
 from stobu.util.log import logger
 
 
@@ -282,7 +282,7 @@ def _get_plot_char_counts(level: str, story_data: StoryData, tags: dict,
 
 
 def _get_rows_and_columns_from_bookdata() -> tuple:
-    bookdata = assertion.is_dict(read_file_as_yaml(ppath.get_book_path()))
+    bookdata = assertion.is_dict(read_file_as_auto(ppath.get_book_path()))
 
     return (bookdata['rows'], bookdata['columns'])
 

@@ -11,7 +11,7 @@ from stobu.dataconverter import conv_to_dumpdata_of_yaml
 from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
-from stobu.util.fileio import read_file_as_yaml, write_file
+from stobu.util.fileio import read_file_as_auto, write_file
 from stobu.util.filepath import basename_of, get_input_filename
 from stobu.util.log import logger
 
@@ -107,7 +107,7 @@ def switch_command_to_reject(cmdargs: argparse.Namespace) -> bool:
 def push_the_chapter(fname: str) -> bool:
     logger.debug(START_PUSH_PROCESS_MESSAGE.format(target="chapter"))
 
-    order_data = read_file_as_yaml(ppath.get_order_path())
+    order_data = read_file_as_auto(ppath.get_order_path())
     tmp = copy.deepcopy(order_data)
     if not _has_the_key('book', tmp) or not _validate_order_book(tmp):
         logger.debug("Invalid order data!: %s", tmp)
@@ -139,7 +139,7 @@ def push_the_chapter(fname: str) -> bool:
 def push_the_episode(fname: str) -> bool:
     logger.debug(START_PUSH_PROCESS_MESSAGE.format(target="episode"))
 
-    order_data = read_file_as_yaml(ppath.get_order_path())
+    order_data = read_file_as_auto(ppath.get_order_path())
     tmp = copy.deepcopy(order_data)
     if not _has_the_key('book', tmp) or not _validate_order_book(tmp):
         logger.debug("Invalid order data!: %s", tmp)
@@ -174,7 +174,7 @@ def push_the_episode(fname: str) -> bool:
 def push_the_scene(fname: str) -> bool:
     logger.debug(START_PUSH_PROCESS_MESSAGE.format(target="scene"))
 
-    order_data = read_file_as_yaml(ppath.get_order_path())
+    order_data = read_file_as_auto(ppath.get_order_path())
     tmp = copy.deepcopy(order_data)
     if not _has_the_key('book', tmp) or not _validate_order_book(tmp):
         logger.debug("Invalid order data!: %s", tmp)
@@ -210,7 +210,7 @@ def push_the_scene(fname: str) -> bool:
 def reject_the_chapter(fname: str) -> bool:
     logger.debug(START_REJECT_PROCESS_MESSAGE.format(target="chapter"))
 
-    order_data = read_file_as_yaml(ppath.get_order_path())
+    order_data = read_file_as_auto(ppath.get_order_path())
     tmp = copy.deepcopy(order_data)
     if not _has_the_key('book', tmp) or not _validate_order_book(tmp):
         logger.error("Invalid order data!: %s", tmp)
@@ -238,7 +238,7 @@ def reject_the_chapter(fname: str) -> bool:
 def reject_the_episode(fname: str) -> bool:
     logger.debug(START_REJECT_PROCESS_MESSAGE.format(target="episode"))
 
-    order_data = read_file_as_yaml(ppath.get_order_path())
+    order_data = read_file_as_auto(ppath.get_order_path())
     tmp = copy.deepcopy(order_data)
     if not _has_the_key('book', tmp) or not _validate_order_book(tmp):
         logger.error("Invalid order data!: %s", tmp)
@@ -267,7 +267,7 @@ def reject_the_episode(fname: str) -> bool:
 def reject_the_scene(fname: str) -> bool:
     logger.debug(START_REJECT_PROCESS_MESSAGE.format(target="scene"))
 
-    order_data = read_file_as_yaml(ppath.get_order_path())
+    order_data = read_file_as_auto(ppath.get_order_path())
     tmp = copy.deepcopy(order_data)
     if not _has_the_key('book', tmp) or not _validate_order_book(tmp):
         logger.error("Invalid order data!: %s", tmp)

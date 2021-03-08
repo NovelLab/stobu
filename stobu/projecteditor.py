@@ -8,11 +8,11 @@ import subprocess
 
 # My Modules
 from stobu.dataconverter import conv_to_dumpdata_of_yaml
-from stobu.settings import DEFAULT_EDITOR
+from stobu.settings import DEFAULT_EDITOR, YAML_EXT, MARKDOWN_EXT
 from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
-from stobu.util.fileio import read_file_as_yaml, write_file
+from stobu.util.fileio import read_file_as_auto, write_file
 from stobu.util.filepath import get_input_filename
 from stobu.util.log import logger
 
@@ -90,7 +90,7 @@ def switch_command_to_set_editor(cmdargs: argparse.Namespace) -> bool:
     logger.debug("Setting the project Editor...")
 
     editor = cmdargs.arg0 if cmdargs.arg0 else input("Please set the Editor name: ")
-    proj_data = read_file_as_yaml(ppath.get_project_path())
+    proj_data = read_file_as_auto(ppath.get_project_path())
     proj_data['storybuilder']['editor'] = editor
 
     if not write_file(ppath.get_project_path(), conv_to_dumpdata_of_yaml(proj_data)):
@@ -334,7 +334,7 @@ def _edit_the_file(fname: str) -> bool:
 
 
 def _get_editor() -> str:
-    proj_data = assertion.is_dict(read_file_as_yaml(ppath.get_project_path()))
+    proj_data = assertion.is_dict(read_file_as_auto(ppath.get_project_path()))
     data = proj_data['storybuilder']
     editor = data['editor'] if data['editor'] else DEFAULT_EDITOR
     return editor

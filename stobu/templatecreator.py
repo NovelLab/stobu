@@ -22,10 +22,10 @@ BOOK_TEMP_FILE = 'book_tmp.yml'
 ORDER_TEMP_FILE = 'order_tmp.yml'
 """str: file name of order template."""
 
-CHAPTER_TEMP_FILE = 'chapter_tmp.yml'
+CHAPTER_TEMP_FILE = 'chapter_tmp.md'
 """str: file name of chapter template."""
 
-EPISODE_TEMP_FILE = 'episode_tmp.yml'
+EPISODE_TEMP_FILE = 'episode_tmp.md'
 """str: file name of episode template."""
 
 SCENE_TEMP_FILE = 'scene_tmp.md'
@@ -34,16 +34,16 @@ SCENE_TEMP_FILE = 'scene_tmp.md'
 NOTE_TEMP_FILE = 'note_tmp.md'
 """str: file name of note template."""
 
-PERSON_TEMP_FILE = 'person_tmp.yml'
+PERSON_TEMP_FILE = 'person_tmp.md'
 """str: file name of person template."""
 
-STAGE_TEMP_FILE = 'stage_tmp.yml'
+STAGE_TEMP_FILE = 'stage_tmp.md'
 """str: file name of stage template."""
 
-ITEM_TEMP_FILE = 'item_tmp.yml'
+ITEM_TEMP_FILE = 'item_tmp.md'
 """str: file name of item template."""
 
-WORD_TEMP_FILE = 'word_tmp.yml'
+WORD_TEMP_FILE = 'word_tmp.md'
 """str: file name of word template."""
 
 PLOT_TEMP_FILE = 'plot_tmp.yml'

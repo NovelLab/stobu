@@ -1,3 +1,4 @@
+---
 name: 名前
 fullname: 苗字,名前
 age: 99
@@ -9,3 +10,4 @@ calling:
 info: 紹介
 keywords: []
 note: 備考
+---
