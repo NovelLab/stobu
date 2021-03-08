@@ -80,10 +80,10 @@ TRASH_DIR = '.trash'
 BUILD_DIR = 'build'
 """str: directory name for build."""
 
-CHAPTER_EXT = YAML_EXT
+CHAPTER_EXT = MARKDOWN_EXT
 """str: extention of chapter files."""
 
-EPISODE_EXT = YAML_EXT
+EPISODE_EXT = MARKDOWN_EXT
 """str: extention of episode files."""
 
 SCENE_EXT = MARKDOWN_EXT
