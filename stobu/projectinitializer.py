@@ -34,6 +34,29 @@ ERR_CHECK_AND_CREATE = '...Failed the check or create {target}!: %s'
 
 
 # Main Function
+def init_project() -> bool:
+    logger.debug("Starting Project Initializer...")
+
+    creator = TemplateCreator.get_instance()
+    if not creator:
+        logger.error("Missing TemplateCreator. not initialized!: %s", creator)
+        return False
+
+    if has_project_file():
+        logger.debug("Already Initialized this project!")
+    else:
+        if not create_project_file(creator):
+            logger.debug("Failure creating the project file!")
+            return False
+
+    if not check_and_create_defaults(creator):
+        logger.error("Failed check and create defaults!")
+        return False
+
+    logger.debug("...Succeeded init project.")
+    return True
+
+
 def check_and_create_defaults(creator: TemplateCreator) -> bool:
     logger.debug("Starting the check and create default dir and files...")
     assert isinstance(creator, TemplateCreator)
@@ -53,19 +76,19 @@ def check_and_create_defaults(creator: TemplateCreator) -> bool:
 def check_and_create_default_dirs() -> bool:
     logger.debug("Starting the check and create default directories...")
 
-    if not check_and_create_chapter_dir() \
-            or not check_and_create_episode_dir() \
-            or not check_and_create_scene_dir() \
-            or not check_and_create_note_dir() \
-            or not check_and_create_person_dir() \
-            or not check_and_create_stage_dir() \
-            or not check_and_create_item_dir() \
-            or not check_and_create_word_dir() \
-            or not check_and_create_trash_dir() \
-            or not check_and_create_material_dir() \
-            or not check_and_create_plan_dir() \
-            or not check_and_create_outline_dir() \
-            or not check_and_create_build_dir():
+    if not _check_and_create_dir('chapter', CHAPTER_DIR) \
+            or not _check_and_create_dir('episode', EPISODE_DIR) \
+            or not _check_and_create_dir('scene', SCENE_DIR) \
+            or not _check_and_create_dir('note', NOTE_DIR) \
+            or not _check_and_create_dir('person', PERSON_DIR) \
+            or not _check_and_create_dir('stage', STAGE_DIR) \
+            or not _check_and_create_dir('item', ITEM_DIR) \
+            or not _check_and_create_dir('word', WORD_DIR) \
+            or not _check_and_create_dir('trash', TRASH_DIR) \
+            or not _check_and_create_dir('material', MATERIAL_DIR) \
+            or not _check_and_create_dir('plan', PLAN_DIR) \
+            or not _check_and_create_dir('outline', OUTLINE_DIR) \
+            or not _check_and_create_dir('build', BUILD_DIR):
         logger.error("Failed check and create default dirs!")
         return False
 
@@ -95,29 +118,6 @@ def check_and_create_default_files(creator: TemplateCreator) -> bool:
         return False
 
     logger.debug("...Succeeded the check and create default files.")
-    return True
-
-
-def init_project() -> bool:
-    logger.debug("Starting Project Initializer...")
-
-    creator = TemplateCreator.get_instance()
-    if not creator:
-        logger.error("Missing TemplateCreator. not initialized!: %s", creator)
-        return False
-
-    if has_project_file():
-        logger.debug("Already Initialized this project!")
-    else:
-        if not create_project_file(creator):
-            logger.debug("Failure creating the project file!")
-            return False
-
-    if not check_and_create_defaults(creator):
-        logger.error("Failed check and create defaults!")
-        return False
-
-    logger.debug("...Succeeded init project.")
     return True
 
 
@@ -360,34 +360,6 @@ def check_and_create_book_file(creator: TemplateCreator) -> bool:
     return True
 
 
-def check_and_create_build_dir() -> bool:
-    return _check_and_create_dir('build', BUILD_DIR)
-
-
-def check_and_create_chapter_dir() -> bool:
-    return _check_and_create_dir('chapter', CHAPTER_DIR)
-
-
-def check_and_create_episode_dir() -> bool:
-    return _check_and_create_dir('episode', EPISODE_DIR)
-
-
-def check_and_create_item_dir() -> bool:
-    return _check_and_create_dir('item', ITEM_DIR)
-
-
-def check_and_create_material_dir() -> bool:
-    return _check_and_create_dir('material', MATERIAL_DIR)
-
-
-def check_and_create_note_dir() -> bool:
-    return _check_and_create_dir('note', NOTE_DIR)
-
-
-def check_and_create_outline_dir() -> bool:
-    return _check_and_create_dir('outline', OUTLINE_DIR)
-
-
 def check_and_create_order_file(creator: TemplateCreator) -> bool:
     logger.debug("Checking and Creating order file...")
 
@@ -407,14 +379,6 @@ def check_and_create_order_file(creator: TemplateCreator) -> bool:
 
     logger.debug("...Succeeded check and create order file.")
     return True
-
-
-def check_and_create_person_dir() -> bool:
-    return _check_and_create_dir('person', PERSON_DIR)
-
-
-def check_and_create_plan_dir() -> bool:
-    return _check_and_create_dir('plan', PLAN_DIR)
 
 
 def check_and_create_rubi_file(creator: TemplateCreator) -> bool:
@@ -438,14 +402,6 @@ def check_and_create_rubi_file(creator: TemplateCreator) -> bool:
     return True
 
 
-def check_and_create_scene_dir() -> bool:
-    return _check_and_create_dir('scene', SCENE_DIR)
-
-
-def check_and_create_stage_dir() -> bool:
-    return _check_and_create_dir('stage', STAGE_DIR)
-
-
 def check_and_create_todo_file(creator: TemplateCreator) -> bool:
     logger.debug("Checking and Creating todo file...")
 
@@ -464,14 +420,6 @@ def check_and_create_todo_file(creator: TemplateCreator) -> bool:
 
     logger.debug("...Succeeded check and create todo file.")
     return True
-
-
-def check_and_create_trash_dir() -> bool:
-    return _check_and_create_dir('trash', TRASH_DIR)
-
-
-def check_and_create_word_dir() -> bool:
-    return _check_and_create_dir('word', WORD_DIR)
 
 
 def create_project_file(creator: TemplateCreator) -> bool:
@@ -540,6 +488,8 @@ def safe_create_directory(dirname: str) -> bool:
 
     if not is_exists_path(dirname):
         os.makedirs(dirname)
+    else:
+        logger.debug("> Already exists the directory: %s", dirname)
 
     return True
 
