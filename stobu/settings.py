@@ -77,6 +77,9 @@ WORD_DIR = 'words'
 TRASH_DIR = '.trash'
 """str: directory name for trash box."""
 
+MATERIAL_DIR = 'materials'
+"""str: directory name for materials."""
+
 BUILD_DIR = 'build'
 """str: directory name for build."""
 

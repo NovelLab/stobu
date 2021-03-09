@@ -9,13 +9,28 @@ import os
 from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME, RUBI_FILENAME
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT, PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from stobu.settings import BUILD_DIR, CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR, PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR, TRASH_DIR
-from stobu.settings import PLAN_DIR, OUTLINE_DIR
+from stobu.settings import PLAN_DIR, OUTLINE_DIR, MATERIAL_DIR
 from stobu.templatecreator import TemplateCreator
 from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
 from stobu.util.fileio import write_file
 from stobu.util.filepath import get_current_path, is_exists_path
 from stobu.util.log import logger
+
+
+__all__ = (
+        )
+
+
+# Define Constants
+START_PROCESS_CHECK_AND_CREATE = 'Starting the check and create {target}...'
+"""str: message template for start process to check and create any."""
+
+FINISH_PROCESS_CHECK_AND_CREATE = '...Succeeded the check and create {target}.'
+"""str: message template for finish process to check and create any."""
+
+ERR_CHECK_AND_CREATE = '...Failed the check or create {target}!: %s'
+"""str: error message template for check or create any."""
 
 
 # Main Function
@@ -47,6 +62,7 @@ def check_and_create_default_dirs() -> bool:
             or not check_and_create_item_dir() \
             or not check_and_create_word_dir() \
             or not check_and_create_trash_dir() \
+            or not check_and_create_material_dir() \
             or not check_and_create_plan_dir() \
             or not check_and_create_outline_dir() \
             or not check_and_create_build_dir():
@@ -345,75 +361,31 @@ def check_and_create_book_file(creator: TemplateCreator) -> bool:
 
 
 def check_and_create_build_dir() -> bool:
-    logger.debug("Checking and Creating build directory...")
-
-    path = os.path.join(get_current_path(), BUILD_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create build directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create build directory.")
-    return True
+    return _check_and_create_dir('build', BUILD_DIR)
 
 
 def check_and_create_chapter_dir() -> bool:
-    logger.debug("Checking and Creating chapter directory...")
-
-    path = os.path.join(get_current_path(), CHAPTER_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create chapter directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create chapter directory.")
-    return True
+    return _check_and_create_dir('chapter', CHAPTER_DIR)
 
 
 def check_and_create_episode_dir() -> bool:
-    logger.debug("Checking and Creating episode directory...")
-
-    path = os.path.join(get_current_path(), EPISODE_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create episode directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create episode directory.")
-    return True
+    return _check_and_create_dir('episode', EPISODE_DIR)
 
 
 def check_and_create_item_dir() -> bool:
-    logger.debug("Checking and Creating item directory...")
+    return _check_and_create_dir('item', ITEM_DIR)
 
-    path = os.path.join(get_current_path(), ITEM_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create item directory!: %s", path)
-        return False
 
-    logger.debug("...Succeeded check and create item directory.")
-    return True
+def check_and_create_material_dir() -> bool:
+    return _check_and_create_dir('material', MATERIAL_DIR)
 
 
 def check_and_create_note_dir() -> bool:
-    logger.debug("Checking and Creating note directory...")
-
-    path = os.path.join(get_current_path(), NOTE_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create note directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create note directory.")
-    return True
+    return _check_and_create_dir('note', NOTE_DIR)
 
 
 def check_and_create_outline_dir() -> bool:
-    logger.debug("Checking and Creating outline directory...")
-
-    path = ppath.get_outline_dir_path()
-    if not safe_create_directory(path):
-        logger.error("Failed check or create note directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create outline directory.")
-    return True
+    return _check_and_create_dir('outline', OUTLINE_DIR)
 
 
 def check_and_create_order_file(creator: TemplateCreator) -> bool:
@@ -438,27 +410,11 @@ def check_and_create_order_file(creator: TemplateCreator) -> bool:
 
 
 def check_and_create_person_dir() -> bool:
-    logger.debug("Checking and Creating person directory...")
-
-    path = os.path.join(get_current_path(), PERSON_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create the directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create person dir.")
-    return True
+    return _check_and_create_dir('person', PERSON_DIR)
 
 
 def check_and_create_plan_dir() -> bool:
-    logger.debug("Checking and Creating plan directory...")
-
-    path = ppath.get_plan_dir_path()
-    if not safe_create_directory(path):
-        logger.error("Failed check or create the directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create plan dir.")
-    return True
+    return _check_and_create_dir('plan', PLAN_DIR)
 
 
 def check_and_create_rubi_file(creator: TemplateCreator) -> bool:
@@ -483,27 +439,11 @@ def check_and_create_rubi_file(creator: TemplateCreator) -> bool:
 
 
 def check_and_create_scene_dir() -> bool:
-    logger.debug("Checking and Creating scene directory...")
-
-    path = os.path.join(get_current_path(), SCENE_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create the directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create scene dir.")
-    return True
+    return _check_and_create_dir('scene', SCENE_DIR)
 
 
 def check_and_create_stage_dir() -> bool:
-    logger.debug("Checking and Creating stage directory...")
-
-    path = os.path.join(get_current_path(), STAGE_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create the directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create stage dir.")
-    return True
+    return _check_and_create_dir('stage', STAGE_DIR)
 
 
 def check_and_create_todo_file(creator: TemplateCreator) -> bool:
@@ -527,27 +467,11 @@ def check_and_create_todo_file(creator: TemplateCreator) -> bool:
 
 
 def check_and_create_trash_dir() -> bool:
-    logger.debug("Checking and Creating trash directory...")
-
-    path = os.path.join(get_current_path(), TRASH_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create the directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create trash dir.")
-    return True
+    return _check_and_create_dir('trash', TRASH_DIR)
 
 
 def check_and_create_word_dir() -> bool:
-    logger.debug("Checking and Creating word directory...")
-
-    path = os.path.join(get_current_path(), WORD_DIR)
-    if not safe_create_directory(path):
-        logger.error("Failed check or create the directory!: %s", path)
-        return False
-
-    logger.debug("...Succeeded check and create word dir.")
-    return True
+    return _check_and_create_dir('word', WORD_DIR)
 
 
 def create_project_file(creator: TemplateCreator) -> bool:
@@ -618,3 +542,21 @@ def safe_create_directory(dirname: str) -> bool:
         os.makedirs(dirname)
 
     return True
+
+
+# Private Functions
+def _check_and_create_dir(target: str, dir_name: str) -> bool:
+    assert isinstance(target, str)
+    assert isinstance(dir_name, str)
+
+    _target = f"{target} directory"
+    logger.debug(START_PROCESS_CHECK_AND_CREATE.format(target=_target))
+
+    path = os.path.join(get_current_path(), dir_name)
+    if not safe_create_directory(path):
+        logger.error(ERR_CHECK_AND_CREATE.format(target=_target), path)
+        return False
+
+    logger.debug(FINISH_PROCESS_CHECK_AND_CREATE.format(target=_target))
+    return True
+
