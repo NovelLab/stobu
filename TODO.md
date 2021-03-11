@@ -13,6 +13,11 @@ ToDo List
 * Work log feature
 * Show note by filtering Category
 * Update file and systems by version
+* Story Event manager: management date event etc
+* Show a guideline of size to culc from master size.
+* Asset: install template e.g. school set, office set and more.
+* Ask sub command when empty input.
 
 ## Bugs
 
+* Show outline invalid indent when multi-line strings
