@@ -67,10 +67,13 @@ def read_file_as_markdown(fname: str, encoding: str=DEFAULT_ENCODING) -> dict:
                 continue
             else:
                 is_frontmatter = True
+                continue
         if is_frontmatter:
             fronts.append(_line)
-        else:
+        elif _line:
             bodys.append(_line)
+        else:
+            continue
 
     if fronts:
         _bodys = yaml.safe_load("\n".join(fronts))
