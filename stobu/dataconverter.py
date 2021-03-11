@@ -10,6 +10,7 @@ import yaml
 # My Modules
 from stobu.datatypes import ActionData, ActionRecord
 from stobu.datatypes import StoryRecord, StoryCode
+from stobu.util.dicts import dict_sorted
 from stobu.util.filepath import basename_of
 
 
@@ -134,14 +135,15 @@ def conv_text_in_action_data_by_tags(action_data: ActionData,
                 calling = callings[record.subject]
                 calling['S'] = f"{record.subject}"
                 calling['M'] = calling['me'] if 'me' in calling else '私'
+                _calling = dict_sorted(calling, True)
                 tmp.append(ActionRecord(
                     record.type,
                     record.subject,
                     record.action,
-                    conv_text_from_tag(record.outline, calling, prefix),
-                    conv_text_from_tag(record.desc, calling, prefix),
+                    conv_text_from_tag(record.outline, _calling, prefix),
+                    conv_text_from_tag(record.desc, _calling, prefix),
                     record.flags,
-                    conv_text_from_tag(record.note, calling, prefix),
+                    conv_text_from_tag(record.note, _calling, prefix),
                     ))
             else:
                 tmp.append(record)

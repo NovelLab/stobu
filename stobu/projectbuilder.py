@@ -18,6 +18,7 @@ from stobu.datatypes import OutputData
 from stobu.nametagmanager import get_nametag_db
 from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
+from stobu.util.dicts import dict_sorted
 from stobu.util.fileio import write_file
 from stobu.util.log import logger
 
@@ -33,7 +34,7 @@ def switch_command_to_build(cmdargs: argparse.Namespace) -> bool:
     logger.debug("Starting command 'Build'...")
 
     # create tag db
-    tagdb = get_nametag_db()
+    tagdb = assertion.is_dict(dict_sorted(get_nametag_db(), True))
 
     # get story data
     story_data = assertion.is_instance(get_story_data(cmdargs.part), StoryData)
