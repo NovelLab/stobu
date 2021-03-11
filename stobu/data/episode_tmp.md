@@ -1,4 +1,4 @@
---
+---
 title: 小話タイトル
 outline: エピソード概要
 {PLOT}

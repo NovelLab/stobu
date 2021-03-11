@@ -17,6 +17,7 @@ ToDo List
 * Show a guideline of size to culc from master size.
 * Asset: install template e.g. school set, office set and more.
 * Ask sub command when empty input.
+* Show selected chapter, episode and more when push.
 
 ## Bugs
 
