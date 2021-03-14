@@ -14,9 +14,9 @@ from stobu.settings import PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
 from stobu.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from stobu.settings import TRASH_DIR, BUILD_DIR
-from stobu.settings import PLAN_DIR, OUTLINE_DIR
-from stobu.settings import PLAN_EXT, OUTLINE_EXT
-from stobu.util.filepath import basename_of
+from stobu.settings import PLAN_DIR, OUTLINE_DIR, EVENT_DIR
+from stobu.settings import PLAN_EXT, OUTLINE_EXT, EVENT_EXT
+from stobu.util.filepath import add_extention, basename_of
 
 
 __all__ = (
@@ -30,6 +30,7 @@ __all__ = (
         'get_trash_dir_path', 'get_trash_file_paths', 'get_trash_file_names',
         'get_plan_path', 'get_plan_dir_path', 'get_plan_file_paths', 'get_plan_file_names',
         'get_outline_path', 'get_outline_dir_path', 'get_outline_file_paths', 'get_outline_file_names',
+        'get_event_path', 'get_event_dir_path', 'get_event_file_paths', 'get_event_file_names',
         'get_chapter_path', 'get_chapter_dir_path', 'get_chapter_file_paths', 'get_chapter_file_names',
         'get_episode_path', 'get_episode_dir_path', 'get_episode_file_paths', 'get_episode_file_names',
         'get_scene_path', 'get_scene_dir_path', 'get_scene_file_paths', 'get_scene_file_names',
@@ -55,7 +56,7 @@ def get_chapter_dir_path() -> str:
 
 
 def get_chapter_file_names() -> list:
-    return [basename_of(name) for name in get_chapter_file_paths()]
+    return _get_any_file_names(get_chapter_file_paths())
 
 
 def get_chapter_file_paths() -> list:
@@ -63,8 +64,7 @@ def get_chapter_file_paths() -> list:
 
 
 def get_chapter_path(fname: str) -> str:
-    return os.path.join(get_chapter_dir_path(),
-                        f"{basename_of(fname)}.{CHAPTER_EXT}")
+    return os.path.join(get_chapter_dir_path(), _get_any_path(fname, CHAPTER_EXT))
 
 
 def get_episode_dir_path() -> str:
@@ -72,7 +72,7 @@ def get_episode_dir_path() -> str:
 
 
 def get_episode_file_names() -> list:
-    return [basename_of(name) for name in get_episode_file_paths()]
+    return _get_any_file_names(get_episode_file_paths())
 
 
 def get_episode_file_paths() -> list:
@@ -80,8 +80,23 @@ def get_episode_file_paths() -> list:
 
 
 def get_episode_path(fname: str) -> str:
-    return os.path.join(get_episode_dir_path(),
-                        f"{basename_of(fname)}.{EPISODE_EXT}")
+    return os.path.join(get_episode_dir_path(), _get_any_path(fname, EPISODE_EXT))
+
+
+def get_event_dir_path() -> str:
+    return os.path.join(get_current_path(), EVENT_DIR)
+
+
+def get_event_file_names() -> list:
+    return _get_any_file_names(get_event_file_paths())
+
+
+def get_event_file_paths() -> list:
+    return _get_any_file_paths(get_event_dir_path(), EVENT_EXT)
+
+
+def get_event_path(fname: str) -> str:
+    return os.path.join(get_event_dir_path(), _get_any_path(fname, EVENT_EXT))
 
 
 def get_current_path() -> str:
@@ -93,7 +108,7 @@ def get_item_dir_path() -> str:
 
 
 def get_item_file_names() -> list:
-    return [basename_of(name) for name in get_item_file_paths()]
+    return _get_any_file_names(get_item_file_paths())
 
 
 def get_item_file_paths() -> list:
@@ -101,8 +116,7 @@ def get_item_file_paths() -> list:
 
 
 def get_item_path(fname: str) -> str:
-    return os.path.join(get_item_dir_path(),
-                        f"{basename_of(fname)}.{ITEM_EXT}")
+    return os.path.join(get_item_dir_path(), _get_any_path(fname, ITEM_EXT))
 
 
 def get_note_dir_path() -> str:
@@ -110,7 +124,7 @@ def get_note_dir_path() -> str:
 
 
 def get_note_file_names() -> list:
-    return [basename_of(name) for name in get_note_file_paths()]
+    return _get_any_file_names(get_note_file_paths())
 
 
 def get_note_file_paths() -> list:
@@ -118,8 +132,7 @@ def get_note_file_paths() -> list:
 
 
 def get_note_path(fname: str) -> str:
-    return os.path.join(get_note_dir_path(),
-                        f"{basename_of(fname)}.{NOTE_EXT}")
+    return os.path.join(get_note_dir_path(), _get_any_path(fname, NOTE_EXT))
 
 
 def get_order_path() -> str:
@@ -131,7 +144,7 @@ def get_outline_dir_path() -> str:
 
 
 def get_outline_file_names() -> list:
-    return [basename_of(name) for name in get_outline_file_paths()]
+    return _get_any_file_names(get_outline_file_paths())
 
 
 def get_outline_file_paths() -> list:
@@ -139,8 +152,7 @@ def get_outline_file_paths() -> list:
 
 
 def get_outline_path(fname: str) -> str:
-    return os.path.join(get_outline_dir_path(),
-                        f"{basename_of(fname)}.{OUTLINE_EXT}")
+    return os.path.join(get_outline_dir_path(), _get_any_path(fname, OUTLINE_EXT))
 
 
 def get_person_dir_path() -> str:
@@ -148,7 +160,7 @@ def get_person_dir_path() -> str:
 
 
 def get_person_file_names() -> list:
-    return [basename_of(name) for name in get_person_file_paths()]
+    return _get_any_file_names(get_person_file_paths())
 
 
 def get_person_file_paths() -> list:
@@ -156,15 +168,15 @@ def get_person_file_paths() -> list:
 
 
 def get_person_path(fname: str) -> str:
-    return os.path.join(get_person_dir_path(),
-                        f"{basename_of(fname)}.{PERSON_EXT}")
+    return os.path.join(get_person_dir_path(), _get_any_path(fname, PERSON_EXT))
+
 
 def get_plan_dir_path() -> str:
     return os.path.join(get_current_path(), PLAN_DIR)
 
 
 def get_plan_file_names() -> list:
-    return [basename_of(name) for name in get_plan_file_paths()]
+    return _get_any_file_names(get_plan_file_paths())
 
 
 def get_plan_file_paths() -> list:
@@ -172,8 +184,8 @@ def get_plan_file_paths() -> list:
 
 
 def get_plan_path(fname: str) -> str:
-    return os.path.join(get_plan_dir_path(),
-                        f"{basename_of(fname)}.{PLAN_EXT}")
+    return os.path.join(get_plan_dir_path(), _get_any_path(fname, PLAN_EXT))
+
 
 def get_project_path() -> str:
     return os.path.join(get_current_path(), PROJECT_FILENAME)
@@ -188,7 +200,7 @@ def get_scene_dir_path() -> str:
 
 
 def get_scene_file_names() -> list:
-    return [basename_of(name) for name in get_scene_file_paths()]
+    return _get_any_file_names(get_scene_file_paths())
 
 
 def get_scene_file_paths() -> list:
@@ -196,8 +208,7 @@ def get_scene_file_paths() -> list:
 
 
 def get_scene_path(fname: str) -> str:
-    return os.path.join(get_scene_dir_path(),
-                        f"{basename_of(fname)}.{SCENE_EXT}")
+    return os.path.join(get_scene_dir_path(), _get_any_path(fname, SCENE_EXT))
 
 
 def get_stage_dir_path() -> str:
@@ -205,7 +216,7 @@ def get_stage_dir_path() -> str:
 
 
 def get_stage_file_names() -> list:
-    return [basename_of(name) for name in get_stage_file_paths()]
+    return _get_any_file_names(get_stage_file_paths())
 
 
 def get_stage_file_paths() -> list:
@@ -213,8 +224,7 @@ def get_stage_file_paths() -> list:
 
 
 def get_stage_path(fname: str) -> str:
-    return os.path.join(get_stage_dir_path(),
-                        f"{basename_of(fname)}.{STAGE_EXT}")
+    return os.path.join(get_stage_dir_path(), _get_any_path(fname, STAGE_EXT))
 
 
 def get_todo_path() -> str:
@@ -226,7 +236,7 @@ def get_trash_dir_path() -> str:
 
 
 def get_trash_file_names() -> list:
-    return [basename_of(name) for name in get_trash_file_paths()]
+    return _get_any_file_names(get_trash_file_paths())
 
 
 def get_trash_file_paths() -> list:
@@ -239,7 +249,7 @@ def get_word_dir_path() -> str:
 
 
 def get_word_file_names() -> list:
-    return [basename_of(name) for name in get_word_file_paths()]
+    return _get_any_file_names(get_word_file_paths())
 
 
 def get_word_file_paths() -> list:
@@ -247,10 +257,25 @@ def get_word_file_paths() -> list:
 
 
 def get_word_path(fname: str) -> str:
-    return os.path.join(get_word_dir_path(),
-                        f"{basename_of(fname)}.{WORD_EXT}")
+    return os.path.join(get_word_dir_path(), _get_any_path(fname, WORD_EXT))
 
 
 # Private Functions
+def _get_any_file_names(paths: list) -> list:
+    assert isinstance(paths, list)
+
+    return [basename_of(name) for name in paths]
+
+
 def _get_any_file_paths(dirname: str, ext: str) -> list:
+    assert isinstance(dirname, str)
+    assert isinstance(ext, str)
+
     return sorted(glob.glob(os.path.join(dirname, f"*.{ext}")))
+
+
+def _get_any_path(fname :str, ext: str) -> str:
+    assert isinstance(fname, str)
+    assert isinstance(ext, str)
+
+    return add_extention(basename_of(fname), ext)

@@ -10,7 +10,7 @@ from typing import Callable
 from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME, RUBI_FILENAME
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT, PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from stobu.settings import BUILD_DIR, CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR, PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR, TRASH_DIR
-from stobu.settings import PLAN_DIR, OUTLINE_DIR, MATERIAL_DIR
+from stobu.settings import PLAN_DIR, OUTLINE_DIR, MATERIAL_DIR, EVENT_DIR
 from stobu.templatecreator import TemplateCreator
 from stobu.tools import filechecker as checker
 from stobu.tools import pathmanager as ppath
@@ -105,6 +105,7 @@ def check_and_create_default_dirs() -> bool:
             or not _check_and_create_dir('material', MATERIAL_DIR) \
             or not _check_and_create_dir('plan', PLAN_DIR) \
             or not _check_and_create_dir('outline', OUTLINE_DIR) \
+            or not _check_and_create_dir('event', EVENT_DIR) \
             or not _check_and_create_dir('build', BUILD_DIR):
         logger.error("Failed check and create default dirs!")
         return False
@@ -147,6 +148,9 @@ def check_and_create_default_files(creator: TemplateCreator) -> bool:
             or not _check_and_create_the_file_using_template(
                     'outline', ppath.get_outline_path('main'),
                     checker.exists_any_outline, creator.get_outline_template) \
+            or not _check_and_create_the_file_using_template(
+                    'event', ppath.get_event_path('main'),
+                    checker.exists_any_event, creator.get_event_template) \
             or not _check_and_create_the_file_using_template(
                     'person', ppath.get_person_path('main'),
                     checker.exists_any_person, creator.get_person_template) \
