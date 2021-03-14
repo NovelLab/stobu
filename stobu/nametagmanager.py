@@ -2,6 +2,7 @@
 
 
 # Official Libraries
+from typing import Callable
 
 
 # My Modules
@@ -31,6 +32,13 @@ class NameTagDB(object):
         return tmp
 
     # methods
+    def add_event(self, key: str, name: str) -> bool:
+        assert isinstance(key, str)
+        assert isinstance(name, str)
+
+        return self._add_name_to_tagdb(key, name) \
+                and self._add_name_to_tagdb(self._add_prefix_name('e_', key), name)
+
     def add_item(self, key: str, name: str) -> bool:
         assert isinstance(key, str)
         assert isinstance(name, str)
@@ -88,6 +96,11 @@ def get_nametag_db() -> dict:
     logger.debug("Creating Name tag DB...")
     db = NameTagDB()
 
+    logger.debug("> event names to DB")
+    if not _create_nametags_from('event', ppath.get_event_file_paths,
+            db.add_event):
+        return {}
+
     logger.debug("> word names to DB")
     if not _create_nametags_from_word_files(db):
         return {}
@@ -113,6 +126,20 @@ def get_nametag_db() -> dict:
 
 
 # Private Functions
+def _create_nametags_from(title: str, list_method: Callable,
+        add_method: Callable) -> bool:
+    assert isinstance(title, str)
+    assert callable(list_method)
+    assert callable(add_method)
+
+    for fname in assertion.is_list(list_method()):
+        data = assertion.is_dict(read_file_as_auto(fname))
+        if not add_method(basename_of(fname), data['name']):
+            logger.error(f"...Failed to add the {title} to tag DB!")
+            return False
+    return True
+
+
 def _create_nametags_from_item_files(db: NameTagDB) -> bool:
     items = ppath.get_item_file_paths()
     for fname in assertion.is_list(items):
