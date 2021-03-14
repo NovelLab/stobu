@@ -80,8 +80,26 @@ TRASH_DIR = '.trash'
 MATERIAL_DIR = 'materials'
 """str: directory name for materials."""
 
+EVENT_DIR = 'events'
+"""str: directory name for events."""
+
 BUILD_DIR = 'build'
 """str: directory name for build."""
+
+PROJECT_EXT = YAML_EXT
+"""str: extention of project file."""
+
+BOOK_EXT = YAML_EXT
+"""str: extention of book file."""
+
+ORDER_EXT = YAML_EXT
+"""str: extention of order file."""
+
+TODO_EXT = MARKDOWN_EXT
+"""str: extention of todo file."""
+
+RUBI_EXT = YAML_EXT
+"""str: extention of rubi file."""
 
 CHAPTER_EXT = MARKDOWN_EXT
 """str: extention of chapter files."""
@@ -100,6 +118,9 @@ PLAN_EXT = MARKDOWN_EXT
 
 OUTLINE_EXT = MARKDOWN_EXT
 """str: extention of outline files."""
+
+EVENT_EXT = MARKDOWN_EXT
+"""str: extention of event files."""
 
 PERSON_EXT = MARKDOWN_EXT
 """str: extention of person files."""
