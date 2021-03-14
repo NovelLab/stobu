@@ -5,6 +5,7 @@
 import argparse
 import os
 import shutil
+from typing import Callable
 
 
 # My Modules
@@ -110,6 +111,8 @@ def switch_command_to_add(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = add_new_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = add_new_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = add_new_event(cmdargs.arg1)
     else:
         logger.error("Unknown add command argument!: %s", cmdargs.arg0)
         return False
@@ -147,6 +150,8 @@ def switch_command_to_copy(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = copy_the_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = copy_the_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = copy_the_event(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -184,6 +189,8 @@ def switch_command_to_delete(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = delete_the_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = delete_the_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = delete_the_event(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -221,6 +228,8 @@ def switch_command_to_rename(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = rename_the_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = rename_the_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = rename_the_event(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -901,273 +910,53 @@ def delete_the_word(fname: str) -> bool:
 
 # - Rename
 def rename_the_chapter(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="chapter"))
-
-    chapters = ppath.get_chapter_file_names()
-    _fname = _get_target_filename(fname, "renaming chapter", chapters)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new chapter")
-    if checker.is_exists_the_chapter(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="chapter"), _new)
-        return False
-
-    if not _renamefile(ppath.get_chapter_path(_fname), ppath.get_chapter_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="chapter"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="chapter"))
-    return True
+    return _rename_the_file('chapter', fname, checker.is_exists_the_chapter,
+            ppath.get_chapter_file_names, ppath.get_chapter_path)
 
 
 def rename_the_episode(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="episode"))
-
-    episodes = ppath.get_episode_file_names()
-    _fname = _get_target_filename(fname, "renaming episode", episodes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new episode")
-    if checker.is_exists_the_episode(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="episode"), _new)
-        return False
-
-    if not _renamefile(ppath.get_episode_path(_fname), ppath.get_episode_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="episode"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="episode"))
-    return True
+    return _rename_the_file('episode', fname, checker.is_exists_the_episode,
+            ppath.get_episode_file_names, ppath.get_episode_path)
 
 
 def rename_the_scene(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="scene"))
-
-    scenes = ppath.get_scene_file_names()
-    _fname = _get_target_filename(fname, "renaming scene", scenes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new scene")
-    if checker.is_exists_the_scene(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="scene"), _new)
-        return False
-
-    if not _renamefile(ppath.get_scene_path(_fname), ppath.get_scene_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="scene"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="scene"))
-    return True
+    return _rename_the_file('scene', fname, checker.is_exists_the_scene,
+            ppath.get_scene_file_names, ppath.get_scene_path)
 
 
 def rename_the_note(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="note"))
-
-    notes = ppath.get_note_file_names()
-    _fname = _get_target_filename(fname, "renaming note", notes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new note")
-    if checker.is_exists_the_note(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="note"), _new)
-        return False
-
-    if not _renamefile(ppath.get_note_path(_fname), ppath.get_note_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="note"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="note"))
-    return True
+    return _rename_the_file('note', fname, checker.is_exists_the_note,
+            ppath.get_note_file_names, ppath.get_note_path)
 
 
 def rename_the_outline(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="outline"))
-
-    outlines = ppath.get_outline_file_names()
-    _fname = _get_target_filename(fname, "renaming outline", outlines)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_outline(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="outline"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new outline")
-    if checker.is_exists_the_outline(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="outline"), _new)
-        return False
-
-    if not _renamefile(ppath.get_outline_path(_fname), ppath.get_outline_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="outline"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="outline"))
-    return True
+    return _rename_the_file('outline', fname, checker.is_exists_the_outline,
+            ppath.get_outline_file_names, ppath.get_outline_path)
 
 
 def rename_the_person(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="person"))
-
-    persons = ppath.get_person_file_names()
-    _fname = _get_target_filename(fname, "renaming person", persons)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new person")
-    if checker.is_exists_the_person(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="person"), _new)
-        return False
-
-    if not _renamefile(ppath.get_person_path(_fname), ppath.get_person_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="person"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="person"))
-    return True
+    return _rename_the_file('person', fname, checker.is_exists_the_person,
+            ppath.get_person_file_names, ppath.get_person_path)
 
 
 def rename_the_plan(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="plan"))
-
-    plans = ppath.get_plan_file_names()
-    _fname = _get_target_filename(fname, "renaming plan", plans)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_plan(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="plan"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new plan")
-    if checker.is_exists_the_plan(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="plan"), _fname)
-        return False
-
-    if not _renamefile(ppath.get_plan_path(_fname), ppath.get_plan_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="plan"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="plan"))
-    return True
+    return _rename_the_file('plan', fname, checker.is_exists_the_plan,
+            ppath.get_plan_file_names, ppath.get_plan_path)
 
 
 def rename_the_stage(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="stage"))
-
-    stages = ppath.get_stage_file_names()
-    _fname = _get_target_filename(fname, "renaming stage", stages)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new stage")
-    if checker.is_exists_the_stage(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="stage"), _new)
-        return False
-
-    if not _renamefile(ppath.get_stage_path(_fname), ppath.get_stage_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="stage"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="stage"))
-    return True
+    return _rename_the_file('stage', fname, checker.is_exists_the_stage,
+            ppath.get_stage_file_names, ppath.get_stage_path)
 
 
 def rename_the_item(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="item"))
-
-    items = ppath.get_item_file_names()
-    _fname = _get_target_filename(fname, "renaming item", items)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new item")
-    if checker.is_exists_the_item(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="item"), _new)
-        return False
-
-    if not _renamefile(ppath.get_item_path(_fname), ppath.get_item_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="item"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="item"))
-    return True
+    return _rename_the_file('item', fname, checker.is_exists_the_item,
+            ppath.get_item_file_names, ppath.get_item_path)
 
 
 def rename_the_word(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="word"))
-
-    words = ppath.get_word_file_names()
-    _fname = _get_target_filename(fname, "renaming word", words)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new word")
-    if checker.is_exists_the_word(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="word"), _new)
-        return False
-
-    if not _renamefile(ppath.get_word_path(_fname), ppath.get_word_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="word"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="word"))
-    return True
+    return _rename_the_file('word', fname, checker.is_exists_the_word,
+            ppath.get_word_file_names, ppath.get_word_path)
 
 
 # Private Functions
@@ -1223,3 +1012,32 @@ def _renamefile(fname: str, newfname: str) -> bool:
         return True
     else:
         return False
+
+
+def _rename_the_file(title: str, fname: str, check_method: Callable,
+        list_method: Callable, path_method: Callable) -> bool:
+    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target=title))
+
+    _fname = _get_target_filename(fname, f"renaming {title}", list_method())
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not check_method(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target=title), _fname)
+        return False
+
+    _new = _get_new_filename("", f"new {title}")
+    if check_method(_new):
+        logger.error(ERR_MESSAGE_DUPLICATED.format(target=title), _new)
+        return False
+
+    if not _renamefile(path_method(_fname), path_method(_new)):
+        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target=title), _fname, _new)
+        return False
+
+    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target=title))
+    return True
+
+

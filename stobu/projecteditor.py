@@ -4,6 +4,7 @@
 # Official Libraries
 import argparse
 import subprocess
+from typing import Callable
 
 
 # My Modules
@@ -18,6 +19,11 @@ from stobu.util.log import logger
 
 
 __all__ = (
+        'edit_the_book', 'edit_the_order',
+        'edit_the_chapter', 'edit_the_episode', 'edit_the_scene', 'edit_the_note',
+        'edit_the_person', 'edit_the_stage', 'edit_the_item', 'edit_the_word',
+        'edit_the_plan', 'edit_the_outline', 'edit_the_event',
+        'edit_todo',
         'switch_command_to_edit',
         'switch_command_to_set_editor',
         )
@@ -73,6 +79,8 @@ def switch_command_to_edit(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = edit_the_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = edit_the_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = edit_the_event(cmdargs.arg1)
     else:
         logger.error("Unknown edit command argument!: %s", cmdargs.arg0)
         return False
@@ -102,234 +110,137 @@ def switch_command_to_set_editor(cmdargs: argparse.Namespace) -> bool:
 
 # Functions
 def edit_the_book() -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="book"))
-
-    if not checker.exists_book_file():
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="book"), "")
-        return False
-
-    if not _edit_the_file(ppath.get_book_path()):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="book"), "")
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="book"))
-    return True
+    return _edit_the_file('book', ppath.get_book_path(),
+            checker.exists_book_file,
+            False, None, None)
 
 
 def edit_the_chapter(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="chapter"))
-
-    chapters = ppath.get_chapter_file_names()
-    _fname = _get_target_filename(fname, "editing chapter", chapters)
-
-    if not checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_chapter_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="chapter"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="chapter"))
-    return True
+    return _edit_the_file('chapter', fname,
+            checker.is_exists_the_chapter,
+            True,
+            ppath.get_chapter_file_names, ppath.get_chapter_path)
 
 
 def edit_the_episode(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="episode"))
+    return _edit_the_file('episode', fname,
+            checker.is_exists_the_episode,
+            True,
+            ppath.get_episode_file_names, ppath.get_episode_path)
 
-    episodes = ppath.get_episode_file_names()
-    _fname = _get_target_filename(fname, "editing episode", episodes)
 
-    if not checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_episode_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="episode"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="episode"))
-    return True
+def edit_the_event(fname: str) -> bool:
+    return _edit_the_file('event', fname,
+            checker.is_exists_the_event,
+            True,
+            ppath.get_event_file_names, ppath.get_event_path)
 
 
 def edit_the_item(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="item"))
-
-    items = ppath.get_item_file_names()
-    _fname = _get_target_filename(fname, "editing item", items)
-
-    if not checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_item_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="item"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="item"))
-    return True
+    return _edit_the_file('item', fname,
+            checker.is_exists_the_item,
+            True,
+            ppath.get_item_file_names, ppath.get_item_path)
 
 
 def edit_the_note(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="note"))
-
-    notes = ppath.get_note_file_names()
-    _fname = _get_target_filename(fname, "editing note", notes)
-
-    if not checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_note_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="note"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="note"))
-    return True
+    return _edit_the_file('note', fname,
+            checker.is_exists_the_note,
+            True,
+            ppath.get_note_file_names, ppath.get_note_path)
 
 
 def edit_the_order() -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="order"))
-
-    if not checker.exists_order_file():
-        logger.error(ERR_MESSAGE_MISSING_FILE.format("order"), "")
-        return False
-
-    if not _edit_the_file(ppath.get_order_path()):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="order"), "")
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="order"))
-    return True
+    return _edit_the_file('order', ppath.get_order_path(),
+            checker.exists_order_file,
+            False, None, None)
 
 
 def edit_the_outline(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="outline"))
-    outlines = ppath.get_outline_file_names()
-    _fname = _get_target_filename(fname, "editing outline", outlines)
-
-    if not checker.is_exists_the_outline(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="outline"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_outline_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="outline"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="outline"))
-    return True
+    return _edit_the_file('outline', fname,
+            checker.is_exists_the_outline,
+            True,
+            ppath.get_outline_file_names, ppath.get_outline_path)
 
 
 def edit_the_person(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="person"))
-
-    persons = ppath.get_person_file_names()
-    _fname = _get_target_filename(fname, "editing person", persons)
-
-    if not checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_person_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="person"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="person"))
-    return True
+    return _edit_the_file('person', fname,
+            checker.is_exists_the_person,
+            True,
+            ppath.get_person_file_names, ppath.get_person_path)
 
 
 def edit_the_plan(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="plan"))
-
-    plans = ppath.get_plan_file_names()
-    _fname = _get_target_filename(fname, "editing plan", plans)
-
-    if not checker.is_exists_the_plan(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="plan"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_plan_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="plan"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="plan"))
-    return True
+    return _edit_the_file('plan', fname,
+            checker.is_exists_the_plan,
+            True,
+            ppath.get_plan_file_names, ppath.get_plan_path)
 
 
 def edit_the_scene(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="scene"))
-
-    scenes = ppath.get_scene_file_names()
-    _fname = _get_target_filename(fname, "editing scene", scenes)
-
-    if not checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_scene_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="scene"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="scene"))
-    return True
+    return _edit_the_file('scene', fname,
+            checker.is_exists_the_scene,
+            True,
+            ppath.get_scene_file_names, ppath.get_scene_path)
 
 
 def edit_the_stage(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="stage"))
-
-    stages = ppath.get_stage_file_names()
-    _fname = _get_target_filename(fname, "editing stage", stages)
-
-    if not checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_stage_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="stage"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="stage"))
-    return True
+    return _edit_the_file('stage', fname,
+            checker.is_exists_the_stage,
+            True,
+            ppath.get_stage_file_names, ppath.get_stage_path)
 
 
 def edit_the_word(fname: str) -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="word"))
-
-    words = ppath.get_word_file_names()
-    _fname = _get_target_filename(fname, "editing word", words)
-
-    if not checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
-        return False
-
-    if not _edit_the_file(ppath.get_word_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="word"), _fname)
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="word"))
-    return True
+    return _edit_the_file('word', fname,
+            checker.is_exists_the_word,
+            True,
+            ppath.get_word_file_names, ppath.get_word_path)
 
 
 def edit_todo() -> bool:
-    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target="todo"))
-
-    if _edit_the_file(ppath.get_todo_path()):
-        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target="todo"), "")
-        return False
-
-    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target="todo"))
-    return True
+    return _edit_the_file('todo', ppath.get_todo_path(),
+            checker.exists_todo_file,
+            False,
+            None, None)
 
 
 # Private Functions
-def _edit_the_file(fname: str) -> bool:
-    assert isinstance(fname, str)
+def _edit_the_file(title: str, fname: str,
+        check_method: Callable,
+        with_list: bool,
+        list_method: Callable,
+        path_method: Callable) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert isinstance(with_list, bool)
+    if with_list:
+        assert callable(path_method)
+        assert callable(list_method)
+    logger.debug(START_EDIT_PROCESS_MESSAGE.format(target=title))
 
-    editor = assertion.is_str(_get_editor())
-    proc = subprocess.run([editor, fname])
-    if proc.returncode != 0:
-        logger.error("Subprocess Error!: %s", proc.returncode)
+    _fname = fname
+    if with_list:
+        filenames = list_method()
+        _fname = _get_target_filename(fname, f"editing {title}", filenames)
+    else:
+        _fname = fname
+
+    if with_list:
+        if not check_method(_fname):
+            logger.error(ERR_MESSAGE_MISSING_FILE.format(target=title), _fname)
+            return False
+    elif not check_method():
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target=title), _fname)
         return False
+
+    path = path_method(_fname) if with_list else _fname
+    if not _run_subprocess_to_edit_file(path):
+        logger.error(ERR_MESSAGE_CANNOT_EDIT.format(target=title), path)
+        return False
+
+    logger.debug(FINISH_EDIT_PROCESS_MESSAGE.format(target=title))
     return True
 
 
@@ -358,3 +269,14 @@ def _get_target_filename(fname: str, msg: str, targets: list) -> str:
             return _fname
     else:
         return _fname
+
+
+def _run_subprocess_to_edit_file(fname: str) -> bool:
+    assert isinstance(fname, str)
+
+    editor = assertion.is_str(_get_editor())
+    proc = subprocess.run([editor, fname])
+    if proc.returncode != 0:
+        logger.error("Subprocess Error!: %s", proc.returncode)
+        return False
+    return True
