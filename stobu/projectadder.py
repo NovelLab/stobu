@@ -474,225 +474,58 @@ def add_new_word(fname: str) -> bool:
 
 # - Copy
 def copy_the_chapter(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="chapter"))
-
-    chapters = ppath.get_chapter_file_names()
-    _fname = _get_target_filename(fname, "copying chapter", chapters)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_chapter_path(_fname), ppath.get_chapter_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="chapter"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="chapter"))
-    return True
+    return _copy_the_file('chapter', fname, checker.is_exists_the_chapter,
+            ppath.get_chapter_file_names, ppath.get_chapter_path)
 
 
 def copy_the_episode(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="episode"))
+    return _copy_the_file('episode', fname, checker.is_exists_the_episode,
+            ppath.get_episode_file_names, ppath.get_episode_path)
 
-    episodes = ppath.get_episode_file_names()
-    _fname = _get_target_filename(fname, "copying episode", episodes)
 
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_episode_path(_fname), ppath.get_episode_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="episode"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="episode"))
-    return True
+def copy_the_event(fname: str) -> bool:
+    return _copy_the_file('event', fname, checker.is_exists_the_event,
+            ppath.get_event_file_names, ppath.get_event_path)
 
 
 def copy_the_scene(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="scene"))
-
-    scenes = ppath.get_scene_file_names()
-    _fname = _get_target_filename(fname, "copying scene", scenes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_scene_path(_fname), ppath.get_scene_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="scene"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="scene"))
-    return True
+    return _copy_the_file('scene', fname, checker.is_exists_the_scene,
+            ppath.get_scene_file_names, ppath.get_scene_path)
 
 
 def copy_the_note(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="note"))
-
-    notes = ppath.get_note_file_names()
-    _fname = _get_target_filename(fname, "copying note", notes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_note_path(_fname), ppath.get_note_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="note"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="note"))
-    return True
+    return _copy_the_file('note', fname, checker.is_exists_the_note,
+            ppath.get_note_file_names, ppath.get_note_path)
 
 
 def copy_the_outline(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="outline"))
-
-    outlines = ppath.get_outline_file_names()
-    _fname = _get_target_filename(fname, "copying outline", outlines)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_outline_path(_fname), ppath.get_outline_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="outline"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="outline"))
-    return True
+    return _copy_the_file('outline', fname, checker.is_exists_the_outline,
+            ppath.get_outline_file_names, ppath.get_outline_path)
 
 
 def copy_the_person(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="person"))
-
-    persons = ppath.get_person_file_names()
-    _fname = _get_target_filename(fname, "copying person", persons)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_person_path(_fname), ppath.get_person_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="person"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="person"))
-    return True
+    return _copy_the_file('person', fname, checker.is_exists_the_person,
+            ppath.get_person_file_names, ppath.get_person_path)
 
 
 def copy_the_plan(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="plan"))
-
-    plans = ppath.get_plan_file_names()
-    _fname = _get_target_filename(fname, "copying plan", plans)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_plan_path(_fname), ppath.get_plan_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="plan"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="plan"))
-    return True
+    return _copy_the_file('plan', fname, checker.is_exists_the_plan,
+            ppath.get_plan_file_names, ppath.get_plan_path)
 
 
 def copy_the_stage(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="stage"))
-
-    stages = ppath.get_stage_file_names()
-    _fname = _get_target_filename(fname, "copying stage", stages)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_stage_path(_fname), ppath.get_stage_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="stage"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="stage"))
-    return True
+    return _copy_the_file('stage', fname, checker.is_exists_the_stage,
+            ppath.get_stage_file_names, ppath.get_stage_path)
 
 
 def copy_the_item(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="item"))
-
-    items = ppath.get_item_file_names()
-    _fname = _get_target_filename(fname, "copying item", items)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_item_path(_fname), ppath.get_item_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="item"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="item"))
-    return True
+    return _copy_the_file('item', fname, checker.is_exists_the_item,
+            ppath.get_item_file_names, ppath.get_item_path)
 
 
 def copy_the_word(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="word"))
-
-    words = ppath.get_word_file_names()
-    _fname = _get_target_filename(fname, "copying word", words)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_word_path(_fname), ppath.get_word_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="word"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="word"))
-    return True
+    return _copy_the_file('word', fname, checker.is_exists_the_word,
+            ppath.get_word_file_names, ppath.get_word_path)
 
 
 # - Delete
@@ -814,6 +647,34 @@ def _copyfile(fname: str, newname: str) -> bool:
     else:
         shutil.copyfile(fname, newname)
         return True
+
+
+def _copy_the_file(title: str, fname: str, check_method: Callable,
+        list_method: Callable, path_method: Callable) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert callable(list_method)
+    assert callable(path_method)
+    logger.debug(START_COPY_PROCESS_MESSAGE.format(target=title))
+
+    _fname = _get_target_filename(fname, f"copying {title}", list_method())
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not check_method(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target=title), _fname)
+        return False
+
+    _new = f"{_fname}_"
+    if not _copyfile(path_method(_fname), path_method(_new)):
+        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target=title), _fname)
+        return False
+
+    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target=title))
+    return True
 
 
 def _delete_the_file(title: str, fname: str, check_method: Callable,
