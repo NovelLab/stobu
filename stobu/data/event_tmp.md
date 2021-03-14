@@ -1,5 +1,5 @@
 ---
-title  : イベントタイトル
+name   : イベントタイトル
 outline: 概要
 stage  : 場所
 year   : 年
