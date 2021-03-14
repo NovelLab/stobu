@@ -245,231 +245,73 @@ def switch_command_to_rename(cmdargs: argparse.Namespace) -> bool:
 # Functions
 # - Add
 def add_new_chapter(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="chapter"))
-
-    _fname = _get_new_filename(fname, "new chapter")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="chapter"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_chapter_template()
-    if not write_file(ppath.get_chapter_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="chapter"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="chapter"))
-
-    return edit_the_chapter(_fname)
+    return _add_new_file('chapter', fname, checker.is_exists_the_chapter,
+            ppath.get_chapter_path,
+            TemplateCreator.get_instance().get_chapter_template,
+            edit_the_chapter)
 
 
 def add_new_episode(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="episode"))
-
-    _fname = _get_new_filename(fname, "new episode")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="episode"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_episode_template()
-    if not write_file(ppath.get_episode_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="episode"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="episode"))
-
-    return edit_the_episode(_fname)
+    return _add_new_file('episode', fname, checker.is_exists_the_episode,
+            ppath.get_episode_path,
+            TemplateCreator.get_instance().get_episode_template,
+            edit_the_episode)
 
 
 def add_new_item(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="item"))
-
-    _fname = _get_new_filename(fname, "new item")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="item"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_item_template()
-    if not write_file(ppath.get_item_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="item"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="item"))
-
-    return edit_the_item(_fname)
+    return _add_new_file('item', fname, checker.is_exists_the_item,
+            ppath.get_item_path,
+            TemplateCreator.get_instance().get_item_template,
+            edit_the_item)
 
 
 def add_new_note(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="note"))
-
-    _fname = _get_new_filename(fname, "new note")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="note"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_note_template()
-    if not write_file(ppath.get_note_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="note"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="note"))
-
-    return edit_the_note(_fname)
+    return _add_new_file('note', fname, checker.is_exists_the_note,
+            ppath.get_note_path,
+            TemplateCreator.get_instance().get_note_template,
+            edit_the_note)
 
 
 def add_new_outline(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="outline"))
-
-    _fname = _get_new_filename(fname, "new outline")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_outline(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="outline"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_outline_template()
-    if not write_file(ppath.get_outline_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="outline"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="outline"))
-    return edit_the_outline(_fname)
+    return _add_new_file('outline', fname, checker.is_exists_the_outline,
+            ppath.get_outline_path,
+            TemplateCreator.get_instance().get_outline_template,
+            edit_the_outline)
 
 
 def add_new_person(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="person"))
-
-    _fname = _get_new_filename(fname, "new person")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="person"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_person_template()
-    if not write_file(ppath.get_person_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="person"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="person"))
-
-    return edit_the_person(_fname)
+    return _add_new_file('person', fname, checker.is_exists_the_person,
+            ppath.get_person_path,
+            TemplateCreator.get_instance().get_person_template,
+            edit_the_person)
 
 
 def add_new_plan(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="plan"))
-
-    _fname = _get_new_filename(fname, "new plan")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_plan(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="plan"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_plan_template()
-    if not write_file(ppath.get_plan_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="plan"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="plan"))
-    return edit_the_plan(_fname)
+    return _add_new_file('plan', fname, checker.is_exists_the_plan,
+            ppath.get_plan_path,
+            TemplateCreator.get_instance().get_plan_template,
+            edit_the_plan)
 
 
 def add_new_scene(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="scene"))
-
-    _fname = _get_new_filename(fname, "new scene")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="scene"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_scene_template()
-    if not write_file(ppath.get_scene_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="scene"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="scene"))
-
-    return edit_the_scene(_fname)
+    return _add_new_file('scene', fname, checker.is_exists_the_scene,
+            ppath.get_scene_path,
+            TemplateCreator.get_instance().get_scene_template,
+            edit_the_scene)
 
 
 def add_new_stage(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="stage"))
-
-    _fname = _get_new_filename(fname, "new stage")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="stage"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_stage_template()
-    if not write_file(ppath.get_stage_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="stage"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="stage"))
-
-    return edit_the_stage(_fname)
+    return _add_new_file('stage', fname, checker.is_exists_the_stage,
+            ppath.get_stage_path,
+            TemplateCreator.get_instance().get_stage_template,
+            edit_the_stage)
 
 
 def add_new_word(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="word"))
-
-    _fname = _get_new_filename(fname, "new word")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="word"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_word_template()
-    if not write_file(ppath.get_word_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="word"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="word"))
-
-    return edit_the_word(_fname)
+    return _add_new_file('word', fname, checker.is_exists_the_word,
+            ppath.get_word_path,
+            TemplateCreator.get_instance().get_word_template,
+            edit_the_word)
 
 
 # - Copy
@@ -641,6 +483,36 @@ def rename_the_word(fname: str) -> bool:
 
 
 # Private Functions
+def _add_new_file(title: str, fname: str, check_method: Callable,
+        path_method: Callable, gettemp_method: Callable, edit_method) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert callable(path_method)
+    assert callable(gettemp_method)
+    assert callable(edit_method)
+    logger.debug(START_ADD_PROCESS_MESSAGE.format(target=title))
+
+    _fname = _get_new_filename(fname, f"new {title}")
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if check_method(_fname):
+        logger.error(ERR_MESSAGE_DUPLICATED.format(target=title), _fname)
+        return False
+
+    template_data = gettemp_method()
+    if not write_file(path_method(_fname), template_data):
+        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target=title), _fname)
+        return False
+
+    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target=title))
+
+    return edit_method(_fname)
+
+
 def _copyfile(fname: str, newname: str) -> bool:
     if not fname or not newname:
         return False
