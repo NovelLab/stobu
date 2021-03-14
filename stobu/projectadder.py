@@ -11,7 +11,7 @@ from typing import Callable
 # My Modules
 from stobu.projecteditor import edit_the_chapter, edit_the_episode, edit_the_scene, edit_the_note
 from stobu.projecteditor import edit_the_person, edit_the_stage, edit_the_item, edit_the_word
-from stobu.projecteditor import edit_the_plan, edit_the_outline
+from stobu.projecteditor import edit_the_plan, edit_the_outline, edit_the_event
 from stobu.templatecreator import TemplateCreator
 from stobu import todomanager as todom
 from stobu.tools import filechecker as checker
@@ -256,6 +256,13 @@ def add_new_episode(fname: str) -> bool:
             ppath.get_episode_path,
             TemplateCreator.get_instance().get_episode_template,
             edit_the_episode)
+
+
+def add_new_event(fname: str) -> bool:
+    return _add_new_file('event', fname, checker.is_exists_the_event,
+            ppath.get_event_path,
+            TemplateCreator.get_instance().get_event_template,
+            edit_the_event)
 
 
 def add_new_item(fname: str) -> bool:
