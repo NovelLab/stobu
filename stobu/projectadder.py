@@ -697,215 +697,58 @@ def copy_the_word(fname: str) -> bool:
 
 # - Delete
 def delete_the_chapter(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="chapter"))
-
-    chapters = ppath.get_chapter_file_names()
-    _fname = _get_target_filename(fname, "deleting chapter", chapters)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_chapter_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="chapter"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="chapter"))
-    return True
+    return _delete_the_file('chapter', fname, checker.is_exists_the_chapter,
+            ppath.get_chapter_file_names, ppath.get_chapter_path)
 
 
 def delete_the_episode(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="episode"))
+    return _delete_the_file('episode', fname, checker.is_exists_the_episode,
+            ppath.get_episode_file_names, ppath.get_episode_path)
 
-    episodes = ppath.get_episode_file_names()
-    _fname = _get_target_filename(fname, "deleting episode", episodes)
 
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_episode_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="episode"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="episode"))
-    return True
+def delete_the_event(fname: str) -> bool:
+    return _delete_the_file('event', fname, checker.is_exists_the_event,
+            ppath.get_event_file_names, ppath.get_event_path)
 
 
 def delete_the_scene(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="scene"))
-
-    scenes = ppath.get_scene_file_names()
-    _fname = _get_target_filename(fname, "deleting scene", scenes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_scene_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="scene"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="scene"))
-    return True
+    return _delete_the_file('scene', fname, checker.is_exists_the_scene,
+            ppath.get_scene_file_names, ppath.get_scene_path)
 
 
 def delete_the_note(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="note"))
-
-    notes = ppath.get_note_file_names()
-    _fname = _get_target_filename(fname, "deleting note", notes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_note_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="note"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="note"))
-    return True
+    return _delete_the_file('note', fname, checker.is_exists_the_note,
+            ppath.get_note_file_names, ppath.get_note_path)
 
 
 def delete_the_outline(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="outline"))
-
-    outlines = ppath.get_outline_file_names()
-    _fname = _get_target_filename(fname, "deleting outline", outlines)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_outline_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="outline"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="outline"))
-    return True
+    return _delete_the_file('outline', fname, checker.is_exists_the_outline,
+            ppath.get_outline_file_names, ppath.get_outline_path)
 
 
 def delete_the_person(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="person"))
-
-    persons = ppath.get_person_file_names()
-    _fname = _get_target_filename(fname, "deleting person", persons)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_person_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="person"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="person"))
-    return True
+    return _delete_the_file('person', fname, checker.is_exists_the_person,
+            ppath.get_person_file_names, ppath.get_person_path)
 
 
 def delete_the_plan(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="plan"))
-
-    plans = ppath.get_plan_file_names()
-    _fname = _get_target_filename(fname, "deleting plan", plans)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_plan_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="plan"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="plan"))
-    return True
+    return _delete_the_file('plan', fname, checker.is_exists_the_plan,
+            ppath.get_plan_file_names, ppath.get_plan_path)
 
 
 def delete_the_stage(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="stage"))
-
-    stages = ppath.get_stage_file_names()
-    _fname = _get_target_filename(fname, "deleting stage", stages)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_stage_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="stage"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="stage"))
-    return True
+    return _delete_the_file('stage', fname, checker.is_exists_the_stage,
+            ppath.get_stage_file_names, ppath.get_stage_path)
 
 
 def delete_the_item(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="item"))
-
-    items = ppath.get_item_file_names()
-    _fname = _get_target_filename(fname, "deleting item", items)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_item_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="item"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="item"))
-    return True
+    return _delete_the_file('item', fname, checker.is_exists_the_item,
+            ppath.get_item_file_names, ppath.get_item_path)
 
 
 def delete_the_word(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="word"))
-
-    words = ppath.get_word_file_names()
-    _fname = _get_target_filename(fname, "deleting word", words)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_word_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="word"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="word"))
-    return True
+    return _delete_the_file('word', fname, checker.is_exists_the_word,
+            ppath.get_word_file_names, ppath.get_word_path)
 
 
 # - Rename
@@ -917,6 +760,11 @@ def rename_the_chapter(fname: str) -> bool:
 def rename_the_episode(fname: str) -> bool:
     return _rename_the_file('episode', fname, checker.is_exists_the_episode,
             ppath.get_episode_file_names, ppath.get_episode_path)
+
+
+def rename_the_event(fname: str) -> bool:
+    return _rename_the_file('event', fname, checker.is_exists_the_event,
+            ppath.get_event_file_names, ppath.get_event_path)
 
 
 def rename_the_scene(fname: str) -> bool:
@@ -968,6 +816,33 @@ def _copyfile(fname: str, newname: str) -> bool:
         return True
 
 
+def _delete_the_file(title: str, fname: str, check_method: Callable,
+        list_method: Callable, path_method: Callable) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert callable(list_method)
+    assert callable(path_method)
+    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target=title))
+
+    _fname = _get_target_filename(fname, f"deleting {title}", list_method())
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not check_method(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target=title), _fname)
+        return False
+
+    if not _move_to_trash(path_method(_fname)):
+        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target=title), _fname)
+        return False
+
+    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target=title))
+    return True
+
+
 def _get_new_filename(fname: str, msg: str) -> str:
     assert isinstance(msg, str)
 
@@ -1016,6 +891,11 @@ def _renamefile(fname: str, newfname: str) -> bool:
 
 def _rename_the_file(title: str, fname: str, check_method: Callable,
         list_method: Callable, path_method: Callable) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert callable(list_method)
+    assert callable(path_method)
     logger.debug(START_RENAME_PROCESS_MESSAGE.format(target=title))
 
     _fname = _get_target_filename(fname, f"renaming {title}", list_method())
