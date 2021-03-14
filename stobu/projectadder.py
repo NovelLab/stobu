@@ -5,12 +5,13 @@
 import argparse
 import os
 import shutil
+from typing import Callable
 
 
 # My Modules
 from stobu.projecteditor import edit_the_chapter, edit_the_episode, edit_the_scene, edit_the_note
 from stobu.projecteditor import edit_the_person, edit_the_stage, edit_the_item, edit_the_word
-from stobu.projecteditor import edit_the_plan, edit_the_outline
+from stobu.projecteditor import edit_the_plan, edit_the_outline, edit_the_event
 from stobu.templatecreator import TemplateCreator
 from stobu import todomanager as todom
 from stobu.tools import filechecker as checker
@@ -110,6 +111,8 @@ def switch_command_to_add(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = add_new_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = add_new_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = add_new_event(cmdargs.arg1)
     else:
         logger.error("Unknown add command argument!: %s", cmdargs.arg0)
         return False
@@ -147,6 +150,8 @@ def switch_command_to_copy(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = copy_the_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = copy_the_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = copy_the_event(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -184,6 +189,8 @@ def switch_command_to_delete(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = delete_the_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = delete_the_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = delete_the_event(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -221,6 +228,8 @@ def switch_command_to_rename(cmdargs: argparse.Namespace) -> bool:
         is_succeeded = rename_the_plan(cmdargs.arg1)
     elif cmdargs.arg0 in ('o', 'outline'):
         is_succeeded = rename_the_outline(cmdargs.arg1)
+    elif cmdargs.arg0 in ('v', 'event'):
+        is_succeeded = rename_the_event(cmdargs.arg1)
     else:
         logger.error("Unknown delete command argument!: %s", cmdargs.arg0)
         return False
@@ -236,947 +245,342 @@ def switch_command_to_rename(cmdargs: argparse.Namespace) -> bool:
 # Functions
 # - Add
 def add_new_chapter(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="chapter"))
-
-    _fname = _get_new_filename(fname, "new chapter")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="chapter"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_chapter_template()
-    if not write_file(ppath.get_chapter_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="chapter"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="chapter"))
-
-    return edit_the_chapter(_fname)
+    return _add_new_file('chapter', fname, checker.is_exists_the_chapter,
+            ppath.get_chapter_path,
+            TemplateCreator.get_instance().get_chapter_template,
+            edit_the_chapter)
 
 
 def add_new_episode(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="episode"))
+    return _add_new_file('episode', fname, checker.is_exists_the_episode,
+            ppath.get_episode_path,
+            TemplateCreator.get_instance().get_episode_template,
+            edit_the_episode)
 
-    _fname = _get_new_filename(fname, "new episode")
 
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="episode"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_episode_template()
-    if not write_file(ppath.get_episode_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="episode"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="episode"))
-
-    return edit_the_episode(_fname)
+def add_new_event(fname: str) -> bool:
+    return _add_new_file('event', fname, checker.is_exists_the_event,
+            ppath.get_event_path,
+            TemplateCreator.get_instance().get_event_template,
+            edit_the_event)
 
 
 def add_new_item(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="item"))
-
-    _fname = _get_new_filename(fname, "new item")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="item"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_item_template()
-    if not write_file(ppath.get_item_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="item"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="item"))
-
-    return edit_the_item(_fname)
+    return _add_new_file('item', fname, checker.is_exists_the_item,
+            ppath.get_item_path,
+            TemplateCreator.get_instance().get_item_template,
+            edit_the_item)
 
 
 def add_new_note(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="note"))
-
-    _fname = _get_new_filename(fname, "new note")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="note"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_note_template()
-    if not write_file(ppath.get_note_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="note"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="note"))
-
-    return edit_the_note(_fname)
+    return _add_new_file('note', fname, checker.is_exists_the_note,
+            ppath.get_note_path,
+            TemplateCreator.get_instance().get_note_template,
+            edit_the_note)
 
 
 def add_new_outline(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="outline"))
-
-    _fname = _get_new_filename(fname, "new outline")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_outline(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="outline"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_outline_template()
-    if not write_file(ppath.get_outline_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="outline"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="outline"))
-    return edit_the_outline(_fname)
+    return _add_new_file('outline', fname, checker.is_exists_the_outline,
+            ppath.get_outline_path,
+            TemplateCreator.get_instance().get_outline_template,
+            edit_the_outline)
 
 
 def add_new_person(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="person"))
-
-    _fname = _get_new_filename(fname, "new person")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="person"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_person_template()
-    if not write_file(ppath.get_person_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="person"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="person"))
-
-    return edit_the_person(_fname)
+    return _add_new_file('person', fname, checker.is_exists_the_person,
+            ppath.get_person_path,
+            TemplateCreator.get_instance().get_person_template,
+            edit_the_person)
 
 
 def add_new_plan(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="plan"))
-
-    _fname = _get_new_filename(fname, "new plan")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_plan(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="plan"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_plan_template()
-    if not write_file(ppath.get_plan_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="plan"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="plan"))
-    return edit_the_plan(_fname)
+    return _add_new_file('plan', fname, checker.is_exists_the_plan,
+            ppath.get_plan_path,
+            TemplateCreator.get_instance().get_plan_template,
+            edit_the_plan)
 
 
 def add_new_scene(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="scene"))
-
-    _fname = _get_new_filename(fname, "new scene")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="scene"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_scene_template()
-    if not write_file(ppath.get_scene_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="scene"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="scene"))
-
-    return edit_the_scene(_fname)
+    return _add_new_file('scene', fname, checker.is_exists_the_scene,
+            ppath.get_scene_path,
+            TemplateCreator.get_instance().get_scene_template,
+            edit_the_scene)
 
 
 def add_new_stage(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="stage"))
-
-    _fname = _get_new_filename(fname, "new stage")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="stage"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_stage_template()
-    if not write_file(ppath.get_stage_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="stage"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="stage"))
-
-    return edit_the_stage(_fname)
+    return _add_new_file('stage', fname, checker.is_exists_the_stage,
+            ppath.get_stage_path,
+            TemplateCreator.get_instance().get_stage_template,
+            edit_the_stage)
 
 
 def add_new_word(fname: str) -> bool:
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target="word"))
-
-    _fname = _get_new_filename(fname, "new word")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="word"), _fname)
-        return False
-
-    template_data = TemplateCreator.get_instance().get_word_template()
-    if not write_file(ppath.get_word_path(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target="word"), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target="word"))
-
-    return edit_the_word(_fname)
+    return _add_new_file('word', fname, checker.is_exists_the_word,
+            ppath.get_word_path,
+            TemplateCreator.get_instance().get_word_template,
+            edit_the_word)
 
 
 # - Copy
 def copy_the_chapter(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="chapter"))
-
-    chapters = ppath.get_chapter_file_names()
-    _fname = _get_target_filename(fname, "copying chapter", chapters)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_chapter_path(_fname), ppath.get_chapter_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="chapter"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="chapter"))
-    return True
+    return _copy_the_file('chapter', fname, checker.is_exists_the_chapter,
+            ppath.get_chapter_file_names, ppath.get_chapter_path)
 
 
 def copy_the_episode(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="episode"))
+    return _copy_the_file('episode', fname, checker.is_exists_the_episode,
+            ppath.get_episode_file_names, ppath.get_episode_path)
 
-    episodes = ppath.get_episode_file_names()
-    _fname = _get_target_filename(fname, "copying episode", episodes)
 
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_episode_path(_fname), ppath.get_episode_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="episode"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="episode"))
-    return True
+def copy_the_event(fname: str) -> bool:
+    return _copy_the_file('event', fname, checker.is_exists_the_event,
+            ppath.get_event_file_names, ppath.get_event_path)
 
 
 def copy_the_scene(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="scene"))
-
-    scenes = ppath.get_scene_file_names()
-    _fname = _get_target_filename(fname, "copying scene", scenes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_scene_path(_fname), ppath.get_scene_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="scene"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="scene"))
-    return True
+    return _copy_the_file('scene', fname, checker.is_exists_the_scene,
+            ppath.get_scene_file_names, ppath.get_scene_path)
 
 
 def copy_the_note(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="note"))
-
-    notes = ppath.get_note_file_names()
-    _fname = _get_target_filename(fname, "copying note", notes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_note_path(_fname), ppath.get_note_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="note"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="note"))
-    return True
+    return _copy_the_file('note', fname, checker.is_exists_the_note,
+            ppath.get_note_file_names, ppath.get_note_path)
 
 
 def copy_the_outline(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="outline"))
-
-    outlines = ppath.get_outline_file_names()
-    _fname = _get_target_filename(fname, "copying outline", outlines)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_outline_path(_fname), ppath.get_outline_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="outline"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="outline"))
-    return True
+    return _copy_the_file('outline', fname, checker.is_exists_the_outline,
+            ppath.get_outline_file_names, ppath.get_outline_path)
 
 
 def copy_the_person(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="person"))
-
-    persons = ppath.get_person_file_names()
-    _fname = _get_target_filename(fname, "copying person", persons)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_person_path(_fname), ppath.get_person_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="person"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="person"))
-    return True
+    return _copy_the_file('person', fname, checker.is_exists_the_person,
+            ppath.get_person_file_names, ppath.get_person_path)
 
 
 def copy_the_plan(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="plan"))
-
-    plans = ppath.get_plan_file_names()
-    _fname = _get_target_filename(fname, "copying plan", plans)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_plan_path(_fname), ppath.get_plan_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="plan"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="plan"))
-    return True
+    return _copy_the_file('plan', fname, checker.is_exists_the_plan,
+            ppath.get_plan_file_names, ppath.get_plan_path)
 
 
 def copy_the_stage(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="stage"))
-
-    stages = ppath.get_stage_file_names()
-    _fname = _get_target_filename(fname, "copying stage", stages)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_stage_path(_fname), ppath.get_stage_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="stage"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="stage"))
-    return True
+    return _copy_the_file('stage', fname, checker.is_exists_the_stage,
+            ppath.get_stage_file_names, ppath.get_stage_path)
 
 
 def copy_the_item(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="item"))
-
-    items = ppath.get_item_file_names()
-    _fname = _get_target_filename(fname, "copying item", items)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_item_path(_fname), ppath.get_item_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="item"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="item"))
-    return True
+    return _copy_the_file('item', fname, checker.is_exists_the_item,
+            ppath.get_item_file_names, ppath.get_item_path)
 
 
 def copy_the_word(fname: str) -> bool:
-    logger.debug(START_COPY_PROCESS_MESSAGE.format(target="word"))
-
-    words = ppath.get_word_file_names()
-    _fname = _get_target_filename(fname, "copying word", words)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
-        return False
-
-    _new = f"{_fname}_"
-    if not _copyfile(ppath.get_word_path(_fname), ppath.get_word_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target="word"), _fname)
-        return False
-
-    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target="word"))
-    return True
+    return _copy_the_file('word', fname, checker.is_exists_the_word,
+            ppath.get_word_file_names, ppath.get_word_path)
 
 
 # - Delete
 def delete_the_chapter(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="chapter"))
-
-    chapters = ppath.get_chapter_file_names()
-    _fname = _get_target_filename(fname, "deleting chapter", chapters)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_chapter_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="chapter"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="chapter"))
-    return True
+    return _delete_the_file('chapter', fname, checker.is_exists_the_chapter,
+            ppath.get_chapter_file_names, ppath.get_chapter_path)
 
 
 def delete_the_episode(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="episode"))
+    return _delete_the_file('episode', fname, checker.is_exists_the_episode,
+            ppath.get_episode_file_names, ppath.get_episode_path)
 
-    episodes = ppath.get_episode_file_names()
-    _fname = _get_target_filename(fname, "deleting episode", episodes)
 
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_episode_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="episode"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="episode"))
-    return True
+def delete_the_event(fname: str) -> bool:
+    return _delete_the_file('event', fname, checker.is_exists_the_event,
+            ppath.get_event_file_names, ppath.get_event_path)
 
 
 def delete_the_scene(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="scene"))
-
-    scenes = ppath.get_scene_file_names()
-    _fname = _get_target_filename(fname, "deleting scene", scenes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_scene_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="scene"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="scene"))
-    return True
+    return _delete_the_file('scene', fname, checker.is_exists_the_scene,
+            ppath.get_scene_file_names, ppath.get_scene_path)
 
 
 def delete_the_note(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="note"))
-
-    notes = ppath.get_note_file_names()
-    _fname = _get_target_filename(fname, "deleting note", notes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_note_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="note"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="note"))
-    return True
+    return _delete_the_file('note', fname, checker.is_exists_the_note,
+            ppath.get_note_file_names, ppath.get_note_path)
 
 
 def delete_the_outline(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="outline"))
-
-    outlines = ppath.get_outline_file_names()
-    _fname = _get_target_filename(fname, "deleting outline", outlines)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_outline_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="outline"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="outline"))
-    return True
+    return _delete_the_file('outline', fname, checker.is_exists_the_outline,
+            ppath.get_outline_file_names, ppath.get_outline_path)
 
 
 def delete_the_person(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="person"))
-
-    persons = ppath.get_person_file_names()
-    _fname = _get_target_filename(fname, "deleting person", persons)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_person_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="person"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="person"))
-    return True
+    return _delete_the_file('person', fname, checker.is_exists_the_person,
+            ppath.get_person_file_names, ppath.get_person_path)
 
 
 def delete_the_plan(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="plan"))
-
-    plans = ppath.get_plan_file_names()
-    _fname = _get_target_filename(fname, "deleting plan", plans)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_plan_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="plan"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="plan"))
-    return True
+    return _delete_the_file('plan', fname, checker.is_exists_the_plan,
+            ppath.get_plan_file_names, ppath.get_plan_path)
 
 
 def delete_the_stage(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="stage"))
-
-    stages = ppath.get_stage_file_names()
-    _fname = _get_target_filename(fname, "deleting stage", stages)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_stage_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="stage"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="stage"))
-    return True
+    return _delete_the_file('stage', fname, checker.is_exists_the_stage,
+            ppath.get_stage_file_names, ppath.get_stage_path)
 
 
 def delete_the_item(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="item"))
-
-    items = ppath.get_item_file_names()
-    _fname = _get_target_filename(fname, "deleting item", items)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_item_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="item"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="item"))
-    return True
+    return _delete_the_file('item', fname, checker.is_exists_the_item,
+            ppath.get_item_file_names, ppath.get_item_path)
 
 
 def delete_the_word(fname: str) -> bool:
-    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target="word"))
-
-    words = ppath.get_word_file_names()
-    _fname = _get_target_filename(fname, "deleting word", words)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
-        return False
-
-    if not _move_to_trash(ppath.get_word_path(_fname)):
-        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target="word"), _fname)
-        return False
-
-    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target="word"))
-    return True
+    return _delete_the_file('word', fname, checker.is_exists_the_word,
+            ppath.get_word_file_names, ppath.get_word_path)
 
 
 # - Rename
 def rename_the_chapter(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="chapter"))
-
-    chapters = ppath.get_chapter_file_names()
-    _fname = _get_target_filename(fname, "renaming chapter", chapters)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_chapter(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new chapter")
-    if checker.is_exists_the_chapter(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="chapter"), _new)
-        return False
-
-    if not _renamefile(ppath.get_chapter_path(_fname), ppath.get_chapter_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="chapter"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="chapter"))
-    return True
+    return _rename_the_file('chapter', fname, checker.is_exists_the_chapter,
+            ppath.get_chapter_file_names, ppath.get_chapter_path)
 
 
 def rename_the_episode(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="episode"))
+    return _rename_the_file('episode', fname, checker.is_exists_the_episode,
+            ppath.get_episode_file_names, ppath.get_episode_path)
 
-    episodes = ppath.get_episode_file_names()
-    _fname = _get_target_filename(fname, "renaming episode", episodes)
 
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_episode(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new episode")
-    if checker.is_exists_the_episode(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="episode"), _new)
-        return False
-
-    if not _renamefile(ppath.get_episode_path(_fname), ppath.get_episode_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="episode"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="episode"))
-    return True
+def rename_the_event(fname: str) -> bool:
+    return _rename_the_file('event', fname, checker.is_exists_the_event,
+            ppath.get_event_file_names, ppath.get_event_path)
 
 
 def rename_the_scene(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="scene"))
-
-    scenes = ppath.get_scene_file_names()
-    _fname = _get_target_filename(fname, "renaming scene", scenes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_scene(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new scene")
-    if checker.is_exists_the_scene(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="scene"), _new)
-        return False
-
-    if not _renamefile(ppath.get_scene_path(_fname), ppath.get_scene_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="scene"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="scene"))
-    return True
+    return _rename_the_file('scene', fname, checker.is_exists_the_scene,
+            ppath.get_scene_file_names, ppath.get_scene_path)
 
 
 def rename_the_note(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="note"))
-
-    notes = ppath.get_note_file_names()
-    _fname = _get_target_filename(fname, "renaming note", notes)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_note(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="note"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new note")
-    if checker.is_exists_the_note(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="note"), _new)
-        return False
-
-    if not _renamefile(ppath.get_note_path(_fname), ppath.get_note_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="note"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="note"))
-    return True
+    return _rename_the_file('note', fname, checker.is_exists_the_note,
+            ppath.get_note_file_names, ppath.get_note_path)
 
 
 def rename_the_outline(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="outline"))
-
-    outlines = ppath.get_outline_file_names()
-    _fname = _get_target_filename(fname, "renaming outline", outlines)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_outline(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="outline"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new outline")
-    if checker.is_exists_the_outline(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="outline"), _new)
-        return False
-
-    if not _renamefile(ppath.get_outline_path(_fname), ppath.get_outline_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="outline"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="outline"))
-    return True
+    return _rename_the_file('outline', fname, checker.is_exists_the_outline,
+            ppath.get_outline_file_names, ppath.get_outline_path)
 
 
 def rename_the_person(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="person"))
-
-    persons = ppath.get_person_file_names()
-    _fname = _get_target_filename(fname, "renaming person", persons)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_person(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="person"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new person")
-    if checker.is_exists_the_person(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="person"), _new)
-        return False
-
-    if not _renamefile(ppath.get_person_path(_fname), ppath.get_person_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="person"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="person"))
-    return True
+    return _rename_the_file('person', fname, checker.is_exists_the_person,
+            ppath.get_person_file_names, ppath.get_person_path)
 
 
 def rename_the_plan(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="plan"))
-
-    plans = ppath.get_plan_file_names()
-    _fname = _get_target_filename(fname, "renaming plan", plans)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_plan(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="plan"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new plan")
-    if checker.is_exists_the_plan(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="plan"), _fname)
-        return False
-
-    if not _renamefile(ppath.get_plan_path(_fname), ppath.get_plan_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="plan"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="plan"))
-    return True
+    return _rename_the_file('plan', fname, checker.is_exists_the_plan,
+            ppath.get_plan_file_names, ppath.get_plan_path)
 
 
 def rename_the_stage(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="stage"))
-
-    stages = ppath.get_stage_file_names()
-    _fname = _get_target_filename(fname, "renaming stage", stages)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_stage(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="stage"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new stage")
-    if checker.is_exists_the_stage(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="stage"), _new)
-        return False
-
-    if not _renamefile(ppath.get_stage_path(_fname), ppath.get_stage_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="stage"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="stage"))
-    return True
+    return _rename_the_file('stage', fname, checker.is_exists_the_stage,
+            ppath.get_stage_file_names, ppath.get_stage_path)
 
 
 def rename_the_item(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="item"))
-
-    items = ppath.get_item_file_names()
-    _fname = _get_target_filename(fname, "renaming item", items)
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if not checker.is_exists_the_item(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="item"), _fname)
-        return False
-
-    _new = _get_new_filename("", "new item")
-    if checker.is_exists_the_item(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="item"), _new)
-        return False
-
-    if not _renamefile(ppath.get_item_path(_fname), ppath.get_item_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="item"), _fname, _new)
-        return False
-
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="item"))
-    return True
+    return _rename_the_file('item', fname, checker.is_exists_the_item,
+            ppath.get_item_file_names, ppath.get_item_path)
 
 
 def rename_the_word(fname: str) -> bool:
-    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target="word"))
+    return _rename_the_file('word', fname, checker.is_exists_the_word,
+            ppath.get_word_file_names, ppath.get_word_path)
 
-    words = ppath.get_word_file_names()
-    _fname = _get_target_filename(fname, "renaming word", words)
+
+# Private Functions
+def _add_new_file(title: str, fname: str, check_method: Callable,
+        path_method: Callable, gettemp_method: Callable, edit_method) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert callable(path_method)
+    assert callable(gettemp_method)
+    assert callable(edit_method)
+    logger.debug(START_ADD_PROCESS_MESSAGE.format(target=title))
+
+    _fname = _get_new_filename(fname, f"new {title}")
 
     if checker.is_invalid_filename(_fname):
         logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
         return False
 
-    if not checker.is_exists_the_word(_fname):
-        logger.error(ERR_MESSAGE_MISSING_FILE.format(target="word"), _fname)
+    if check_method(_fname):
+        logger.error(ERR_MESSAGE_DUPLICATED.format(target=title), _fname)
         return False
 
-    _new = _get_new_filename("", "new word")
-    if checker.is_exists_the_word(_new):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target="word"), _new)
+    template_data = gettemp_method()
+    if not write_file(path_method(_fname), template_data):
+        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target=title), _fname)
         return False
 
-    if not _renamefile(ppath.get_word_path(_fname), ppath.get_word_path(_new)):
-        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target="word"), _fname, _new)
-        return False
+    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target=title))
 
-    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target="word"))
-    return True
+    return edit_method(_fname)
 
 
-# Private Functions
 def _copyfile(fname: str, newname: str) -> bool:
     if not fname or not newname:
         return False
     else:
         shutil.copyfile(fname, newname)
         return True
+
+
+def _copy_the_file(title: str, fname: str, check_method: Callable,
+        list_method: Callable, path_method: Callable) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert callable(list_method)
+    assert callable(path_method)
+    logger.debug(START_COPY_PROCESS_MESSAGE.format(target=title))
+
+    _fname = _get_target_filename(fname, f"copying {title}", list_method())
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not check_method(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target=title), _fname)
+        return False
+
+    _new = f"{_fname}_"
+    if not _copyfile(path_method(_fname), path_method(_new)):
+        logger.error(ERR_MESSAGE_CANNOT_COPY.format(target=title), _fname)
+        return False
+
+    logger.debug(FINISH_COPY_PROCESS_MESSAGE.format(target=title))
+    return True
+
+
+def _delete_the_file(title: str, fname: str, check_method: Callable,
+        list_method: Callable, path_method: Callable) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert callable(list_method)
+    assert callable(path_method)
+    logger.debug(START_DELETE_PROCESS_MESSAGE.format(target=title))
+
+    _fname = _get_target_filename(fname, f"deleting {title}", list_method())
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not check_method(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target=title), _fname)
+        return False
+
+    if not _move_to_trash(path_method(_fname)):
+        logger.error(ERR_MESSAGE_CANNOT_REMOVE.format(target=title), _fname)
+        return False
+
+    logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target=title))
+    return True
 
 
 def _get_new_filename(fname: str, msg: str) -> str:
@@ -1223,3 +627,37 @@ def _renamefile(fname: str, newfname: str) -> bool:
         return True
     else:
         return False
+
+
+def _rename_the_file(title: str, fname: str, check_method: Callable,
+        list_method: Callable, path_method: Callable) -> bool:
+    assert isinstance(title, str)
+    assert isinstance(fname, str) if fname else True
+    assert callable(check_method)
+    assert callable(list_method)
+    assert callable(path_method)
+    logger.debug(START_RENAME_PROCESS_MESSAGE.format(target=title))
+
+    _fname = _get_target_filename(fname, f"renaming {title}", list_method())
+
+    if checker.is_invalid_filename(_fname):
+        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
+        return False
+
+    if not check_method(_fname):
+        logger.error(ERR_MESSAGE_MISSING_FILE.format(target=title), _fname)
+        return False
+
+    _new = _get_new_filename("", f"new {title}")
+    if check_method(_new):
+        logger.error(ERR_MESSAGE_DUPLICATED.format(target=title), _new)
+        return False
+
+    if not _renamefile(path_method(_fname), path_method(_new)):
+        logger.error(ERR_MESSAGE_CANNOT_RENAME.format(target=title), _fname, _new)
+        return False
+
+    logger.debug(FINISH_RENAME_PROCESS_MESSAGE.format(target=title))
+    return True
+
+

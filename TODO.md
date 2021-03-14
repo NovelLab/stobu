@@ -18,6 +18,10 @@ ToDo List
 * Asset: install template e.g. school set, office set and more.
 * Ask sub command when empty input.
 * Show selected chapter, episode and more when push.
+* Story graph feature.
+* Todo marking: continue to work from the mark point
+* Add character's attributes in scene
+* Event table
 
 ## Bugs
 

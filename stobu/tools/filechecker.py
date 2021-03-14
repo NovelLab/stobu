@@ -9,20 +9,23 @@ import os
 # My Modules
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
 from stobu.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
-from stobu.settings import PLAN_EXT, OUTLINE_EXT
+from stobu.settings import PLAN_EXT, OUTLINE_EXT, EVENT_EXT
 from stobu.tools import pathmanager as ppath
 
 
 __all__ = (
         'exists_any_chapter', 'exists_any_episode', 'exists_any_scene', 'exists_any_note',
         'exists_any_person', 'exists_any_stage', 'exists_any_item', 'exists_any_word',
-        'exists_any_plan', 'exists_any_outline',
+        'exists_any_plan', 'exists_any_outline', 'exists_any_event',
         'exists_project_file',
         'exists_book_file',
         'exists_order_file',
         'exists_rubi_file',
         'exists_todo_file',
         'is_invalid_filename',
+        'is_exists_the_chapter', 'is_exists_the_episode', 'is_exists_the_scene', 'is_exists_the_note',
+        'is_exists_the_person', 'is_exists_the_stage', 'is_exists_the_item', 'is_exists_the_word',
+        'is_exists_the_plan', 'is_exists_the_outline', 'is_exists_the_event',
         )
 
 
@@ -35,6 +38,11 @@ def exists_any_chapter() -> bool:
 def exists_any_episode() -> bool:
     """Check if any episode file exists."""
     return _exists_any_file(ppath.get_episode_dir_path(), EPISODE_EXT)
+
+
+def exists_any_event() -> bool:
+    """Check if any event file exists."""
+    return _exists_any_file(ppath.get_event_dir_path(), EVENT_EXT)
 
 
 def exists_any_item() -> bool:
@@ -110,6 +118,11 @@ def is_exists_the_chapter(fname: str) -> bool:
 def is_exists_the_episode(fname: str) -> bool:
     """Check if the episode file exists."""
     return _is_exists_file(ppath.get_episode_path(fname))
+
+
+def is_exists_the_event(fname: str) -> bool:
+    """Check if the event file exists."""
+    return _is_exists_file(ppath.get_event_path(fname))
 
 
 def is_exists_the_item(fname: str) -> bool:
