@@ -19,7 +19,14 @@ detail:
   weight: 50
   appearance:
     hair: 髪
+    hcolor: 髪色
     face: 顔面
+    brows: 眉毛
+    eyes: 目
+    nose: 鼻
+    mouth: 口
+    skin: 肌
+    style: 体型・体格
     note: 備考
   family: 独身
   parents: 両親
