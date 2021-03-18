@@ -1,7 +1,7 @@
 ---
-title: 章タイトル
-outline: 章の概要
+title   : 章タイトル
+outline : 章の概要
 {PLOT}
 keywords: []
-note: 備考
+note    : 備考
 ---

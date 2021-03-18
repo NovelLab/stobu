@@ -22,6 +22,7 @@ ToDo List
 * Todo marking: continue to work from the mark point
 * Add character's attributes in scene
 * Event table
+* Foreshadow and payoff feature.
 
 ## Bugs
 
