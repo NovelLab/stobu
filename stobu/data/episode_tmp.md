@@ -1,7 +1,7 @@
 ---
-title: 小話タイトル
-outline: エピソード概要
+title   : 小話タイトル
+outline : エピソード概要
 {PLOT}
 keywords: []
-note: 備考
+note    : 備考
 ---

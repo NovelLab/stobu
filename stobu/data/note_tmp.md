@@ -1,6 +1,6 @@
 ---
-title: タイトル
+title   : タイトル
 category: 一般
 keywords: []
-note: 備考
+note    : 備考
 ---
