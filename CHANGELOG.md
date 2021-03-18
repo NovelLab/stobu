@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - plan
 - outline
 - event
+- person detail
 ### Fixed
 - nothing output_part bug
 - no name file added
