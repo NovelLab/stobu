@@ -5,3 +5,10 @@ info    : 紹介
 keywords: []
 note    : 備考
 ---
+
+---
+detail:
+  appearance: 見た目
+  size: サイズ
+  note: 備考
+---
