@@ -20,6 +20,7 @@ detail:
   appearance:
     hair: 髪
     face: 顔面
+    note: 備考
   family: 独身
   parents: 両親
 ---
