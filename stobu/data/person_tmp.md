@@ -28,7 +28,8 @@ detail:
     skin: 肌
     style: 体型・体格
     note: 備考
-  family: 独身
+  family:
+    - 独身
   parents:
     - 父親
     - 母親
