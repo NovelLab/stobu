@@ -1,7 +1,7 @@
 ---
-name: 名前
+name    : 名前
 category: 一般
-info: 紹介
+info    : 紹介
 keywords: []
-note: 備考
+note    : 備考
 ---

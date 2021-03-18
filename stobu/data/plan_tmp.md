@@ -1,5 +1,5 @@
 ---
-title: タイトル
+title   : タイトル
 keywords: []
-note: 備考
+note    : 備考
 ---

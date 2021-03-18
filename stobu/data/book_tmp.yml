@@ -1,19 +1,19 @@
-title: ストーリータイトル
-copy: キャッチコピー
-theme: テーマ
-genre: ジャンル
-target: 対象
-size: 何文字想定
-columns: 20
-rows: 20
-contest: コンテスト情報
-caution: 注意書き
-sites:
+title   : ストーリータイトル
+copy    : キャッチコピー
+theme   : テーマ
+genre   : ジャンル
+target  : 対象
+size    : 何文字想定
+columns : 20
+rows    : 20
+contest : コンテスト情報
+caution : 注意書き
+sites   :
   - 小説家になろう
-tags:
+tags    :
   - novel
-version: '0.0.0'
+version : '0.0.0'
 released: 2021/01/01
-outline: 概要
+outline : 概要
 {PLOT}
-note: 備考
+note    : 備考

@@ -1,4 +1,4 @@
 storybuilder:
-  verison: {VERSION}
+  verison  : {VERSION}
   copyright: "{COPYRIGHT}"
-  editor: "{EDITOR}"
+  editor   : "{EDITOR}"
