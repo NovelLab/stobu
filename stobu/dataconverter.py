@@ -133,8 +133,6 @@ def conv_text_in_action_data_by_tags(action_data: ActionData,
         if record.type == 'action':
             if record.subject in callings:
                 calling = callings[record.subject]
-                calling['S'] = f"{record.subject}"
-                calling['M'] = calling['me'] if 'me' in calling else '私'
                 _calling = dict_sorted(calling, True)
                 tmp.append(ActionRecord(
                     record.type,
@@ -180,6 +178,26 @@ def conv_to_story_record(ordername: str, orderdata: dict) -> StoryRecord:
             _get_category(ordername),
             basename_of(ordername),
             orderdata)
+
+
+def replace_text_tag(text: str, tags: dict, prefix: str = '$') -> str:
+    assert isinstance(text, str)
+    assert isinstance(tags, dict)
+    assert isinstance(prefix, str)
+
+    tmp = text
+
+    for key, val in tags.items():
+        if prefix in tmp:
+            tag_key = f"{prefix}{key}"
+            if tag_key in tmp:
+                if prefix:
+                    tmp = re.sub(r'\{}{}'.format(prefix, key),
+                            f'{prefix}{val}', tmp)
+                else:
+                    tmp = re.sub(key, val, tmp)
+    return tmp
+
 
 
 def rid_null_status(text: str) -> str:

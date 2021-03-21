@@ -28,7 +28,11 @@ class NameTagDB(object):
 
         for fname in persons:
             data = read_file_as_auto(fname)
-            tmp[basename_of(fname)] = data['calling']
+            name = data['name']
+            calling = data['calling']
+            calling['S'] = name
+            calling['M'] = calling['me'] if 'me' in calling else '私'
+            tmp[basename_of(fname)] = calling
         return tmp
 
     # methods
