@@ -15,7 +15,8 @@ ToDo List
 * Update file and systems by version
 * Story Event manager: management date event etc
 * Show a guideline of size to culc from master size.
-* Asset: install template e.g. school set, office set and more.
+* Asset1: install template e.g. school set, office set and more.
+* Asset2: convert tag name from templates
 * Ask sub command when empty input.
 * Show selected chapter, episode and more when push.
 * Story graph feature.
@@ -27,3 +28,4 @@ ToDo List
 ## Bugs
 
 * Show outline invalid indent when multi-line strings
+* Cannot Move to trashbox when same name already exists

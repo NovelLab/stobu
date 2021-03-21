@@ -6,16 +6,16 @@ import os
 
 
 # My Modules
-from stobu.projectadder import switch_command_to_add
-from stobu.projectadder import switch_command_to_copy
-from stobu.projectadder import switch_command_to_delete
-from stobu.projectadder import switch_command_to_rename
-from stobu.projectbuilder import switch_command_to_build
-from stobu.projecteditor import switch_command_to_edit, switch_command_to_set_editor
-from stobu.projectinitializer import init_project
-from stobu.projectpusher import switch_command_to_push
-from stobu.projectpusher import switch_command_to_reject
-from stobu.projectviewer import switch_command_to_list
+from stobu.commands.projectadder import switch_command_to_add
+from stobu.commands.projectadder import switch_command_to_copy
+from stobu.commands.projectadder import switch_command_to_delete
+from stobu.commands.projectadder import switch_command_to_rename
+from stobu.commands.projectbuilder import switch_command_to_build
+from stobu.commands.projecteditor import switch_command_to_edit, switch_command_to_set_editor
+from stobu.commands.projectinitializer import init_project
+from stobu.commands.projectpusher import switch_command_to_push
+from stobu.commands.projectpusher import switch_command_to_reject
+from stobu.commands.projectviewer import switch_command_to_list
 from stobu.tools.commandlineparser import get_project_commands
 from stobu.tools.filechecker import exists_project_file
 from stobu.util.log import logger

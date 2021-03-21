@@ -13,6 +13,7 @@ from stobu.tools import pathmanager as ppath
 from stobu.util import assertion
 from stobu.util.fileio import read_file_as_auto, write_file
 from stobu.util.filepath import basename_of, get_input_filename
+from stobu.util.lists import difference_list_from
 from stobu.util.log import logger
 
 
@@ -114,7 +115,9 @@ def push_the_chapter(fname: str) -> bool:
         return False
 
     chapters = ppath.get_chapter_file_names()
-    _fname = fname if fname else _get_target_filename(fname, "pushing chapter", chapters)
+    ordered_chaps = _get_chapter_names_from_order(order_data)
+    _fname = fname if fname else _get_target_filename(fname, "pushing chapter",
+            sorted(difference_list_from(chapters, ordered_chaps)))
 
     if not checker.is_exists_the_chapter(_fname):
         logger.debug(ERR_MESSAGE_MISSING_FILE.format(target="chapter"), _fname)
@@ -146,7 +149,9 @@ def push_the_episode(fname: str) -> bool:
         return False
 
     episodes = ppath.get_episode_file_names()
-    _fname = fname if fname else _get_target_filename(fname, "pushing episode", episodes)
+    ordered_eps = _get_episode_names_from_order(order_data)
+    _fname = fname if fname else _get_target_filename(fname, "pushing episode",
+            sorted(difference_list_from(episodes, ordered_eps)))
 
     if not checker.is_exists_the_episode(_fname):
         logger.debug(ERR_MESSAGE_MISSING_FILE.format(target="episode"), _fname)
@@ -181,7 +186,9 @@ def push_the_scene(fname: str) -> bool:
         return False
 
     scenes = ppath.get_scene_file_names()
-    _fname = fname if fname else _get_target_filename(fname, "pushing scene", scenes)
+    ordered_scenes = _get_scene_names_from_order(order_data)
+    _fname = fname if fname else _get_target_filename(fname, "pushing scene",
+            sorted(difference_list_from(scenes, ordered_scenes)))
 
     if not checker.is_exists_the_scene(_fname):
         logger.debug(ERR_MESSAGE_MISSING_FILE.format(target="scene"), _fname)
