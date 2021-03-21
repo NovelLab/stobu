@@ -6,6 +6,7 @@
 
 # My Modules
 from stobu.datatypes import ActionData, ActionRecord
+from stobu.dataconverter import replace_text_tag
 from stobu.util.log import logger
 
 
@@ -49,8 +50,7 @@ def apply_instruction_to_action_data(action_data: ActionData,
                 continue
         elif record.type in ('action', 'text'):
             # alias
-            if record.subject in alias.keys():
-                record.subject == alias[record.subject]
+            record = _conv_using_alias(record, alias)
             # NOTE: other alias?
             # br refine
             if is_script_mode:
@@ -84,6 +84,25 @@ def apply_instruction_to_action_data(action_data: ActionData,
 
 
 # Private Functions
+def _conv_using_alias(record: ActionRecord, alias: dict) -> ActionRecord:
+    assert isinstance(record, ActionRecord)
+    assert isinstance(alias, dict)
+
+    subject = ""
+
+    if record.subject in alias.keys():
+        subject = alias[record.subject]
+    return ActionRecord(
+            record.type,
+            alias[record.subject] if record.subject in alias.keys() else record.subject,
+            record.action,
+            replace_text_tag(record.outline, alias),
+            replace_text_tag(record.desc, alias),
+            record.flags,
+            replace_text_tag(record.note, alias),
+            )
+
+
 def _get_br_action() -> ActionRecord:
     return ActionRecord('br', "")
 
