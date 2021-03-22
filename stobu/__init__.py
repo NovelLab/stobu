@@ -5,5 +5,5 @@
 
 
 # Define Application Info
-__version__ = "0.0.2-22"
+__version__ = "0.0.2-23"
 """str: this application version number."""
