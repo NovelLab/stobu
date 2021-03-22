@@ -24,6 +24,8 @@ ToDo List
 * Add character's attributes in scene
 * Event table
 * Foreshadow and payoff feature.
+* Format shown when scene data etc.
+* Same action and data(year, date etc).
 
 ## Bugs
 

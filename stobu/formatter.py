@@ -13,6 +13,7 @@ from stobu.datatypes import PlotData, PlotRecord
 from stobu.datatypes import StoryCode, StoryCodeData
 from stobu.util import assertion
 from stobu.util.log import logger
+from stobu.util.strings import just_string_of
 
 
 __all__ = (
@@ -395,4 +396,4 @@ def _get_charcounts_elemenet(record: CountRecord, title: str = None) -> str:
     lines = round(record.lines, 3)
     papers = round(record.papers, 3)
 
-    return f"- {title}: {papers}p/{lines}n [{total}c ({real}/{space})c]"
+    return f"- {just_string_of(title, 16)}: {papers}p/{lines}n [{total}c ({real}/{space})c]"
