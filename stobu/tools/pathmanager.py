@@ -8,7 +8,7 @@ import os
 
 # My Modules
 from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME
-from stobu.settings import RUBI_FILENAME, TODO_FILENAME
+from stobu.settings import RUBI_FILENAME, TODO_FILENAME, TIME_FILENAME
 from stobu.settings import CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR
 from stobu.settings import PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
@@ -26,6 +26,7 @@ __all__ = (
         'get_project_path',
         'get_rubi_path',
         'get_todo_path',
+        'get_time_path',
         'get_build_dir_path',
         'get_trash_dir_path', 'get_trash_file_paths', 'get_trash_file_names',
         'get_plan_path', 'get_plan_dir_path', 'get_plan_file_paths', 'get_plan_file_names',
@@ -225,6 +226,10 @@ def get_stage_file_paths() -> list:
 
 def get_stage_path(fname: str) -> str:
     return os.path.join(get_stage_dir_path(), _get_any_path(fname, STAGE_EXT))
+
+
+def get_time_path() -> str:
+    return os.path.join(get_current_path(), TIME_FILENAME)
 
 
 def get_todo_path() -> str:

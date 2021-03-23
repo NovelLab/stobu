@@ -1,0 +1,33 @@
+earlymorning:
+  name: 早朝
+  time: '6:00'
+morning:
+  name: 朝
+  time: '8:00'
+midmorning:
+  name: 午前
+  time: '10:00'
+noon:
+  name: 正午
+  time: '12:00'
+afternoon:
+  name: 午後
+  time: '14:00'
+afterschool:
+  name: 黄昏
+  time: '16:00'
+evening:
+  name: 夕方
+  time: '17:00'
+night:
+  name: 夜
+  time: '20:00'
+midnight:
+  name: 夜半
+  time: '24:00'
+deepnight:
+  name: 深夜
+  time: '2:00'
+dawn:
+  name: 未明
+  time: '4:00'

@@ -44,6 +44,9 @@ RUBI_FILENAME = f"rubi.{YAML_EXT}"
 TODO_FILENAME = f"todo.{MARKDOWN_EXT}"
 """str: file name of todo file."""
 
+TIME_FILENAME = f"time.{YAML_EXT}"
+"""str: file name of time file."""
+
 CHAPTER_DIR = 'chapters'
 """str: directory name for chapter files."""
 
@@ -97,6 +100,9 @@ ORDER_EXT = YAML_EXT
 
 TODO_EXT = MARKDOWN_EXT
 """str: extention of todo file."""
+
+TIME_EXT = YAML_EXT
+"""str: extention of time file."""
 
 RUBI_EXT = YAML_EXT
 """str: extention of rubi file."""

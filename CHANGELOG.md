@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.3] - 2021-03-23
 ### Added
 - show current version
 - set editor
@@ -15,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - outline
 - event
 - person detail
+- same keyword using
+- scene info build
 ### Fixed
 - nothing output_part bug
 - no name file added
@@ -48,6 +51,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - setup: using requirements
 
 
-[Unreleased]: https://github.com/NovelLab/stobu/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/NovelLab/stobu/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/NovelLab/stobu/releases/v0.0.3
 [0.0.2]: https://github.com/NovelLab/stobu/releases/v0.0.2
 [0.0.1]: https://github.com/NovelLab/stobu/releases/v0.0.1

@@ -24,6 +24,7 @@ __all__ = (
         'format_novel_data',
         'format_outline_data',
         'format_plot_data',
+        'format_scene_info_data',
         'format_script_data',
         'get_breakline',
         )
@@ -305,6 +306,75 @@ def format_plot_data(level: str, plots: PlotData) -> list:
     return tmp
 
 
+def format_scene_info_data(code_data: StoryCodeData, tags: dict) -> list:
+    assert isinstance(code_data, StoryCodeData)
+    assert isinstance(tags, dict)
+
+    tmp = []
+    scene_data = {
+            'camera': '',
+            'stage': '',
+            'year': '',
+            'date': '',
+            'time': '',
+            }
+
+    scn_idx = 0
+    def info_format(stage: str, time: str, date: str, year: str, camera: str,
+            use_bracket: bool = True) -> str:
+        _stage = just_string_of(stage, 32)
+        _time = just_string_of(str(time), 4)
+        _date = just_string_of(str(date), 16)
+        _year = just_string_of(str(year), 8)
+        _camera = camera
+        if use_bracket:
+            return f"{_stage}（{_time}）｜{_date}/{_year}＜{_camera}＞"
+        else:
+            return f"{_stage}  {_time}    {_date} {_year}  {_camera}"
+    for code in code_data.get_data():
+        assert isinstance(code, StoryCode)
+
+        if 'book-title' == code.head:
+            tmp.append(f"# {code.body}\n\n")
+        elif 'chapter-title' == code.head:
+            tmp.append(f"## {code.body}\n\n")
+        elif 'episode-title' == code.head:
+            tmp.append(f"### {code.body}\n\n")
+        elif 'scene-title' == code.head:
+            continue
+        elif 'scene-camera' == code.head:
+            scene_data['camera'] = code.body
+        elif 'scene-stage' == code.head:
+            scene_data['stage'] = code.body
+        elif 'scene-year' == code.head:
+            scene_data['year'] = code.body
+        elif 'scene-date' == code.head:
+            scene_data['date'] = code.body
+        elif 'scene-time' == code.head:
+            scene_data['time'] = code.body
+        elif 'scene-start' == code.head:
+            camera = scene_data['camera']
+            stage = scene_data['stage']
+            year = scene_data['year']
+            date = scene_data['date']
+            time = scene_data['time']
+            tmp.append(f"{scn_idx:4}. {info_format(stage, time, date, year, camera)}\n")
+            scn_idx += 1
+        elif 'scene-end' == code.head:
+            continue
+        elif 'scene-elapsed' == code.head:
+            elapsed = assertion.is_dict(code.foot)
+            stage = '↓' if elapsed['stage'] == 'changed' else '…'
+            time = '↓' if elapsed['time'] == 'changed' else '…'
+            date = '↓' if elapsed['date'] == 'changed' else '…'
+            year = '↓' if elapsed['year'] == 'changed' else '…'
+            camera = '↓' if elapsed['camera'] == 'changed' else '…'
+            tmp.insert(-1, f"      {info_format(stage, time, date, year, camera, False)}\n")
+        else:
+            continue
+    return tmp
+
+
 def format_script_data(code_data: StoryCodeData, tags: dict, indent_num: int = 3) -> list:
     assert isinstance(code_data, StoryCodeData)
     assert isinstance(tags, dict)
@@ -342,7 +412,7 @@ def format_script_data(code_data: StoryCodeData, tags: dict, indent_num: int = 3
         elif 'scene-time' == code.head:
             scene_data['time'] = code.body
         elif 'scene-start' == code.head:
-            tmp.append(f"○　{scene_data['stage']}（scene_data['time']）\n")
+            tmp.append(f"○　{scene_data['stage']}（{scene_data['time']}）\n")
         elif 'scene-end' == code.head:
             tmp.append('\n')
         elif 'description' == code.head:

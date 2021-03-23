@@ -69,6 +69,12 @@ class NameTagDB(object):
         return self._add_name_to_tagdb(key, name) \
                 and self._add_name_to_tagdb(self._add_prefix_name('t_', key), name)
 
+    def add_time(self, key: str, name: (int, str)) -> bool:
+        assert isinstance(key, str)
+        assert isinstance(name, (int, str))
+
+        return self._add_name_to_tagdb(key, str(name))
+
     def add_word(self, key: str, name: str) -> bool:
         assert isinstance(key, str)
         assert isinstance(name, str)
@@ -121,6 +127,10 @@ def get_nametag_db() -> dict:
     if not _create_nametags_from_person_files(db):
         return {}
 
+    logger.debug("> time names to DB")
+    if not _create_nametags_from_time_file(db):
+        return {}
+
     if not db.sort_db():
         logger.error("Failed to sort DB!")
         return {}
@@ -170,6 +180,15 @@ def _create_nametags_from_stage_files(db: NameTagDB) -> bool:
         data = assertion.is_dict(read_file_as_auto(fname))
         if not db.add_stage(basename_of(fname), data['name']):
             logger.error("Failed to add a stage name to tag DB!")
+            return False
+    return True
+
+
+def _create_nametags_from_time_file(db: NameTagDB) -> bool:
+    times = assertion.is_dict(read_file_as_auto(ppath.get_time_path()))
+    for key, data in times.items():
+        if not db.add_time(key, data['name']):
+            logger.error("Failed to add a time name to tag DB!")
             return False
     return True
 

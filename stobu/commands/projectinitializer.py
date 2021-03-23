@@ -131,6 +131,9 @@ def check_and_create_default_files(creator: TemplateCreator) -> bool:
                     'todo', ppath.get_todo_path(),
                     checker.exists_todo_file, creator.get_todo_template) \
             or not _check_and_create_the_file_using_template(
+                    'time', ppath.get_time_path(),
+                    checker.exists_time_file, creator.get_time_template) \
+            or not _check_and_create_the_file_using_template(
                     'chapter', ppath.get_chapter_path('main'),
                     checker.exists_any_chapter, creator.get_chapter_template) \
             or not _check_and_create_the_file_using_template(

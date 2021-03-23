@@ -54,7 +54,7 @@ def init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
     parser.add_argument('arg1', metavar='arg1', type=str, nargs='?', help='any arguments')
     parser.add_argument('-o', '--outline', help='outline output', action='store_true')
     parser.add_argument('-p', '--plot', help='plot output', action='store_true')
-    parser.add_argument('-b', '--box', help='box output', action='store_true')
+    parser.add_argument('-i', '--info', help='scene info output', action='store_true')
     parser.add_argument('-s', '--script', help='script output', action='store_true')
     parser.add_argument('-n', '--novel', help='novel output', action='store_true')
     parser.add_argument('-r', '--rubi', help='output with rubi', action='store_true')

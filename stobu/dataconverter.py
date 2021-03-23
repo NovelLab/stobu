@@ -121,8 +121,9 @@ def conv_text_from_tag(text: str, tags: dict, prefix: str = '$') -> str:
 
 
 def conv_text_in_action_data_by_tags(action_data: ActionData,
-        callings: dict, prefix: str = '$') -> ActionData:
+        tags: dict, callings: dict, prefix: str = '$') -> ActionData:
     assert isinstance(action_data, ActionData)
+    assert isinstance(tags, dict)
     assert isinstance(callings, dict)
     assert isinstance(prefix, str)
 
@@ -130,13 +131,22 @@ def conv_text_in_action_data_by_tags(action_data: ActionData,
 
     for record in action_data.get_data():
         assert isinstance(record, ActionRecord)
-        if record.type == 'action':
+        if record.type in ('scene-camera', 'scene-stage', 'scene-year', 'scene-date', 'scene-time'):
+            tmp.append(ActionRecord(
+                record.type,
+                replace_element_tag(record.subject, tags),
+                record.action,
+                record.outline,
+                record.desc,
+                record.note,
+                ))
+        elif record.type == 'action':
             if record.subject in callings:
                 calling = callings[record.subject]
                 _calling = dict_sorted(calling, True)
                 tmp.append(ActionRecord(
                     record.type,
-                    record.subject,
+                    replace_element_tag(record.subject, tags),
                     record.action,
                     conv_text_from_tag(record.outline, _calling, prefix),
                     conv_text_from_tag(record.desc, _calling, prefix),
@@ -178,6 +188,16 @@ def conv_to_story_record(ordername: str, orderdata: dict) -> StoryRecord:
             _get_category(ordername),
             basename_of(ordername),
             orderdata)
+
+
+def replace_element_tag(elm: str, tags: dict) -> str:
+    assert isinstance(elm, (int, str))
+    assert isinstance(tags, dict)
+
+    for key, val in tags.items():
+        if key == elm:
+            return val
+    return elm
 
 
 def replace_text_tag(text: str, tags: dict, prefix: str = '$') -> str:
