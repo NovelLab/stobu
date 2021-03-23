@@ -23,6 +23,7 @@ __all__ = (
         'exists_rubi_file',
         'exists_todo_file',
         'exists_time_file',
+        'exists_mob_file',
         'is_invalid_filename',
         'is_exists_the_chapter', 'is_exists_the_episode', 'is_exists_the_scene', 'is_exists_the_note',
         'is_exists_the_person', 'is_exists_the_stage', 'is_exists_the_item', 'is_exists_the_word',
@@ -89,6 +90,11 @@ def exists_any_word() -> bool:
 def exists_book_file() -> bool:
     """Check if book file exists."""
     return _is_exists_file(ppath.get_book_path())
+
+
+def exists_mob_file() -> bool:
+    """Check if mob file exsits."""
+    return _is_exists_file(ppath.get_mob_path())
 
 
 def exists_order_file() -> bool:

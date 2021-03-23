@@ -55,16 +55,18 @@ def _get_action_data_in_scene(record: StoryRecord, cache: StoryRecord) -> list:
         assert cache.category == 'scene'
 
     tmp = []
+    act_cache = None
 
     head = assertion.is_list(_get_action_data_of_scene_head(record, cache))
     tmp.extend(head)
 
     for line in record.data['markdown']:
         assert isinstance(line, str)
-        ret = conv_action_record_from_scene_action(line)
+        ret = conv_action_record_from_scene_action(line, act_cache)
         if ret:
             assert isinstance(ret, ActionRecord)
             tmp.append(ret)
+            act_cache = ret
 
     tmp.append(ActionRecord('scene-end', ""))
 

@@ -74,6 +74,10 @@ jobs:
       - name: Install app
         run: python setup.py install
 
-      # Runs application
-      - name: Run stobu
+      # Run test initialize
+      - name: Run stobu initialize
         run: stobu init --debug
+
+      # Run test basic usage
+      - name: Stobu build test
+        run: stobu build -opisn

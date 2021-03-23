@@ -8,7 +8,7 @@ import os
 
 # My Modules
 from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME
-from stobu.settings import RUBI_FILENAME, TODO_FILENAME, TIME_FILENAME
+from stobu.settings import RUBI_FILENAME, TODO_FILENAME, TIME_FILENAME, MOB_FILENAME
 from stobu.settings import CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR
 from stobu.settings import PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
@@ -27,6 +27,7 @@ __all__ = (
         'get_rubi_path',
         'get_todo_path',
         'get_time_path',
+        'get_mob_path',
         'get_build_dir_path',
         'get_trash_dir_path', 'get_trash_file_paths', 'get_trash_file_names',
         'get_plan_path', 'get_plan_dir_path', 'get_plan_file_paths', 'get_plan_file_names',
@@ -118,6 +119,10 @@ def get_item_file_paths() -> list:
 
 def get_item_path(fname: str) -> str:
     return os.path.join(get_item_dir_path(), _get_any_path(fname, ITEM_EXT))
+
+
+def get_mob_path() -> str:
+    return os.path.join(get_current_path(), MOB_FILENAME)
 
 
 def get_note_dir_path() -> str:

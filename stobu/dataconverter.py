@@ -12,6 +12,7 @@ from stobu.datatypes import ActionData, ActionRecord
 from stobu.datatypes import StoryRecord, StoryCode
 from stobu.util.dicts import dict_sorted
 from stobu.util.filepath import basename_of
+from stobu.util.strings import hankaku_to_zenkaku
 
 
 __all__ = (
@@ -25,8 +26,10 @@ __all__ = (
 
 
 # Main Functions
-def conv_action_record_from_scene_action(actline: str) -> Union[ActionRecord, None]:
+def conv_action_record_from_scene_action(actline: str, cache: ActionRecord) -> Union[ActionRecord, None]:
     assert isinstance(actline, str)
+    if cache:
+        assert isinstance(cache, ActionRecord)
 
     _line = actline.rstrip('\n\r')
     assert isinstance(_line, str)
@@ -57,6 +60,9 @@ def conv_action_record_from_scene_action(actline: str) -> Union[ActionRecord, No
             tmp = _
         inst, text = tmp[1:].split(']')
         subject, act, outline = inst.split(':')
+        if cache:
+            subject = cache.subject if subject == '-' else subject
+            act = cache.action if act == '-' else act
         return ActionRecord("action", subject, act, outline, text, [], comment)
     elif _line:
         return ActionRecord("text", "", "do", "", _line)
@@ -217,7 +223,6 @@ def replace_text_tag(text: str, tags: dict, prefix: str = '$') -> str:
                 else:
                     tmp = re.sub(key, val, tmp)
     return tmp
-
 
 
 def rid_null_status(text: str) -> str:
