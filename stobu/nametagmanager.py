@@ -50,6 +50,12 @@ class NameTagDB(object):
         return self._add_name_to_tagdb(key, name) \
                 and self._add_name_to_tagdb(self._add_prefix_name('i_', key), name)
 
+    def add_mob_person(self, key: str, name: str) -> bool:
+        assert isinstance(key, str)
+        assert isinstance(name, str)
+
+        return self._add_name_to_tagdb(key, name)
+
     def add_person(self, key: str, name: str, fullname: str) -> bool:
         assert isinstance(key, str)
         assert isinstance(name, str)
@@ -111,6 +117,10 @@ def get_nametag_db() -> dict:
             db.add_event):
         return {}
 
+    logger.debug("> mob names to DB")
+    if not _create_nametags_from_mob_file(db):
+        return {}
+
     logger.debug("> word names to DB")
     if not _create_nametags_from_word_files(db):
         return {}
@@ -155,6 +165,8 @@ def _create_nametags_from(title: str, list_method: Callable,
 
 
 def _create_nametags_from_item_files(db: NameTagDB) -> bool:
+    assert isinstance(db, NameTagDB)
+
     items = ppath.get_item_file_paths()
     for fname in assertion.is_list(items):
         data = assertion.is_dict(read_file_as_auto(fname))
@@ -164,7 +176,19 @@ def _create_nametags_from_item_files(db: NameTagDB) -> bool:
     return True
 
 
+def _create_nametags_from_mob_file(db: NameTagDB) -> bool:
+    assert isinstance(db, NameTagDB)
+    mobs = assertion.is_dict(read_file_as_auto(ppath.get_mob_path()))
+    for key, data in mobs.items():
+        if not db.add_mob_person(key, data['name']):
+            logger.error("Failed to add a mob person name to tag DB!")
+            return False
+    return True
+
+
 def _create_nametags_from_person_files(db: NameTagDB) -> bool:
+    assert isinstance(db, NameTagDB)
+
     persons = ppath.get_person_file_paths()
     for fname in assertion.is_list(persons):
         data = assertion.is_dict(read_file_as_auto(fname))
@@ -175,6 +199,8 @@ def _create_nametags_from_person_files(db: NameTagDB) -> bool:
 
 
 def _create_nametags_from_stage_files(db: NameTagDB) -> bool:
+    assert isinstance(db, NameTagDB)
+
     stages = ppath.get_stage_file_paths()
     for fname in assertion.is_list(stages):
         data = assertion.is_dict(read_file_as_auto(fname))
@@ -185,6 +211,8 @@ def _create_nametags_from_stage_files(db: NameTagDB) -> bool:
 
 
 def _create_nametags_from_time_file(db: NameTagDB) -> bool:
+    assert isinstance(db, NameTagDB)
+
     times = assertion.is_dict(read_file_as_auto(ppath.get_time_path()))
     for key, data in times.items():
         if not db.add_time(key, data['name']):
@@ -194,6 +222,8 @@ def _create_nametags_from_time_file(db: NameTagDB) -> bool:
 
 
 def _create_nametags_from_word_files(db: NameTagDB) -> bool:
+    assert isinstance(db, NameTagDB)
+
     words = ppath.get_word_file_paths()
     for fname in assertion.is_list(words):
         data = assertion.is_dict(read_file_as_auto(fname))

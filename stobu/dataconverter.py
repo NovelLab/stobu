@@ -12,6 +12,7 @@ from stobu.datatypes import ActionData, ActionRecord
 from stobu.datatypes import StoryRecord, StoryCode
 from stobu.util.dicts import dict_sorted
 from stobu.util.filepath import basename_of
+from stobu.util.strings import hankaku_to_zenkaku
 
 
 __all__ = (
@@ -222,7 +223,6 @@ def replace_text_tag(text: str, tags: dict, prefix: str = '$') -> str:
                 else:
                     tmp = re.sub(key, val, tmp)
     return tmp
-
 
 
 def rid_null_status(text: str) -> str:

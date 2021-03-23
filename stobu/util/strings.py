@@ -14,6 +14,20 @@ __all__ = (
         )
 
 
+# Define constants
+ZEN = "".join(chr(0xff01 + i) for i in range(94))
+"""string table for Zenkaku."""
+
+HAN = "".join(chr(0x21 + i) for i in range(94))
+"""string table for Hankaku."""
+
+ZEN2HAN = str.maketrans(ZEN, HAN)
+"""translate method."""
+
+HAN2ZEN = str.maketrans(HAN, ZEN)
+"""translate method."""
+
+
 # Main Functions
 def count_of_multibyte_strings(text: str) -> int:
     assert isinstance(text, str)
@@ -61,6 +75,12 @@ def get_limit_string_east_asian_width(text: str, limit: int) -> str:
         if idx <= limit:
             tmp.append(c)
     return "".join(tmp)
+
+
+def hankaku_to_zenkaku(text: str) -> str:
+    assert isinstance(text, str)
+
+    return text.translate(HAN2ZEN)
 
 
 def just_string_of(text: str, limit: int, padding: str = ' ', is_right: bool=False) -> str:

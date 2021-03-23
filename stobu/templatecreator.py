@@ -11,6 +11,7 @@ from stobu.settings import COPYRIGHT, VERSION, DEFAULT_EDITOR
 from stobu.settings import YAML_EXT
 from stobu.settings import PROJECT_EXT, BOOK_EXT, ORDER_EXT, TODO_EXT, RUBI_EXT
 from stobu.settings import TIME_EXT
+from stobu.settings import MOB_EXT
 from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
 from stobu.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
 from stobu.settings import PLAN_EXT, OUTLINE_EXT, EVENT_EXT
@@ -69,6 +70,9 @@ TODO_TEMP_FILE = add_extention('todo_tmp', TODO_EXT)
 TIME_TEMP_FILE = add_extention('time_tmp', TIME_EXT)
 """str: file name of time template."""
 
+MOB_TEMP_FILE = add_extention('mob_tmp', MOB_EXT)
+"""str: file name of mob template."""
+
 PLAN_TEMP_FILE = add_extention('plan_tmp', PLAN_EXT)
 """str: file name of plan template."""
 
@@ -112,6 +116,7 @@ class TemplateCreator(object):
                 'rubi': RUBI_TEMP_FILE,
                 'todo': TODO_TEMP_FILE,
                 'time': TIME_TEMP_FILE,
+                'mob': MOB_TEMP_FILE,
                 'plan': PLAN_TEMP_FILE,
                 'outline': OUTLINE_TEMP_FILE,
                 'event': EVENT_TEMP_FILE,
@@ -141,6 +146,9 @@ class TemplateCreator(object):
 
     def get_item_template(self) -> str:
         return self._get_template_data('item')
+
+    def get_mob_template(self) -> str:
+        return self._get_template_data('mob')
 
     def get_note_template(self) -> str:
         return self._get_template_data('note')

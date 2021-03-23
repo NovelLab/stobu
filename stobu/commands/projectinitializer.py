@@ -134,6 +134,9 @@ def check_and_create_default_files(creator: TemplateCreator) -> bool:
                     'time', ppath.get_time_path(),
                     checker.exists_time_file, creator.get_time_template) \
             or not _check_and_create_the_file_using_template(
+                    'mob', ppath.get_mob_path(),
+                    checker.exists_mob_file, creator.get_mob_template) \
+            or not _check_and_create_the_file_using_template(
                     'chapter', ppath.get_chapter_path('main'),
                     checker.exists_any_chapter, creator.get_chapter_template) \
             or not _check_and_create_the_file_using_template(

@@ -47,6 +47,9 @@ TODO_FILENAME = f"todo.{MARKDOWN_EXT}"
 TIME_FILENAME = f"time.{YAML_EXT}"
 """str: file name of time file."""
 
+MOB_FILENAME = f"mob.{YAML_EXT}"
+"""str: file name of mob file."""
+
 CHAPTER_DIR = 'chapters'
 """str: directory name for chapter files."""
 
@@ -103,6 +106,9 @@ TODO_EXT = MARKDOWN_EXT
 
 TIME_EXT = YAML_EXT
 """str: extention of time file."""
+
+MOB_EXT = YAML_EXT
+"""str: extention of mod file."""
 
 RUBI_EXT = YAML_EXT
 """str: extention of rubi file."""

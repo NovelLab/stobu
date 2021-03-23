@@ -13,7 +13,7 @@ from stobu.datatypes import PlotData, PlotRecord
 from stobu.datatypes import StoryCode, StoryCodeData
 from stobu.util import assertion
 from stobu.util.log import logger
-from stobu.util.strings import just_string_of
+from stobu.util.strings import just_string_of, hankaku_to_zenkaku
 
 
 __all__ = (
@@ -419,7 +419,7 @@ def format_script_data(code_data: StoryCodeData, tags: dict, indent_num: int = 3
             suffix = "" if code.body.endswith(('。', '、')) else '。'
             tmp.append(f"{code.body}{suffix}")
         elif 'dialogue' == code.head:
-            subject = conv_text_from_tag(code.foot, tags, "")
+            subject = hankaku_to_zenkaku(conv_text_from_tag(code.foot, tags, ""))
             tmp.append(f"{subject}「{code.body}」")
         elif 'monologue' == code.head:
             subject = conv_text_from_tag(code.foot, tags, "")

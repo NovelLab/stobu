@@ -1,0 +1,26 @@
+baby:
+  name: 赤ん坊
+child:
+  name: 子供
+girl:
+  name: 少女
+boy:
+  name: 少年
+man:
+  name: 男性
+lady:
+  name: 女性
+oldman:
+  name: 老人
+oldlady:
+  name: 老婦人
+police:
+  name: 警官
+shopper:
+  name: 店員
+dog:
+  name: 犬
+cat:
+  name: 猫
+bird:
+  name: 鳥
