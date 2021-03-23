@@ -61,7 +61,7 @@ def get_story_code_data_from_story_data_as_novel(story_data: StoryData, tags: di
 
     callings = NameTagDB.get_calling_tags()
     action_data_tagfixed = assertion.is_instance(
-            conv_text_in_action_data_by_tags(action_data_applied, callings),
+            conv_text_in_action_data_by_tags(action_data_applied, tags, callings),
             ActionData)
 
     story_code_data = assertion.is_instance(get_story_code_data(action_data_tagfixed, False),

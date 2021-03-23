@@ -61,7 +61,7 @@ def get_action_data_tagfixed(story_data: StoryData, tags: dict) -> ActionData:
 
     callings = NameTagDB.get_calling_tags()
     action_data_tagfixed = assertion.is_instance(
-            conv_text_in_action_data_by_tags(action_data, callings),
+            conv_text_in_action_data_by_tags(action_data, tags, callings),
             ActionData)
 
     return action_data_tagfixed
