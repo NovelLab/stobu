@@ -25,8 +25,10 @@ __all__ = (
 
 
 # Main Functions
-def conv_action_record_from_scene_action(actline: str) -> Union[ActionRecord, None]:
+def conv_action_record_from_scene_action(actline: str, cache: ActionRecord) -> Union[ActionRecord, None]:
     assert isinstance(actline, str)
+    if cache:
+        assert isinstance(cache, ActionRecord)
 
     _line = actline.rstrip('\n\r')
     assert isinstance(_line, str)
@@ -57,6 +59,9 @@ def conv_action_record_from_scene_action(actline: str) -> Union[ActionRecord, No
             tmp = _
         inst, text = tmp[1:].split(']')
         subject, act, outline = inst.split(':')
+        if cache:
+            subject = cache.subject if subject == '-' else subject
+            act = cache.action if act == '-' else act
         return ActionRecord("action", subject, act, outline, text, [], comment)
     elif _line:
         return ActionRecord("text", "", "do", "", _line)

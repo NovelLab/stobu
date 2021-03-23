@@ -24,9 +24,11 @@ ToDo List
 * Add character's attributes in scene
 * Event table
 * Foreshadow and payoff feature.
-* Same action and data(year, date etc).
+* Mod people using.
 
 ## Bugs
 
 * Show outline invalid indent when multi-line strings
 * Cannot Move to trashbox when same name already exists
+* Invalid index in scene info.
+* Invalid cache in scene info same.
