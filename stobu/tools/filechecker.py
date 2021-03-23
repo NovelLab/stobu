@@ -22,6 +22,7 @@ __all__ = (
         'exists_order_file',
         'exists_rubi_file',
         'exists_todo_file',
+        'exists_time_file',
         'is_invalid_filename',
         'is_exists_the_chapter', 'is_exists_the_episode', 'is_exists_the_scene', 'is_exists_the_note',
         'is_exists_the_person', 'is_exists_the_stage', 'is_exists_the_item', 'is_exists_the_word',
@@ -103,6 +104,11 @@ def exists_project_file() -> bool:
 def exists_rubi_file() -> bool:
     """Check if rubi file exists."""
     return _is_exists_file(ppath.get_rubi_path())
+
+
+def exists_time_file() -> bool:
+    """Check if time file exists."""
+    return _is_exists_file(ppath.get_time_path())
 
 
 def exists_todo_file() -> bool:
