@@ -323,9 +323,9 @@ def format_scene_info_data(code_data: StoryCodeData, tags: dict) -> list:
     def info_format(stage: str, time: str, date: str, year: str, camera: str,
             use_bracket: bool = True) -> str:
         _stage = just_string_of(stage, 32)
-        _time = just_string_of(time, 4)
-        _date = just_string_of(date, 16)
-        _year = just_string_of(year, 8)
+        _time = just_string_of(str(time), 4)
+        _date = just_string_of(str(date), 16)
+        _year = just_string_of(str(year), 8)
         _camera = camera
         if use_bracket:
             return f"{_stage}（{_time}）｜{_date}/{_year}＜{_camera}＞"

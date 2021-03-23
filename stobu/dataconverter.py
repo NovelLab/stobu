@@ -102,6 +102,12 @@ def conv_code_from_action_record(record: ActionRecord,
     return None
 
 
+def conv_tag_in_action_record(record: ActionRecord) -> ActionRecord:
+    assert isinstance(record, ActionRecord)
+
+    return record
+
+
 def conv_text_from_tag(text: str, tags: dict, prefix: str = '$') -> str:
     assert isinstance(text, str)
     assert isinstance(tags, dict)
