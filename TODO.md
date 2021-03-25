@@ -25,6 +25,7 @@ ToDo List
 * Event table
 * Foreshadow and payoff feature.
 * Mod people using.
+* Aozora bunko format.
 
 ## Bugs
 

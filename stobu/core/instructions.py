@@ -28,6 +28,7 @@ def apply_instruction_to_action_data(action_data: ActionData,
             is_br_mode = True
             has_first_indent = False
             alias = {}
+            tmp.append(record)
         elif record.type == 'instruction':
             if record.action == 'P':
                 # in Paragraph mode
