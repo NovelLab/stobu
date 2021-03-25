@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - hankaku to zenkaku
+- Next day and month mark using in Scene info
 ### Fixed
 - missing scene head
 
