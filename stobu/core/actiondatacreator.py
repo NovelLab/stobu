@@ -104,15 +104,28 @@ def _get_action_data_of_scene_head(record: StoryRecord, cache: StoryRecord) -> l
             stage = cache.data['stage']
         if year == '_same_':
             year = cache.data['year']
+        elif '_next' in str(year) or str(year) in ('翌年', '一年後', '二年後', '三年後', '四年後', '五年後', '十年後'):
+            if year in ('_nextyear_', '翌年', '一年後'):
+                year = cache.data['year'] + 1
+            elif year in ('_next2year_', '二年後'):
+                year = cache.data['year'] + 2
+            elif year in ('_next3year_', '三年後'):
+                year = cache.data['year'] + 3
+            elif year in ('_next4year_', '四年後'):
+                year = cache.data['year'] + 4
+            elif year in ('_next5year_', '五年後'):
+                year = cache.data['year'] + 5
+            elif year in ('_next10year_', '十年後'):
+                year = cache.data['year'] + 10
         if date == '_same_':
             date = cache.data['date']
-        elif '_next' in date:
+        elif '_next' in date or date in ('翌日', '翌週', '翌月'):
             m, d = cache.data['date'].split('/')
-            if date == '_nextday_':
+            if date in ('_nextday_', '翌日'):
                 date = get_next_month_day_str(str(year), m, d, 0, 1)
-            elif date == '_nextweek_':
+            elif date in ('_nextweek_', '翌週'):
                 date = get_next_month_day_str(str(year), m, d, 0, 7)
-            elif date == '_nextmonth_':
+            elif date in ('_nextmonth_', '翌月'):
                 date = get_next_month_day_str(str(year), m, d, 1, 0)
         if time == '_same_':
             time = cache.data['time']
