@@ -9,6 +9,7 @@ from stobu.dataconverter import conv_action_record_from_scene_action
 from stobu.datatypes import ActionData, ActionRecord
 from stobu.datatypes import StoryData, StoryRecord
 from stobu.util import assertion
+from stobu.util.datetimes import get_next_month_day_str
 from stobu.util.log import logger
 
 
@@ -34,10 +35,10 @@ def get_action_data(story_data: StoryData) -> ActionData:
         elif record.category == 'episode':
             tmp.append(ActionRecord('episode-title', "", "", record.data['title']))
         elif record.category == 'scene':
-            ret = _get_action_data_in_scene(record, scene_cache)
+            ret, head = _get_action_data_in_scene(record, scene_cache)
             if ret:
                 tmp.extend(ret)
-                scene_cache = record
+                scene_cache = head
         else:
             logger.debug("Unknown StoryRecord data!: %s", record)
             continue
@@ -47,7 +48,8 @@ def get_action_data(story_data: StoryData) -> ActionData:
 
 
 # Private Functions
-def _get_action_data_in_scene(record: StoryRecord, cache: StoryRecord) -> list:
+def _get_action_data_in_scene(
+        record: StoryRecord, cache: StoryRecord) -> (list, StoryRecord):
     assert isinstance(record, StoryRecord)
     assert record.category == 'scene'
     if cache:
@@ -70,7 +72,16 @@ def _get_action_data_in_scene(record: StoryRecord, cache: StoryRecord) -> list:
 
     tmp.append(ActionRecord('scene-end', ""))
 
-    return tmp
+    return tmp, StoryRecord(
+            'scene',
+            '_cache_',
+            {'camera': assertion.is_instance(head[1], ActionRecord).subject,
+                'stage': assertion.is_instance(head[2], ActionRecord).subject,
+                'year': assertion.is_instance(head[3], ActionRecord).subject,
+                'date': assertion.is_instance(head[4], ActionRecord).subject,
+                'time': assertion.is_instance(head[5], ActionRecord).subject,
+                },
+            )
 
 
 def _get_action_data_of_scene_head(record: StoryRecord, cache: StoryRecord) -> list:
@@ -95,6 +106,14 @@ def _get_action_data_of_scene_head(record: StoryRecord, cache: StoryRecord) -> l
             year = cache.data['year']
         if date == '_same_':
             date = cache.data['date']
+        elif '_next' in date:
+            m, d = cache.data['date'].split('/')
+            if date == '_nextday_':
+                date = get_next_month_day_str(str(year), m, d, 0, 1)
+            elif date == '_nextweek_':
+                date = get_next_month_day_str(str(year), m, d, 0, 7)
+            elif date == '_nextmonth_':
+                date = get_next_month_day_str(str(year), m, d, 1, 0)
         if time == '_same_':
             time = cache.data['time']
 
