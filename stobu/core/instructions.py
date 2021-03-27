@@ -52,25 +52,20 @@ def apply_instruction_to_action_data(action_data: ActionData,
         elif record.type in ('action', 'text'):
             # alias
             record = _conv_using_alias(record, alias)
-            # NOTE: other alias?
             # br refine
-            if is_script_mode:
-                if record.action in ('talk', 'think'):
-                    if not record.outline:
-                        continue
-            else:
-                if record.action in ('talk',):
-                    if not record.outline and not record.desc:
-                        continue
-                else:
-                    if not record.desc:
-                        continue
             if is_br_mode:
-                if record.action not in ('talk',):
-                    tmp.append(_get_indent_action())
+                if is_script_mode:
+                    if record.action not in ('talk', 'monologue'):
+                        tmp.append(_get_indent_action())
+                else:
+                    if record.action not in ('talk',):
+                        tmp.append(_get_indent_action())
             elif not is_br_mode:
-                if not has_first_indent and record.action == 'talk':
-                    has_first_indent = True
+                if not has_first_indent:
+                    if is_script_mode and record.action in ('talk', 'monologue'):
+                        has_first_indent = True
+                    elif record.action in ('talk',):
+                        has_first_indent = True
                 elif not has_first_indent:
                     tmp.append(_get_indent_action())
                     has_first_indent = True

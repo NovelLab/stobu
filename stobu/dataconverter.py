@@ -8,6 +8,7 @@ import yaml
 
 
 # My Modules
+from stobu.actiontypes import ActRecordType
 from stobu.datatypes import ActionData, ActionRecord
 from stobu.datatypes import StoryRecord, StoryCode
 from stobu.util.dicts import dict_sorted
@@ -38,18 +39,18 @@ def conv_action_record_from_scene_action(actline: str, cache: ActionRecord) -> U
         return None
     elif _line.startswith('# '):
         # comment
-        return ActionRecord('comment', _line)
+        return ActionRecord(ActRecordType.COMMENT, _line)
     elif _line.startswith('## '):
         # head
-        return ActionRecord('head-title', _line)
+        return ActionRecord(ActRecordType.TITLE, 'head', _line)
     elif _line.startswith('#!'):
         # instruction
         cmd = _line[2:]
         if ' ' in cmd:
             _cmd, txt = cmd.split(' ')
-            return ActionRecord('instruction', "", _cmd, txt)
+            return ActionRecord(ActRecordType.INSTRUCTION, "", _cmd, txt)
         else:
-            return ActionRecord('instruction', "", cmd)
+            return ActionRecord(ActRecordType.INSTRUCTION, "", cmd)
     elif _line.startswith('['):
         # action
         tmp = _line
@@ -63,9 +64,9 @@ def conv_action_record_from_scene_action(actline: str, cache: ActionRecord) -> U
         if cache:
             subject = cache.subject if subject == '-' else subject
             act = cache.action if act == '-' else act
-        return ActionRecord("action", subject, act, outline, text, [], comment)
+        return ActionRecord(ActRecordType.ACTION, subject, act, outline, text, [], comment)
     elif _line:
-        return ActionRecord("text", "", "do", "", _line)
+        return ActionRecord(ActRecordType.TEXT, "", "do", "", _line)
     else:
         return None
 
@@ -75,13 +76,13 @@ def conv_code_from_action_record(record: ActionRecord,
     assert isinstance(record, ActionRecord)
     assert isinstance(is_script_mode, bool)
 
-    if 'title' in record.type:
+    if ActRecordType.TITLE is record.type:
+        # TODO: type convert
         return StoryCode(record.type, record.outline, record.note)
-    elif record.type in ('scene-camera', 'scene-stage', 'scene-year', 'scene-date', 'scene-time'):
+    elif ActRecordType.SCENE_DATA is record.type:
+        # TODO: convert type etc (contain, scene-start,end)
         return StoryCode(record.type, record.subject, record.note)
-    elif record.type in ('scene-start', 'scene-end'):
-        return StoryCode(record.type, "")
-    elif 'action' == record.type:
+    elif ActRecordType.ACTION is record.type:
         body = record.outline if is_script_mode else record.desc
         if 'talk' == record.action:
             if not is_script_mode:
@@ -101,9 +102,9 @@ def conv_code_from_action_record(record: ActionRecord,
             return StoryCode('description', record.desc, record.note)
         else:
             return None
-    elif 'br' == record.type:
+    elif ActRecordType.BR is record.type:
         return StoryCode(record.type, '')
-    elif 'indent' == record.type:
+    elif ActRecordType.INDENT is record.type:
         return StoryCode(record.type, '')
     return None
 
@@ -137,7 +138,9 @@ def conv_text_in_action_data_by_tags(action_data: ActionData,
 
     for record in action_data.get_data():
         assert isinstance(record, ActionRecord)
-        if record.type in ('scene-camera', 'scene-stage', 'scene-year', 'scene-date', 'scene-time'):
+        if ActRecordType.SCENE_DATA is record.type:
+            # TODO
+            #in ('scene-camera', 'scene-stage', 'scene-year', 'scene-date', 'scene-time'):
             tmp.append(ActionRecord(
                 record.type,
                 replace_element_tag(record.subject, tags),
@@ -146,7 +149,7 @@ def conv_text_in_action_data_by_tags(action_data: ActionData,
                 record.desc,
                 record.note,
                 ))
-        elif record.type == 'action':
+        elif ActRecordType.ACTION is record.type:
             if record.subject in callings:
                 calling = callings[record.subject]
                 _calling = dict_sorted(calling, True)

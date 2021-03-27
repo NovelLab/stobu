@@ -8,6 +8,8 @@
 from stobu.dataconverter import conv_action_record_from_scene_action
 from stobu.datatypes import ActionData, ActionRecord
 from stobu.datatypes import StoryData, StoryRecord
+from stobu.types.actiontypes import ActRecordType
+from stobu.types.storyrecordtypes import StoryRecordType
 from stobu.util import assertion
 from stobu.util.datetimes import get_next_month_day_str
 from stobu.util.log import logger
@@ -28,13 +30,13 @@ def get_action_data(story_data: StoryData) -> ActionData:
 
     for record in story_data.get_data():
         assert isinstance(record, StoryRecord)
-        if record.category == 'book':
+        if StoryRecordType.BOOK is record.type:
             tmp.append(ActionRecord('book-title', "", "", record.data['title']))
-        elif record.category == 'chapter':
+        elif StoryRecordType.CHAPTER is record.type:
             tmp.append(ActionRecord('chapter-title', "", "", record.data['title']))
-        elif record.category == 'episode':
+        elif StoryRecordType.EPISODE is record.type:
             tmp.append(ActionRecord('episode-title', "", "", record.data['title']))
-        elif record.category == 'scene':
+        elif StoryRecordType.SCENE is record.category:
             ret, head = _get_action_data_in_scene(record, scene_cache)
             if ret:
                 tmp.extend(ret)
@@ -51,10 +53,10 @@ def get_action_data(story_data: StoryData) -> ActionData:
 def _get_action_data_in_scene(
         record: StoryRecord, cache: StoryRecord) -> (list, StoryRecord):
     assert isinstance(record, StoryRecord)
-    assert record.category == 'scene'
+    assert StoryRecordType.SCENE is record.type
     if cache:
         assert isinstance(cache, StoryRecord)
-        assert cache.category == 'scene'
+        assert StoryRecordType.SCENE is cache.type
 
     tmp = []
     act_cache = None
@@ -70,10 +72,10 @@ def _get_action_data_in_scene(
             tmp.append(ret)
             act_cache = ret
 
-    tmp.append(ActionRecord('scene-end', ""))
+    tmp.append(get_scene_end_action_record())
 
     return tmp, StoryRecord(
-            'scene',
+            StoryRecordType.SCENE,
             '_cache_',
             {'camera': assertion.is_instance(head[1], ActionRecord).subject,
                 'stage': assertion.is_instance(head[2], ActionRecord).subject,
@@ -86,10 +88,10 @@ def _get_action_data_in_scene(
 
 def _get_action_data_of_scene_head(record: StoryRecord, cache: StoryRecord) -> list:
     assert isinstance(record, StoryRecord)
-    assert record.category == 'scene'
+    assert StoryRecordType.SCENE is record.type
     if cache:
         assert isinstance(cache, StoryRecord)
-        assert cache.category == 'scene'
+        assert StoryRecordType.SCENE is cache.type
 
     camera = record.data['camera']
     stage = record.data['stage']
@@ -137,6 +139,6 @@ def _get_action_data_of_scene_head(record: StoryRecord, cache: StoryRecord) -> l
     tmp.append(ActionRecord('scene-year', year))
     tmp.append(ActionRecord('scene-date', date))
     tmp.append(ActionRecord('scene-time', time))
-    tmp.append(ActionRecord('scene-start', ""))
+    tmp.append(get_scene_start_action_record())
 
     return tmp
