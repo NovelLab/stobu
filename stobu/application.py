@@ -2,6 +2,7 @@
 
 
 # Official Libraries
+import argparse
 import os
 
 
@@ -16,7 +17,8 @@ from stobu.commands.projectinitializer import init_project
 from stobu.commands.projectpusher import switch_command_to_push
 from stobu.commands.projectpusher import switch_command_to_reject
 from stobu.commands.projectviewer import switch_command_to_list
-from stobu.tools.commandlineparser import get_project_commands
+from stobu.systems import messages as msg
+from stobu.tools import commandlineparser as parse
 from stobu.tools.filechecker import exists_project_file
 from stobu.util.log import logger
 
@@ -25,17 +27,22 @@ from stobu.util.log import logger
 EXIT_CODE = int
 
 
+# Define Constants
+APP = "Main Application"
+
+
+# Main
 class Application(object):
 
     """Application for storybuilder."""
 
     def __init__(self) -> None:
         # base setting
-        logger.debug("Initialized the Application.")
+        logger.debug(msg.MSG_INITIALIZED.format(app=APP))
 
     # main method
     def run(self) -> EXIT_CODE:
-        logger.debug("Starting the Application...")
+        logger.debug(msg.MSG_START_APP.format(app=APP))
 
         is_succeeded = True
         """bool: if True is successfull result to proceed, False is any
@@ -43,60 +50,75 @@ class Application(object):
         """
 
         # pre process
-        cmdargs = get_project_commands()
+        cmdargs = parse.get_project_commands()
 
         if not cmdargs:
-            logger.error("Missing command!: %s", cmdargs)
+            logger.error(msg.ERR_MISSING_DATA.format(data='command'), cmdargs)
             return os.EX_NOINPUT
+        assert isinstance(argparse.Namespace)
 
-        logger.debug("Success get the command-line arguments: %s", cmdargs)
+        logger.debug(
+                msg.MSG_SUCCESS_PROC_WITH_DATA.format(proc='get commandline arguments'),
+                cmdargs)
 
         # check if command is init
-        if cmdargs.cmd in ('i', 'init'):
-            logger.debug("INIT project starting...")
+        if parse.is_init_command(cmdargs.cmd):
             is_succeeded = init_project()
             if not is_succeeded:
-                logger.error("Uninitialized this project. we have any problems!")
+                logger.error(msg.ERR_FAILURE_APP_INITIALIZED.format(app='Project'))
                 return os.EX_SOFTWARE
             else:
                 return os.EX_OK
 
         # check if project exists
         if not exists_project_file():
-            logger.error("Missing the project file!")
+            logger.error(msg.ERR_MISSING_DATA.format(data='project file'))
             return os.EX_OSFILE
 
         # main process
         # - command switch
         is_succeeded = False
+        cmd_cache = 'any'
 
-        if cmdargs.cmd in ('b', 'build'):
+        if parse.is_build_command(cmdargs.cmd):
             is_succeeded = switch_command_to_build(cmdargs)
-        elif cmdargs.cmd in ('a', 'add'):
+            cmd_cache = 'build'
+        elif parse.is_add_command(cmdargs.cmd):
             is_succeeded = switch_command_to_add(cmdargs)
-        elif cmdargs.cmd in ('c', 'copy'):
+            cmd_cache = 'add'
+        elif parse.is_copy_command(cmdargs.cmd):
             is_succeeded = switch_command_to_copy(cmdargs)
-        elif cmdargs.cmd in ('d', 'delete'):
+            cmd_cache = 'copy'
+        elif parse.is_delete_command(cmdargs.cmd):
             is_succeeded = switch_command_to_delete(cmdargs)
-        elif cmdargs.cmd in ('e', 'edit'):
+            cmd_cache = 'delete'
+        elif parse.is_edit_command(cmdargs.cmd):
             is_succeeded = switch_command_to_edit(cmdargs)
-        elif cmdargs.cmd in ('l', 'list'):
+            cmd_cache = 'edit'
+        elif parse.is_list_command(cmdargs.cmd):
             is_succeeded = switch_command_to_list(cmdargs)
-        elif cmdargs.cmd in ('r', 'rename'):
+            cmd_cache = 'list'
+        elif parse.is_rename_command(cmdargs.cmd):
             is_succeeded = switch_command_to_rename(cmdargs)
-        elif cmdargs.cmd in ('p', 'push'):
+            cmd_cache = 'rename'
+        elif parse.is_push_command(cmdargs.cmd):
             is_succeeded = switch_command_to_push(cmdargs)
-        elif cmdargs.cmd in ('j', 'reject'):
+            cmd_cache = 'push'
+        elif parse.is_reject_command(cmdargs.cmd):
             is_succeeded = switch_command_to_reject(cmdargs)
-        elif cmdargs.cmd == 'set_editor':
+            cmd_cache = 'reject'
+        elif parse.is_set_editor_command(cmdargs.cmd):
             is_succeeded = switch_command_to_set_editor(cmdargs)
+            cmd_cache = 'set_editor'
         else:
-            logger.error("Unknown command!: %s", cmdargs.cmd)
+            logger.error(
+                    msg.ERR_UNKNOWN_PROC_WITH_DATA.format(proc='app command'),
+                    cmdargs.cmd)
             return os.EX_SOFTWARE
 
         # post process
         if not is_succeeded:
-            logger.error("Failed any command!")
+            logger.error(msg.ERR_FAILURE_PROC.format(proc=f'{cmd_cache} command'))
             return os.EX_SOFTWARE
 
         return os.EX_OK

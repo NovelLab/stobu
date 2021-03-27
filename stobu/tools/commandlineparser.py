@@ -7,6 +7,7 @@ from typing import Union
 
 
 # My Modules
+from stobu.systems import messages as msg
 from stobu.util.log import logger
 
 
@@ -19,21 +20,91 @@ story building manager on cui.
 """
 """str: description for argument parser."""
 
+# Define constants
+APP = 'Argument Parser'
 
-# main function
+
+# Main Function
 def get_project_commands() -> Union[argparse.Namespace, None]:
-    logger.debug("Starting get commandline arguments...")
-    parser = get_commandline_parser()
+    logger.debug(msg.MSG_START_APP.format(app=APP))
+    parser = _get_commandline_parser()
 
-    if not init_commandline_parser(parser):
-        logger.error("Failed the initializing commandline parser!")
+    if not _init_commandline_parser(parser):
+        logger.error(msg.ERR_FAILURE_APP_INITIALIZED(app=APP))
         return None
 
-    return get_commandline_arguments(parser)
+    return _get_commandline_arguments(parser)
 
 
-# functions
-def get_commandline_parser() -> argparse.ArgumentParser:
+# Check Functions
+def is_add_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('a', 'add')
+
+
+def is_build_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('b', 'build')
+
+
+def is_copy_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('c', 'copy')
+
+
+def is_delete_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('d', 'delete')
+
+
+def is_edit_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('e', 'edit')
+
+
+def is_init_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('i', 'init')
+
+
+def is_list_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('l', 'list')
+
+
+def is_rename_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('n', 'rename')
+
+
+def is_push_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('p', 'push')
+
+
+def is_reject_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('r', 'reject')
+
+
+def is_set_editor_command(cmd: str) -> bool:
+    assert isinstance(cmd, str)
+
+    return cmd in ('set_editor',)
+
+
+# Private Functions
+def _get_commandline_parser() -> argparse.ArgumentParser:
     """Argument Parser getter."""
 
     parser = argparse.ArgumentParser(
@@ -41,11 +112,11 @@ def get_commandline_parser() -> argparse.ArgumentParser:
             description=DESCRIPTION,
             )
 
-    logger.debug("Create an ArgumentParser.")
+    logger.debug(msg.MSG_SUCCESS_PROC_WITH_DATA.format(proc=APP), parser)
     return parser
 
 
-def init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
+def _init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
     """Init argument parser."""
     assert isinstance(parser, argparse.ArgumentParser)
 
@@ -62,11 +133,11 @@ def init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
     parser.add_argument('--part', type=str, help='select ouput part')
     parser.add_argument('--debug', help='set debug flag', action='store_true')
 
-    logger.debug("Initialized the ArgumentParser.")
+    logger.debug(msg.MSG_SUCCESS_PROC.format(proc=f'{APP} setting options'))
     return True
 
 
-def get_commandline_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
+def _get_commandline_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
     """Get commandline arguments and parsed list."""
     assert isinstance(parser, argparse.ArgumentParser)
 

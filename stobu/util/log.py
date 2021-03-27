@@ -9,7 +9,7 @@ import sys
 
 
 # My Modules
-from stobu.systempaths import USR_CACHE_DIR
+from stobu.systems.systempaths import USR_CACHE_DIR
 
 
 # Define Formatters

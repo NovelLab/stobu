@@ -6,9 +6,10 @@
 
 # My Modules
 from stobu import __version__
+from stobu.util.filepath import add_extention
 
 
-# Define Basic Info
+# Define Shared Constants of basic Info
 PROJECT = "StoryBuilder"
 """str: application name."""
 
@@ -22,32 +23,32 @@ AUTHORS = ["N.T.WORKS"]
 """list[str]: application authors."""
 
 
-# Define Shared Info
+# Define Shared Constants of file paths
 MARKDOWN_EXT = 'md'
 """str: extention of MARKDOWN files."""
 
 YAML_EXT = 'yml'
 """str: extention of YAML files."""
 
-PROJECT_FILENAME = f"project.{YAML_EXT}"
+PROJECT_FILENAME = add_extention('project', YAML_EXT)
 """str: file name of project file."""
 
-BOOK_FILENAME = f"book.{YAML_EXT}"
+BOOK_FILENAME = add_extention('book', YAML_EXT)
 """str: file name of book file."""
 
-ORDER_FILENAME = f"order.{YAML_EXT}"
+ORDER_FILENAME = add_extention('order', YAML_EXT)
 """str: file name of order file."""
 
-RUBI_FILENAME = f"rubi.{YAML_EXT}"
+RUBI_FILENAME = add_extention('rubi', YAML_EXT)
 """str: file name of rubi file."""
 
-TODO_FILENAME = f"todo.{MARKDOWN_EXT}"
+TODO_FILENAME = add_extention('todo', MARKDOWN_EXT)
 """str: file name of todo file."""
 
-TIME_FILENAME = f"time.{YAML_EXT}"
+TIME_FILENAME = add_extention('time', YAML_EXT)
 """str: file name of time file."""
 
-MOB_FILENAME = f"mob.{YAML_EXT}"
+MOB_FILENAME = add_extention('mob', YAML_EXT)
 """str: file name of mob file."""
 
 CHAPTER_DIR = 'chapters'
