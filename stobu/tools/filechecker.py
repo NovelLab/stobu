@@ -7,9 +7,9 @@ import os
 
 
 # My Modules
-from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
-from stobu.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
-from stobu.settings import PLAN_EXT, OUTLINE_EXT, EVENT_EXT
+from stobu.systems.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
+from stobu.systems.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
+from stobu.systems.settings import PLAN_EXT, OUTLINE_EXT, EVENT_EXT
 from stobu.tools import pathmanager as ppath
 
 

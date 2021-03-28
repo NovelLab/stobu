@@ -7,15 +7,15 @@ import os
 
 
 # My Modules
-from stobu.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME
-from stobu.settings import RUBI_FILENAME, TODO_FILENAME, TIME_FILENAME, MOB_FILENAME
-from stobu.settings import CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR
-from stobu.settings import PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR
-from stobu.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
-from stobu.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
-from stobu.settings import TRASH_DIR, BUILD_DIR
-from stobu.settings import PLAN_DIR, OUTLINE_DIR, EVENT_DIR
-from stobu.settings import PLAN_EXT, OUTLINE_EXT, EVENT_EXT
+from stobu.systems.settings import PROJECT_FILENAME, BOOK_FILENAME, ORDER_FILENAME
+from stobu.systems.settings import RUBI_FILENAME, TODO_FILENAME, TIME_FILENAME, MOB_FILENAME
+from stobu.systems.settings import CHAPTER_DIR, EPISODE_DIR, SCENE_DIR, NOTE_DIR
+from stobu.systems.settings import PERSON_DIR, STAGE_DIR, ITEM_DIR, WORD_DIR
+from stobu.systems.settings import CHAPTER_EXT, EPISODE_EXT, SCENE_EXT, NOTE_EXT
+from stobu.systems.settings import PERSON_EXT, STAGE_EXT, ITEM_EXT, WORD_EXT
+from stobu.systems.settings import TRASH_DIR, BUILD_DIR
+from stobu.systems.settings import PLAN_DIR, OUTLINE_DIR, EVENT_DIR
+from stobu.systems.settings import PLAN_EXT, OUTLINE_EXT, EVENT_EXT
 from stobu.util.filepath import add_extention, basename_of
 
 

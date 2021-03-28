@@ -43,6 +43,78 @@ def is_add_command(cmd: str) -> bool:
     return cmd in ('a', 'add')
 
 
+def is_arg_chapter(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('c', 'chapter')
+
+
+def is_arg_todo(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('d', 'todo')
+
+
+def is_arg_episode(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('e', 'episode')
+
+
+def is_arg_event(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('v', 'event')
+
+
+def is_arg_item(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('i', 'item')
+
+
+def is_arg_note(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('n', 'note')
+
+
+def is_arg_outline(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('o', 'outline')
+
+
+def is_arg_person(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('p', 'person')
+
+
+def is_arg_plan(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('l', 'plan')
+
+
+def is_arg_scene(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('s', 'scene')
+
+
+def is_arg_stage(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('t', 'stage')
+
+
+def is_arg_word(arg: str) -> bool:
+    assert isinstance(arg, str)
+
+    return arg in ('w', 'word')
+
+
 def is_build_command(cmd: str) -> bool:
     assert isinstance(cmd, str)
 

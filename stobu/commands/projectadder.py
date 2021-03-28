@@ -204,82 +204,6 @@ def switch_command_to_rename(cmdargs: argparse.Namespace) -> bool:
 
 # Functions
 # - Add
-def add_new_chapter(fname: str) -> bool:
-    return _add_new_file('chapter', fname, checker.is_exists_the_chapter,
-            ppath.get_chapter_path,
-            TemplateCreator.get_instance().get_chapter_template,
-            edit_the_chapter)
-
-
-def add_new_episode(fname: str) -> bool:
-    return _add_new_file('episode', fname, checker.is_exists_the_episode,
-            ppath.get_episode_path,
-            TemplateCreator.get_instance().get_episode_template,
-            edit_the_episode)
-
-
-def add_new_event(fname: str) -> bool:
-    return _add_new_file('event', fname, checker.is_exists_the_event,
-            ppath.get_event_path,
-            TemplateCreator.get_instance().get_event_template,
-            edit_the_event)
-
-
-def add_new_item(fname: str) -> bool:
-    return _add_new_file('item', fname, checker.is_exists_the_item,
-            ppath.get_item_path,
-            TemplateCreator.get_instance().get_item_template,
-            edit_the_item)
-
-
-def add_new_note(fname: str) -> bool:
-    return _add_new_file('note', fname, checker.is_exists_the_note,
-            ppath.get_note_path,
-            TemplateCreator.get_instance().get_note_template,
-            edit_the_note)
-
-
-def add_new_outline(fname: str) -> bool:
-    return _add_new_file('outline', fname, checker.is_exists_the_outline,
-            ppath.get_outline_path,
-            TemplateCreator.get_instance().get_outline_template,
-            edit_the_outline)
-
-
-def add_new_person(fname: str) -> bool:
-    return _add_new_file('person', fname, checker.is_exists_the_person,
-            ppath.get_person_path,
-            TemplateCreator.get_instance().get_person_template,
-            edit_the_person)
-
-
-def add_new_plan(fname: str) -> bool:
-    return _add_new_file('plan', fname, checker.is_exists_the_plan,
-            ppath.get_plan_path,
-            TemplateCreator.get_instance().get_plan_template,
-            edit_the_plan)
-
-
-def add_new_scene(fname: str) -> bool:
-    return _add_new_file('scene', fname, checker.is_exists_the_scene,
-            ppath.get_scene_path,
-            TemplateCreator.get_instance().get_scene_template,
-            edit_the_scene)
-
-
-def add_new_stage(fname: str) -> bool:
-    return _add_new_file('stage', fname, checker.is_exists_the_stage,
-            ppath.get_stage_path,
-            TemplateCreator.get_instance().get_stage_template,
-            edit_the_stage)
-
-
-def add_new_word(fname: str) -> bool:
-    return _add_new_file('word', fname, checker.is_exists_the_word,
-            ppath.get_word_path,
-            TemplateCreator.get_instance().get_word_template,
-            edit_the_word)
-
 
 # - Copy
 def copy_the_chapter(fname: str) -> bool:
@@ -450,35 +374,6 @@ def rename_the_word(fname: str) -> bool:
 
 
 # Private Functions
-def _add_new_file(title: str, fname: str, check_method: Callable,
-        path_method: Callable, gettemp_method: Callable, edit_method) -> bool:
-    assert isinstance(title, str)
-    assert isinstance(fname, str) if fname else True
-    assert callable(check_method)
-    assert callable(path_method)
-    assert callable(gettemp_method)
-    assert callable(edit_method)
-    logger.debug(START_ADD_PROCESS_MESSAGE.format(target=title))
-
-    _fname = _get_new_filename(fname, f"new {title}")
-
-    if checker.is_invalid_filename(_fname):
-        logger.error(ERR_MESSAGE_INVALID_FILENAME, _fname)
-        return False
-
-    if check_method(_fname):
-        logger.error(ERR_MESSAGE_DUPLICATED.format(target=title), _fname)
-        return False
-
-    template_data = gettemp_method()
-    if not write_file(path_method(_fname), template_data):
-        logger.error(ERR_MESSAGE_CANNOT_CREATE.format(target=title), _fname)
-        return False
-
-    logger.debug(FINISH_ADD_PROCESS_MESSAGE.format(target=title))
-
-    return edit_method(_fname)
-
 
 def _copyfile(fname: str, newname: str) -> bool:
     if not fname or not newname:
@@ -542,12 +437,6 @@ def _delete_the_file(title: str, fname: str, check_method: Callable,
     logger.debug(FINISH_DELETE_PROCESS_MESSAGE.format(target=title))
     return True
 
-
-def _get_new_filename(fname: str, msg: str) -> str:
-    assert isinstance(msg, str)
-
-    return assertion.is_str(fname) if fname else get_input_filename(
-            INPUT_TARGET_FILENAME_MESSAGE.format(target=msg))
 
 
 def _get_target_filename(fname: str, msg: str, targets: list) -> str:

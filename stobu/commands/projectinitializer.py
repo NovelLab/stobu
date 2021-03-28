@@ -51,27 +51,6 @@ START_PROCESS_CREATE_FILE = 'Starting to create the {target} file...'
 
 
 # Main Function
-def init_project() -> bool:
-    logger.debug("Starting Project Initializer...")
-
-    creator = TemplateCreator.get_instance()
-    if not creator:
-        logger.error("Missing TemplateCreator. not initialized!: %s", creator)
-        return False
-
-    if not _check_and_create_the_file_using_template(
-            'project', ppath.get_project_path(),
-            checker.exists_project_file, creator.get_project_template):
-        logger.debug("Failure creating the project file!")
-        return False
-
-    if not check_and_create_defaults(creator):
-        logger.error("Failed check and create defaults!")
-        return False
-
-    logger.debug("...Succeeded init project.")
-    return True
-
 
 # Functions
 def check_and_create_defaults(creator: TemplateCreator) -> bool:
