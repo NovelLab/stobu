@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.4] - 2021-04-16
 ### Added
 - hankaku to zenkaku
 - Next day and month mark using in Scene info
+### Changed
+- all sources
 ### Fixed
 - missing scene head
 - next day using kanji bug
@@ -58,7 +61,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - setup: using requirements
 
 
-[Unreleased]: https://github.com/NovelLab/stobu/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/NovelLab/stobu/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/NovelLab/stobu/releases/v0.0.4
 [0.0.3]: https://github.com/NovelLab/stobu/releases/v0.0.3
 [0.0.2]: https://github.com/NovelLab/stobu/releases/v0.0.2
 [0.0.1]: https://github.com/NovelLab/stobu/releases/v0.0.1
