@@ -1,200 +1,77 @@
-"""Commandline arguments and option parser."""
-
+"""Parser of commandline arguments."""
 
 # Official Libraries
-import argparse
-from typing import Union
+from argparse import ArgumentParser, Namespace
 
 
 # My Modules
-from stobu.systems import messages as msg
-from stobu.util.log import logger
+from stobu.syss import messages as msg
+from stobu.utils import assertion
+from stobu.utils.log import logger
+
+
+__all__ = (
+        'get_commandline_arguments',
+        )
 
 
 # Define Constants
+PROC = 'get_commandline_args'
+"""str: main process name."""
+
 PROGRAM_NAME = 'stobu'
 """str: program name for argument parser."""
 
-DESCRIPTION = """
-story building manager on cui.
-"""
+DESCRIPTION = 'story building utility tool on cui.'
 """str: description for argument parser."""
 
-# Define constants
-APP = 'Argument Parser'
 
+# Main
+def get_commandline_arguments() -> Namespace:
+    logger.debug(msg.PROC_START.format(proc=PROC))
 
-# Main Function
-def get_project_commands() -> Union[argparse.Namespace, None]:
-    logger.debug(msg.MSG_START_APP.format(app=APP))
-    parser = _get_commandline_parser()
+    parser = assertion.is_instance(_init_commandline_parser(),
+            ArgumentParser)
 
-    if not _init_commandline_parser(parser):
-        logger.error(msg.ERR_FAILURE_APP_INITIALIZED(app=APP))
+    if not parser:
         return None
 
-    return _get_commandline_arguments(parser)
+    if not _set_parser_options(parser):
+        logger.warning(msg.ERR_FAIL_SET_DATA.format(data='arg parser options'))
+        return None
 
+    args = parser.parse_args()
 
-# Check Functions
-def is_add_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
+    if not args:
+        return None
 
-    return cmd in ('a', 'add')
+    logger.debug(msg.PROC_DONE.format(proc=PROC))
+    return args
 
-
-def is_arg_chapter(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('c', 'chapter')
-
-
-def is_arg_todo(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('d', 'todo')
-
-
-def is_arg_episode(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('e', 'episode')
-
-
-def is_arg_event(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('v', 'event')
-
-
-def is_arg_item(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('i', 'item')
-
-
-def is_arg_note(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('n', 'note')
-
-
-def is_arg_outline(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('o', 'outline')
-
-
-def is_arg_person(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('p', 'person')
-
-
-def is_arg_plan(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('l', 'plan')
-
-
-def is_arg_scene(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('s', 'scene')
-
-
-def is_arg_stage(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('t', 'stage')
-
-
-def is_arg_word(arg: str) -> bool:
-    assert isinstance(arg, str)
-
-    return arg in ('w', 'word')
-
-
-def is_build_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('b', 'build')
-
-
-def is_copy_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('c', 'copy')
-
-
-def is_delete_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('d', 'delete')
-
-
-def is_edit_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('e', 'edit')
-
-
-def is_init_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('i', 'init')
-
-
-def is_list_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('l', 'list')
-
-
-def is_rename_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('n', 'rename')
-
-
-def is_push_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('p', 'push')
-
-
-def is_reject_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('r', 'reject')
-
-
-def is_set_editor_command(cmd: str) -> bool:
-    assert isinstance(cmd, str)
-
-    return cmd in ('set_editor',)
 
 
 # Private Functions
-def _get_commandline_parser() -> argparse.ArgumentParser:
-    """Argument Parser getter."""
+def _init_commandline_parser() -> ArgumentParser:
+    _PROC = "init commandline parser"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
 
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
             prog=PROGRAM_NAME,
             description=DESCRIPTION,
             )
 
-    logger.debug(msg.MSG_SUCCESS_PROC_WITH_DATA.format(proc=APP), parser)
+    logger.debug(msg.PROC_DONE.format(proc=_PROC))
     return parser
 
 
-def _init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
-    """Init argument parser."""
-    assert isinstance(parser, argparse.ArgumentParser)
+def _set_parser_options(parser: ArgumentParser) -> bool:
+    assert isinstance(parser, ArgumentParser)
+    _PROC = 'set parser options'
+    logger.debug(msg.PROC_START.format(proc=_PROC))
 
     parser.add_argument('cmd', metavar='command', type=str, help='builder command')
-    parser.add_argument('arg0', metavar='arg0', type=str, nargs='?', help='sub command or any arguments')
-    parser.add_argument('arg1', metavar='arg1', type=str, nargs='?', help='any arguments')
+    parser.add_argument('elm', metavar='element', type=str, nargs='?', help='sub command or any element')
+    parser.add_argument('option', metavar='option', type=str, nargs='?', help='any arguments')
     parser.add_argument('-o', '--outline', help='outline output', action='store_true')
     parser.add_argument('-p', '--plot', help='plot output', action='store_true')
     parser.add_argument('-i', '--info', help='scene info output', action='store_true')
@@ -202,17 +79,10 @@ def _init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
     parser.add_argument('-n', '--novel', help='novel output', action='store_true')
     parser.add_argument('-r', '--rubi', help='output with rubi', action='store_true')
     parser.add_argument('-v', '--version', help='output app version', action='store_true')
+    parser.add_argument('-e', '--edit', help='add and edit when new file', action='store_true')
     parser.add_argument('--part', type=str, help='select ouput part')
+    parser.add_argument('--comment', help='show comment', action='store_true')
     parser.add_argument('--debug', help='set debug flag', action='store_true')
 
-    logger.debug(msg.MSG_SUCCESS_PROC.format(proc=f'{APP} setting options'))
+    logger.debug(msg.PROC_DONE.format(proc=_PROC))
     return True
-
-
-def _get_commandline_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
-    """Get commandline arguments and parsed list."""
-    assert isinstance(parser, argparse.ArgumentParser)
-
-    args = parser.parse_args()
-
-    return args

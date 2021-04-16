@@ -1,100 +1,108 @@
-"""Main application for storybuilder."""
-
+"""Application class."""
 
 # Official Libraries
-from argparse import Namespace
 import os
+from argparse import Namespace
 
 
 # My Modules
-from stobu.commands.commandswitcher import run_command, run_init_command
-from stobu.commands.commandswitcher import RunResult
-from stobu.systems import messages as msg
-from stobu.tools import commandlineparser as parse
-from stobu.tools.filechecker import exists_project_file
-from stobu.util import assertion
-from stobu.util.log import logger
+from stobu.commands.adder import add_story_source
+from stobu.commands.builder import build_project
+from stobu.commands.copier import copy_story_source
+from stobu.commands.deleter import delete_story_source
+from stobu.commands.editor import edit_story_source
+from stobu.commands.initializer import init_project
+from stobu.commands.lister import show_list_of_story_sources
+from stobu.commands.pusher import push_story_source
+from stobu.commands.rejector import reject_story_source
+from stobu.commands.renamer import rename_story_source
+from stobu.commands.setter import set_project_data
+from stobu.syss import messages as msg
+from stobu.tools.cmdchecker import has_cmd_of
+from stobu.tools.commandlineparser import get_commandline_arguments
+from stobu.types.command import CmdType
+from stobu.utils.log import logger
 
 
-# Define type hints
-EXIT_CODE = int
+__all__ = (
+        'Application',
+        )
 
 
 # Define Constants
-APP = "Main Application"
+PROC = 'APPLICATION'
 
 
 # Main
 class Application(object):
 
-    """Application for storybuilder."""
+    def __init__(self):
+        logger.debug(msg.PROC_INITIALIZED.format(proc=PROC))
 
-    def __init__(self) -> None:
-        self._args = None
-        logger.debug(msg.MSG_INITIALIZED.format(app=APP))
+    def run(self) -> int:
+        logger.debug(msg.PROC_START.format(proc=PROC))
 
-    # Methods
-    def run(self) -> EXIT_CODE:
-        logger.debug(msg.MSG_START_APP.format(app=APP))
-
-        # pre process
-        if not self._pre_process():
-            return os.EX_SOFTWARE
-
-        # main process
-        if not self._main_process(self._args):
-            return os.EX_SOFTWARE
-
-        # post process
-        if not self._post_process():
-            return os.EX_SOFTWARE
-
-        logger.debug(msg.MSG_FINISH_APP.format(app=APP))
-        return os.EX_OK
-
-    # Private Methods
-    def _pre_process(self) -> bool:
-        logger.debug(msg.MSG_START_PROC.format(proc="Pre Process"))
-        args = parse.get_project_commands()
+        args = get_commandline_arguments()
 
         if not args:
-            logger.error(msg.ERR_MISSING_DATA.format(data='command'), args)
+            logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"commandline args in {PROC}"))
             return os.EX_NOINPUT
-        assert isinstance(args, Namespace)
 
-        logger.debug(
-                msg.MSG_SUCCESS_PROC_WITH_DATA.format(
-                    proc='get commandline arguments'), args)
+        if has_cmd_of(args, CmdType.INIT):
+            if not init_project(args):
+                logger.error(msg.ERR_FAIL_CANNOT_INITIALIZE.format(data='project'))
+                return os.EX_SOFTWARE
+            return os.EX_OK
 
-        # check if command is init
-        init_result = assertion.is_instance(run_init_command(args), RunResult)
-        if not init_result.result:
-            return False
+        is_succeeded = False
 
-        # check if project exists
-        if not exists_project_file():
-            logger.error(msg.ERR_MISSING_DATA.format(data='project file'))
-            return False
+        if has_cmd_of(args, CmdType.BUILD):
+            is_succeeded = build_project(args)
+        elif has_cmd_of(args, CmdType.NONE) or has_cmd_of(args, CmdType.INIT):
+            is_succeeded = True
+        else:
+            if not _is_valid_args(args):
+                return os.EX_NOINPUT
 
-        self._args = args
+            if has_cmd_of(args, CmdType.ADD):
+                is_succeeded = add_story_source(args)
+            elif has_cmd_of(args, CmdType.COPY):
+                is_succeeded = copy_story_source(args)
+            elif has_cmd_of(args, CmdType.DELETE):
+                is_succeeded = delete_story_source(args)
+            elif has_cmd_of(args, CmdType.EDIT):
+                is_succeeded = edit_story_source(args)
+            elif has_cmd_of(args, CmdType.LIST):
+                is_succeeded = show_list_of_story_sources(args)
+            elif has_cmd_of(args, CmdType.PUSH):
+                is_succeeded = push_story_source(args)
+            elif has_cmd_of(args, CmdType.REJECT):
+                is_succeeded = reject_story_source(args)
+            elif has_cmd_of(args, CmdType.RENAME):
+                is_succeeded = rename_story_source(args)
+            elif has_cmd_of(args, CmdType.SET):
+                is_succeeded = set_project_data(args)
+            else:
+                logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"command type in {PROC}"))
 
-        logger.debug(msg.MSG_FINISH_PROC.format(proc="Pre Process"))
-        return True
+        if not is_succeeded:
+            logger.error(msg.ERR_FAILED_PROC.format(proc=PROC))
+            return os.EX_SOFTWARE
 
-    def _main_process(self, args: Namespace) -> bool:
-        assert isinstance(args, Namespace)
-        logger.debug(msg.MSG_START_PROC.format(proc="Main Process"))
+        logger.debug(msg.PROC_DONE.format(proc=PROC))
+        return os.EX_OK
 
-        run_result = assertion.is_instance(run_command(args), RunResult)
 
-        if not run_result.result:
-            logger.error(msg.ERR_FAILURE_PROC.format(proc=f'{run_result.name} command'))
-            return False
+# Private Functions
+def _is_valid_args(args: Namespace) -> bool:
+    assert isinstance(args, Namespace)
 
-        logger.debug(msg.MSG_FINISH_PROC.format(proc="Main Process"))
-        return True
+    if not args.cmd:
+        logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"command in {PROC}"))
+        return False
 
-    def _post_process(self) -> bool:
-        logger.debug(msg.MSG_START_PROC.format(proc="Post Process"))
-        logger.debug(msg.MSG_FINISH_PROC.format(proc="Post Process"))
-        return True
+    if not args.elm:
+        logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"command args in {PROC}"))
+        return False
+
+    return True
