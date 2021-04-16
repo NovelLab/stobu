@@ -1,7 +1,7 @@
 """Define data name of plan file."""
 
 # Official Librariees
-from enum import auto, Enum
+from enum import Enum
 
 
 __all__ = (

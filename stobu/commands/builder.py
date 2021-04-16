@@ -23,7 +23,7 @@ from stobu.types.content import ContentsData
 from stobu.types.command import CmdType
 from stobu.types.element import ElmType
 from stobu.types.output import OutputsData
-from stobu.types.story import StoryData, StoryRecord
+from stobu.types.story import StoryData
 from stobu.utils import assertion
 from stobu.utils.fileio import write_file
 from stobu.utils.log import logger

@@ -49,7 +49,7 @@ def format_plots_charcounts_data(counts_data: CountsData) -> list:
 
     for record in counts_data.get_data():
         assert isinstance(record, CountRecord)
-        if not current is record.type:
+        if current is not record.type:
             tmp.append(get_format_record_as_br())
             tmp.append(head_string_from_elm(record.type, 'count'))
             current = record.type
@@ -68,7 +68,7 @@ def format_plots_data(plots_data: PlotsData) -> list:
 
     for record in plots_data.get_data():
         assert isinstance(record, PlotRecord)
-        if not current is record.type:
+        if current is not record.type:
             tmp.append(head_string_from_elm(record.type, record.title))
             current = record.type
         tmp.extend(_conv_output_record(record))

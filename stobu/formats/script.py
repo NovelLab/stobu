@@ -65,7 +65,7 @@ def format_scripts_charcounts_data(counts_data: CountsData) -> list:
 
     for record in counts_data.get_data():
         assert isinstance(record, CountRecord)
-        if not current is record.type:
+        if current is not record.type:
             tmp.append(get_format_record_as_br())
             tmp.append(head_string_from_elm(record.type, 'count'))
             current = record.type

@@ -2,7 +2,6 @@
 
 # Official Libraries
 from dataclasses import dataclass
-from enum import Enum, auto
 
 
 # My Modules

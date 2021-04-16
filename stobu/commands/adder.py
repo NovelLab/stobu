@@ -7,7 +7,7 @@ from argparse import Namespace
 # My Modules
 from stobu.syss import messages as msg
 from stobu.tools.cmdchecker import has_cmd_of
-from stobu.tools.elmchecker import elm_from, has_elm_of, is_enable_elm_in
+from stobu.tools.elmchecker import elm_from, is_enable_elm_in
 from stobu.tools.pathchecker import is_duplicated_path_in_dir
 from stobu.tools.pathgetter import filepath_of
 from stobu.types.command import CmdType

@@ -12,7 +12,6 @@ from stobu.tools.pathgetter import filepath_of
 from stobu.types.element import ElmType
 from stobu.utils import assertion
 from stobu.utils.fileio import read_file, write_file
-from stobu.utils.filepath import basename_of
 from stobu.utils.log import logger
 
 
@@ -21,6 +20,10 @@ __all__ = (
         'remove_item_order_data',
         'write_order_data',
         )
+
+
+# Define Constants
+PROC = 'TOOL ORDER DATA WRITER'
 
 
 # Main

@@ -1,7 +1,7 @@
 """Define data name of project file."""
 
 # Official Libraries
-from enum import Enum, auto
+from enum import Enum
 
 
 __all__ = (

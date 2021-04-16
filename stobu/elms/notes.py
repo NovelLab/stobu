@@ -1,7 +1,7 @@
 """Define data name of note file."""
 
 # Official Librariees
-from enum import auto, Enum
+from enum import Enum
 
 
 __all__ = (

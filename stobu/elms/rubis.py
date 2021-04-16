@@ -1,7 +1,7 @@
 """Define data name of rubi."""
 
 # Official Librariees
-from enum import auto, Enum
+from enum import Enum
 
 
 __all__ = (

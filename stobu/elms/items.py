@@ -1,7 +1,7 @@
 """Define data name of item file."""
 
 # Official Librariees
-from enum import auto, Enum
+from enum import Enum
 
 
 __all__ = (

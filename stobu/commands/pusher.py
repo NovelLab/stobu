@@ -7,13 +7,13 @@ from argparse import Namespace
 # My Modules
 from stobu.syss import messages as msg
 from stobu.tools.cmdchecker import has_cmd_of
-from stobu.tools.elmchecker import has_elm_of, is_enable_elm_in, elm_from
+from stobu.tools.elmchecker import is_enable_elm_in, elm_from
 from stobu.tools.orderdatareader import get_filenames_in_order_by_elm
 from stobu.tools.orderdatareader import get_parent_item_of, ordername_of, orderitem_of
 from stobu.tools.orderdatareader import get_elm_from_order, rid_prefix
 from stobu.tools.orderdatawriter import add_order_data, write_order_data
 from stobu.tools.pathchecker import is_duplicated_path_in_dir
-from stobu.tools.pathgetter import filepath_of, filepaths_by_elm, get_target_filename_from_list
+from stobu.tools.pathgetter import filepaths_by_elm, get_target_filename_from_list
 from stobu.types.command import CmdType
 from stobu.types.element import ElmType
 from stobu.utils import assertion
@@ -56,7 +56,7 @@ def push_story_source(args: Namespace) -> bool:
 
     parent = 'book'
 
-    if not ElmType.CHAPTER is elm:
+    if ElmType.CHAPTER is not elm:
         parent = _get_push_parent_filename(elm)
         if not parent:
             logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"push parent filename in {PROC}"))

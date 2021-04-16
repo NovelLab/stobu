@@ -1,7 +1,7 @@
 """Define element types."""
 
 # Official Libraries
-from enum import Enum, auto
+from enum import Enum
 
 
 # My Modules

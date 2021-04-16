@@ -10,9 +10,7 @@ from stobu.syss import messages as msg
 from stobu.tools.cmdchecker import has_cmd_of
 from stobu.tools.datareader import project_item_of
 from stobu.tools.datawriter import write_project_data
-from stobu.tools.elmchecker import has_elm_of
 from stobu.types.command import CmdType
-from stobu.types.element import ElmType
 from stobu.utils.log import logger
 
 

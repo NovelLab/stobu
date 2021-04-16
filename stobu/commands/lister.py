@@ -9,7 +9,7 @@ import yaml
 from stobu.syss import messages as msg
 from stobu.tools.cmdchecker import has_cmd_of
 from stobu.tools.datareader import get_order_data
-from stobu.tools.elmchecker import has_elm_of, is_enable_elm_in, elm_from
+from stobu.tools.elmchecker import is_enable_elm_in, elm_from
 from stobu.tools.pathgetter import filepaths_by_elm
 from stobu.types.command import CmdType
 from stobu.types.element import ElmType
@@ -71,6 +71,7 @@ def _show_list(elm: ElmType) -> bool:
         return _show_list_of_order()
     else:
         return _show_list_of_files(elm)
+
 
 def _show_list_of_files(elm: ElmType) -> bool:
     assert isinstance(elm, ElmType)

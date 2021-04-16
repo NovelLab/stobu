@@ -1,7 +1,6 @@
 """Check paths module."""
 
 # Official Libraries
-import os
 
 
 # My Modules

@@ -1,7 +1,7 @@
 """Define enum type for build command."""
 
 # Official Libraries
-from enum import auto, Enum
+from enum import Enum
 
 
 __all__ = (

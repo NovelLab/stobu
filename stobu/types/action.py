@@ -7,11 +7,11 @@ from enum import auto, Enum
 
 # My Modules
 from stobu.types.basedata import _BaseData
-from stobu.types.element import ElmType
 
 
 __all__ = (
-        'ActRecordType',
+        'ActType',
+        'ActDataType',
         'ActionRecord',
         'ActionsData',
         )

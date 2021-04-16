@@ -7,8 +7,8 @@ from argparse import Namespace
 # My Modules
 from stobu.syss import messages as msg
 from stobu.tools.cmdchecker import has_cmd_of
-from stobu.tools.elmchecker import has_elm_of, is_enable_elm_in, elm_from
-from stobu.tools.orderdatareader import get_elm_from_order, get_filenames_in_order_by_elm
+from stobu.tools.elmchecker import is_enable_elm_in, elm_from
+from stobu.tools.orderdatareader import get_filenames_in_order_by_elm
 from stobu.tools.orderdatareader import orderitem_of, rid_prefix
 from stobu.tools.orderdatawriter import remove_item_order_data, write_order_data
 from stobu.tools.pathchecker import is_duplicated_path_in_dir

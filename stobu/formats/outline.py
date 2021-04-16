@@ -8,7 +8,6 @@ from stobu.formats.common import head_string_from_elm, get_format_record_as_br
 from stobu.formats.common import conv_charcounts_from
 from stobu.formats.common import get_breakline
 from stobu.syss import messages as msg
-from stobu.tools.elmchecker import is_enable_the_elm
 from stobu.types.count import CountRecord, CountsData
 from stobu.types.element import ElmType
 from stobu.types.outline import OutlineRecord, OutlinesData
@@ -45,11 +44,11 @@ def format_outlines_charcounts_data(counts_data: CountsData) -> list:
     current = ElmType.NONE
 
     tmp.append(get_breakline())
-    tmp.append(f"# OUTLINE char counts:\n")
+    tmp.append("# OUTLINE char counts:\n")
 
     for record in counts_data.get_data():
         assert isinstance(record, CountRecord)
-        if not current is record.type:
+        if current is not record.type:
             tmp.append(get_format_record_as_br())
             tmp.append(head_string_from_elm(record.type, 'count'))
             current = record.type
@@ -70,7 +69,7 @@ def format_outlines_data(outlines_data: OutlinesData) -> list:
 
     for record in outlines_data.get_data():
         assert isinstance(record, OutlineRecord)
-        if not current is record.type:
+        if current is not record.type:
             tmp.append(head_string_from_elm(record.type, record.title))
             current = record.type
         tmp.extend(_conv_output_record(record))
@@ -103,7 +102,7 @@ def _record_outline_of(record: OutlineRecord) -> str:
     indent = "    "
     if "\n" in outline:
         lines = outline.split('\n')
-        return indent  + f"\n{indent}".join(lines) * "\n"
+        return indent + f"\n{indent}".join(lines) * "\n"
     else:
         return indent + outline + "\n"
 

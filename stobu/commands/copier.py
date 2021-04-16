@@ -8,7 +8,7 @@ import shutil
 # My Modules
 from stobu.syss import messages as msg
 from stobu.tools.cmdchecker import has_cmd_of
-from stobu.tools.elmchecker import has_elm_of, is_enable_elm_in, elm_from
+from stobu.tools.elmchecker import is_enable_elm_in, elm_from
 from stobu.tools.pathchecker import is_duplicated_path_in_dir
 from stobu.tools.pathgetter import filepath_of, filepaths_by_elm, get_target_filename_from_list
 from stobu.types.command import CmdType

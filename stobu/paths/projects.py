@@ -1,11 +1,9 @@
 """Define project paths."""
 
 # Official Libraries
-import os
 
 
 # My Modules
-from stobu import __app_base_dir__
 from stobu import __project_path__
 from stobu.types.element import ElmType
 

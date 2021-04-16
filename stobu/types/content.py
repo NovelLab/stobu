@@ -1,8 +1,7 @@
 """Define contents data and record."""
 
 # Official Libraries
-from dataclasses import dataclass, field
-from enum import auto, Enum
+from dataclasses import dataclass
 
 
 # My Modules

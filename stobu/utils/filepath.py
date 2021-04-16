@@ -6,7 +6,7 @@ import os
 
 __all__ = (
         'basename_of',
-        'filename_with_number',
+        'filenames_with_number',
         'new_filename_by_input',
         )
 
