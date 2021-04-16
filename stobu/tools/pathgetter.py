@@ -6,6 +6,7 @@ import glob
 
 
 # My Modules
+from stobu.paths.projects import APP_DIR
 from stobu.paths.projects import PROJECT_DIR
 from stobu.paths.projects import BASE_FILE_TABLE, DIRS_TABLE, EXT_TABLE
 from stobu.syss import messages as msg
@@ -15,10 +16,15 @@ from stobu.utils.log import logger
 
 
 __all__ = (
+        'add_extention',
         'dirpath_of',
+        'ext_of',
+        'get_app_path',
         'get_project_path',
         'get_target_filename_from_list',
         'filepath_of',
+        'filepaths_by_elm',
+        'is_base_file',
         )
 
 
@@ -55,6 +61,10 @@ def ext_of(elm: ElmType) -> str:
     assert isinstance(elm, ElmType)
 
     return EXT_TABLE[elm]
+
+
+def get_app_path() -> str:
+    return APP_DIR
 
 
 def get_project_path() -> str:

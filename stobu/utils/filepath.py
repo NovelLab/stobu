@@ -7,6 +7,7 @@ import os
 __all__ = (
         'basename_of',
         'filenames_with_number',
+        'is_exists_path',
         'new_filename_by_input',
         )
 
@@ -30,6 +31,12 @@ def filenames_with_number(fnames: list, first_num: int = 1) -> list:
         tmp.append(f"{idx}: {fname}")
         idx += 1
     return tmp
+
+
+def is_exists_path(path: str) -> bool:
+    assert isinstance(path, str)
+
+    return os.path.exists(path)
 
 
 def new_filename_by_input(title: str) -> str:

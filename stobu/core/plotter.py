@@ -140,7 +140,7 @@ def _get_plot_item_of(record: StoryRecord, item: PlotItem) -> str:
         return ""
 
     key = str(item)
-    if key in not data:
+    if key not in data:
         logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"{key} of record in {PROC}"))
         return ""
 

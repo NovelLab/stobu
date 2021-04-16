@@ -4,11 +4,15 @@
 
 
 # My Modules
+from stobu import __app_base_dir__
 from stobu import __project_path__
 from stobu.types.element import ElmType
 
 
 # Define Constants
+APP_DIR = __app_base_dir__
+"""str: path of application directory."""
+
 PROJECT_DIR = __project_path__
 """str: path of project directory."""
 
