@@ -15,6 +15,7 @@ from stobu.utils.log import logger
 
 
 __all__ = (
+        'write_project_data',
         )
 
 

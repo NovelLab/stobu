@@ -6,9 +6,11 @@ from typing import Any
 
 
 # My Modules
+from stobu.elms.books import BookItem
 from stobu.elms.orders import OrderItem
 from stobu.elms.persons import PersonItem
 from stobu.elms.projects import ProjectItem
+from stobu.paths.projects import EXT_TABLE, MARKDOWN_EXT, YAML_EXT
 from stobu.syss import messages as msg
 from stobu.syss.settings import PROJECT
 from stobu.tools.filedatareader import read_markdown_data_as_yaml, read_yaml_data
@@ -19,6 +21,7 @@ from stobu.utils.log import logger
 
 
 __all__ = (
+        'get_basefile_data',
         'get_mob_data',
         'get_order_data',
         'get_person_data',
@@ -33,7 +36,33 @@ __all__ = (
 PROC = 'TOOL DATA READER'
 
 
+BASE_FILES = [
+        ElmType.BOOK,
+        ElmType.MOB,
+        ElmType.ORDER,
+        ElmType.PROJECT,
+        ElmType.RUBI,
+        ElmType.TIME,
+        ElmType.TODO,
+        ]
+
+
 # Main Functions
+def get_basefile_data(elm: ElmType) -> dict:
+    assert isinstance(elm, ElmType)
+
+    if not elm in BASE_FILES:
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"element type in {PROC}"))
+        return {}
+
+    data = read_file(filepath_of(elm, ''))
+
+    if EXT_TABLE[elm] is MARKDOWN_EXT:
+        return read_markdown_data_as_yaml(data)
+    else:
+        return read_yaml_data(data)
+
+
 def get_mob_data() -> dict:
     return read_yaml_data(read_file(filepath_of(ElmType.MOB, '')))
 
