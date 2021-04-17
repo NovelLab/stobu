@@ -10,10 +10,6 @@ from stobu.core.outliner import outlines_data_from, outputs_data_from_outlines_d
 from stobu.core.plotter import plots_data_from, outputs_data_from_plots_data
 from stobu.core.scripter import scripts_data_from, outputs_data_from_scripts_data
 from stobu.counts.common import counts_data_from
-from stobu.counts.novel import counts_data_from_novels_outputs_data
-from stobu.counts.outline import counts_data_from_outlines_outputs_data
-from stobu.counts.plot import counts_data_from_plots_outputs_data
-from stobu.counts.script import counts_data_from_scripts_outputs_data
 from stobu.elms.books import BookItem
 from stobu.formats.novel import format_novels_charcounts_data
 from stobu.formats.outline import format_outlines_charcounts_data
