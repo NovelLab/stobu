@@ -14,6 +14,7 @@ from stobu.tools.pathgetter import filepath_of
 from stobu.types.element import ElmType
 from stobu.utils.fileio import read_file
 from stobu.utils.log import logger
+from stobu.utils.strings import rid_rn
 
 
 __all__ = (
@@ -98,7 +99,7 @@ def get_template_data(elm: ElmType) -> str:
 
     if elm in WITH_PLOT:
         plot = read_file(_get_filename(ElmType.PLOT))
-        return data.replace('{PLOT}', plot)
+        return data.replace('{PLOT}', rid_rn(plot))
     elif ElmType.PROJECT is elm:
         return data.replace('{VERSION}', VERSION).replace('{EDITOR}', DEFAULT_EDITOR)
     else:

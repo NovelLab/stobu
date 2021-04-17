@@ -30,7 +30,7 @@ APP_CACHE_DIR = os.path.join(USER_CACHE_DIR, 'storybuilder')
 """str: path of this application cache directory."""
 
 if not os.path.exists(USER_CACHE_DIR):
-    os.makedirs(USR_CACHE_DIR)
+    os.makedirs(USER_CACHE_DIR)
 
 if not os.path.exists(APP_CACHE_DIR):
     os.makedirs(APP_CACHE_DIR)

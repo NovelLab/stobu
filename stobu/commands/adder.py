@@ -10,6 +10,7 @@ from stobu.tools.cmdchecker import has_cmd_of
 from stobu.tools.elmchecker import elm_from, is_enable_elm_in
 from stobu.tools.pathchecker import is_duplicated_path_in_dir
 from stobu.tools.pathgetter import filepath_of
+from stobu.tools.templater import get_template_data
 from stobu.types.command import CmdType
 from stobu.types.element import ElmType
 from stobu.utils import assertion
@@ -60,7 +61,7 @@ def add_story_source(args: Namespace) -> bool:
         return False
 
     path = filepath_of(elm, fname)
-    data = 'test'
+    data = get_template_data(elm)
 
     if not write_file(path, data):
         logger.error(msg.ERR_FAIL_CANNOT_CREATE_DATA.format(data=f"new {elm} file in {PROC}"))
