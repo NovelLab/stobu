@@ -18,12 +18,15 @@ afterschool:
   time: '16:00'
 evening:
   name: 夕方
-  time: '17:00'
+  time: '18:00'
 night:
   name: 夜
   time: '20:00'
-midnight:
+latenight:
   name: 夜半
+  time: '22:00'
+midnight:
+  name: 真夜中
   time: '24:00'
 deepnight:
   name: 深夜

@@ -1,102 +1,108 @@
-"""Main application for storybuilder."""
-
+"""Application class."""
 
 # Official Libraries
 import os
+from argparse import Namespace
 
 
 # My Modules
-from stobu.commands.projectadder import switch_command_to_add
-from stobu.commands.projectadder import switch_command_to_copy
-from stobu.commands.projectadder import switch_command_to_delete
-from stobu.commands.projectadder import switch_command_to_rename
-from stobu.commands.projectbuilder import switch_command_to_build
-from stobu.commands.projecteditor import switch_command_to_edit, switch_command_to_set_editor
-from stobu.commands.projectinitializer import init_project
-from stobu.commands.projectpusher import switch_command_to_push
-from stobu.commands.projectpusher import switch_command_to_reject
-from stobu.commands.projectviewer import switch_command_to_list
-from stobu.tools.commandlineparser import get_project_commands
-from stobu.tools.filechecker import exists_project_file
-from stobu.util.log import logger
+from stobu.commands.adder import add_story_source
+from stobu.commands.builder import build_project
+from stobu.commands.copier import copy_story_source
+from stobu.commands.deleter import delete_story_source
+from stobu.commands.editor import edit_story_source
+from stobu.commands.initializer import init_project
+from stobu.commands.lister import show_list_of_story_sources
+from stobu.commands.pusher import push_story_source
+from stobu.commands.rejector import reject_story_source
+from stobu.commands.renamer import rename_story_source
+from stobu.commands.setter import set_project_data
+from stobu.syss import messages as msg
+from stobu.tools.cmdchecker import has_cmd_of
+from stobu.tools.commandlineparser import get_commandline_arguments
+from stobu.types.command import CmdType
+from stobu.utils.log import logger
 
 
-# Define type hints
-EXIT_CODE = int
+__all__ = (
+        'Application',
+        )
 
 
+# Define Constants
+PROC = 'APPLICATION'
+
+
+# Main
 class Application(object):
 
-    """Application for storybuilder."""
+    def __init__(self):
+        logger.debug(msg.PROC_INITIALIZED.format(proc=PROC))
 
-    def __init__(self) -> None:
-        # base setting
-        logger.debug("Initialized the Application.")
+    def run(self) -> int:
+        logger.debug(msg.PROC_START.format(proc=PROC))
 
-    # main method
-    def run(self) -> EXIT_CODE:
-        logger.debug("Starting the Application...")
+        args = get_commandline_arguments()
 
-        is_succeeded = True
-        """bool: if True is successfull result to proceed, False is any
-            failure in process.
-        """
-
-        # pre process
-        cmdargs = get_project_commands()
-
-        if not cmdargs:
-            logger.error("Missing command!: %s", cmdargs)
+        if not args:
+            logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"commandline args in {PROC}"))
             return os.EX_NOINPUT
 
-        logger.debug("Success get the command-line arguments: %s", cmdargs)
-
-        # check if command is init
-        if cmdargs.cmd in ('i', 'init'):
-            logger.debug("INIT project starting...")
-            is_succeeded = init_project()
-            if not is_succeeded:
-                logger.error("Uninitialized this project. we have any problems!")
+        if has_cmd_of(args, CmdType.INIT):
+            if not init_project(args):
+                logger.error(msg.ERR_FAIL_CANNOT_INITIALIZE.format(data='project'))
                 return os.EX_SOFTWARE
-            else:
-                return os.EX_OK
+            return os.EX_OK
 
-        # check if project exists
-        if not exists_project_file():
-            logger.error("Missing the project file!")
-            return os.EX_OSFILE
-
-        # main process
-        # - command switch
         is_succeeded = False
 
-        if cmdargs.cmd in ('b', 'build'):
-            is_succeeded = switch_command_to_build(cmdargs)
-        elif cmdargs.cmd in ('a', 'add'):
-            is_succeeded = switch_command_to_add(cmdargs)
-        elif cmdargs.cmd in ('c', 'copy'):
-            is_succeeded = switch_command_to_copy(cmdargs)
-        elif cmdargs.cmd in ('d', 'delete'):
-            is_succeeded = switch_command_to_delete(cmdargs)
-        elif cmdargs.cmd in ('e', 'edit'):
-            is_succeeded = switch_command_to_edit(cmdargs)
-        elif cmdargs.cmd in ('l', 'list'):
-            is_succeeded = switch_command_to_list(cmdargs)
-        elif cmdargs.cmd in ('r', 'rename'):
-            is_succeeded = switch_command_to_rename(cmdargs)
-        elif cmdargs.cmd in ('p', 'push'):
-            is_succeeded = switch_command_to_push(cmdargs)
-        elif cmdargs.cmd in ('j', 'reject'):
-            is_succeeded = switch_command_to_reject(cmdargs)
-        elif cmdargs.cmd == 'set_editor':
-            is_succeeded = switch_command_to_set_editor(cmdargs)
+        if has_cmd_of(args, CmdType.BUILD):
+            is_succeeded = build_project(args)
+        elif has_cmd_of(args, CmdType.NONE) or has_cmd_of(args, CmdType.INIT):
+            is_succeeded = True
         else:
-            logger.error("Unknown command!: %s", cmdargs.cmd)
-            return os.EX_SOFTWARE
+            if not _is_valid_args(args):
+                return os.EX_NOINPUT
 
-        # post process
+            if has_cmd_of(args, CmdType.ADD):
+                is_succeeded = add_story_source(args)
+            elif has_cmd_of(args, CmdType.COPY):
+                is_succeeded = copy_story_source(args)
+            elif has_cmd_of(args, CmdType.DELETE):
+                is_succeeded = delete_story_source(args)
+            elif has_cmd_of(args, CmdType.EDIT):
+                is_succeeded = edit_story_source(args)
+            elif has_cmd_of(args, CmdType.LIST):
+                is_succeeded = show_list_of_story_sources(args)
+            elif has_cmd_of(args, CmdType.PUSH):
+                is_succeeded = push_story_source(args)
+            elif has_cmd_of(args, CmdType.REJECT):
+                is_succeeded = reject_story_source(args)
+            elif has_cmd_of(args, CmdType.RENAME):
+                is_succeeded = rename_story_source(args)
+            elif has_cmd_of(args, CmdType.SET):
+                is_succeeded = set_project_data(args)
+            else:
+                logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"command type in {PROC}"))
+
         if not is_succeeded:
-            logger.error("Failed any command!")
+            logger.error(msg.ERR_FAILED_PROC.format(proc=PROC))
             return os.EX_SOFTWARE
 
+        logger.debug(msg.PROC_DONE.format(proc=PROC))
         return os.EX_OK
+
+
+# Private Functions
+def _is_valid_args(args: Namespace) -> bool:
+    assert isinstance(args, Namespace)
+
+    if not args.cmd:
+        logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"command in {PROC}"))
+        return False
+
+    if not args.elm:
+        logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"command args in {PROC}"))
+        return False
+
+    return True

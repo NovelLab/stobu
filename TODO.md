@@ -26,6 +26,7 @@ ToDo List
 * Foreshadow and payoff feature.
 * Mod people using.
 * Aozora bunko format.
+* detail (time and camera) output mode in Script build.
 
 ## Bugs
 
@@ -33,3 +34,4 @@ ToDo List
 * Cannot Move to trashbox when same name already exists
 * Invalid index in scene info.
 * Invalid cache in scene info same.
+* Invalid format in scene info.

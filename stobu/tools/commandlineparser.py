@@ -1,57 +1,77 @@
-"""Commandline arguments and option parser."""
-
+"""Parser of commandline arguments."""
 
 # Official Libraries
-import argparse
-from typing import Union
+from argparse import ArgumentParser, Namespace
 
 
 # My Modules
-from stobu.util.log import logger
+from stobu.syss import messages as msg
+from stobu.utils import assertion
+from stobu.utils.log import logger
+
+
+__all__ = (
+        'get_commandline_arguments',
+        )
 
 
 # Define Constants
+PROC = 'get_commandline_args'
+"""str: main process name."""
+
 PROGRAM_NAME = 'stobu'
 """str: program name for argument parser."""
 
-DESCRIPTION = """
-story building manager on cui.
-"""
+DESCRIPTION = 'story building utility tool on cui.'
 """str: description for argument parser."""
 
 
-# main function
-def get_project_commands() -> Union[argparse.Namespace, None]:
-    logger.debug("Starting get commandline arguments...")
-    parser = get_commandline_parser()
+# Main
+def get_commandline_arguments() -> Namespace:
+    logger.debug(msg.PROC_START.format(proc=PROC))
 
-    if not init_commandline_parser(parser):
-        logger.error("Failed the initializing commandline parser!")
+    parser = assertion.is_instance(_init_commandline_parser(),
+            ArgumentParser)
+
+    if not parser:
         return None
 
-    return get_commandline_arguments(parser)
+    if not _set_parser_options(parser):
+        logger.warning(msg.ERR_FAIL_SET_DATA.format(data='arg parser options'))
+        return None
+
+    args = parser.parse_args()
+
+    if not args:
+        return None
+
+    logger.debug(msg.PROC_DONE.format(proc=PROC))
+    return args
 
 
-# functions
-def get_commandline_parser() -> argparse.ArgumentParser:
-    """Argument Parser getter."""
 
-    parser = argparse.ArgumentParser(
+# Private Functions
+def _init_commandline_parser() -> ArgumentParser:
+    _PROC = "init commandline parser"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+
+    parser = ArgumentParser(
             prog=PROGRAM_NAME,
             description=DESCRIPTION,
             )
 
-    logger.debug("Create an ArgumentParser.")
+    logger.debug(msg.PROC_DONE.format(proc=_PROC))
     return parser
 
 
-def init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
-    """Init argument parser."""
-    assert isinstance(parser, argparse.ArgumentParser)
+def _set_parser_options(parser: ArgumentParser) -> bool:
+    assert isinstance(parser, ArgumentParser)
+    _PROC = 'set parser options'
+    logger.debug(msg.PROC_START.format(proc=_PROC))
 
     parser.add_argument('cmd', metavar='command', type=str, help='builder command')
-    parser.add_argument('arg0', metavar='arg0', type=str, nargs='?', help='sub command or any arguments')
-    parser.add_argument('arg1', metavar='arg1', type=str, nargs='?', help='any arguments')
+    parser.add_argument('elm', metavar='element', type=str, nargs='?', help='sub command or any element')
+    parser.add_argument('option', metavar='option', type=str, nargs='?', help='any arguments')
     parser.add_argument('-o', '--outline', help='outline output', action='store_true')
     parser.add_argument('-p', '--plot', help='plot output', action='store_true')
     parser.add_argument('-i', '--info', help='scene info output', action='store_true')
@@ -59,17 +79,10 @@ def init_commandline_parser(parser: argparse.ArgumentParser) -> bool:
     parser.add_argument('-n', '--novel', help='novel output', action='store_true')
     parser.add_argument('-r', '--rubi', help='output with rubi', action='store_true')
     parser.add_argument('-v', '--version', help='output app version', action='store_true')
+    parser.add_argument('-e', '--edit', help='add and edit when new file', action='store_true')
     parser.add_argument('--part', type=str, help='select ouput part')
+    parser.add_argument('--comment', help='show comment', action='store_true')
     parser.add_argument('--debug', help='set debug flag', action='store_true')
 
-    logger.debug("Initialized the ArgumentParser.")
+    logger.debug(msg.PROC_DONE.format(proc=_PROC))
     return True
-
-
-def get_commandline_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
-    """Get commandline arguments and parsed list."""
-    assert isinstance(parser, argparse.ArgumentParser)
-
-    args = parser.parse_args()
-
-    return args
