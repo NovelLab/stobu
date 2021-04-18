@@ -3,7 +3,9 @@
 import pytest
 
 # my modules
-from stobu.util.assertion import is_dict, is_int, is_list, is_str, is_instance
+from stobu.utils.assertion import is_int, is_str
+from stobu.utils.assertion import is_instance
+from stobu.utils.assertion import is_list, is_tuple, is_dict
 
 
 # test "is_dict"
@@ -52,6 +54,23 @@ def test_assertion_is_list__failure(x):
 
     with pytest.raises(AssertionError):
         is_list(x)
+
+
+# test "is_tuple"
+@pytest.mark.parametrize("x",
+        [(1,2,3), ()])
+def test_assertion_is_tuple(x):
+
+    assert is_tuple(x) or is_tuple(x) == (), f"Expected a tuple type value: {x}"
+
+
+@pytest.mark.parametrize("x",
+        [1, "a", {"a":1}, [1,2,]])
+def test_assertion_is_tuple__failure(x):
+
+    with pytest.raises(AssertionError):
+        is_tuple(x)
+
 
 
 # test "is_str"
