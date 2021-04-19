@@ -42,29 +42,29 @@ def serialized_filenames_from_order(order_data: dict,
     ch_idx, ep_idx, sc_idx = 0, 0, 0
 
     for ch_record in assertion.is_list(order_data[str(OrderItem.BOOK)]):
-        assert isinstance(ch_record, dict)
-        if ch_start > ch_idx or ch_idx > ch_end:
-            ch_idx += 1
-            continue
-        for key in ch_record.keys():
-            tmp.append(key)
-        for ch_data in ch_record.values():
-            assert isinstance(ch_data, list)
-            for ep_record in ch_data:
-                assert isinstance(ep_record, dict)
-                if ep_start > ep_idx or ep_idx > ep_end:
+        # in Chapter
+        if ch_idx >= ch_start and (ch_idx <= ch_end or ch_end < 0):
+            assert isinstance(ch_record, dict)
+            for key in ch_record.keys():
+                tmp.append(key)
+            # in Episode
+            for ch_data in ch_record.values():
+                assert isinstance(ch_data, list)
+                for ep_record in ch_data:
+                    if ep_idx >= ep_start and (ep_idx <= ep_end or ep_end < 0):
+                        assert isinstance(ep_record, dict)
+                        for key in ep_record.keys():
+                            tmp.append(key)
+                        # in Scene
+                        for ep_data in ep_record.values():
+                            assert isinstance(ep_data, list)
+                            for sc_record in ep_data:
+                                if sc_idx >= sc_start and (sc_idx <= sc_end or sc_end < 0):
+                                    assert isinstance(sc_record, str)
+                                    tmp.append(sc_record)
+                                sc_idx += 1
                     ep_idx += 1
-                    continue
-                for key in ep_record.keys():
-                    tmp.append(key)
-                for ep_data in ep_record.values():
-                    assert isinstance(ep_data, list)
-                    for sc_record in ep_data:
-                        assert isinstance(sc_record, str)
-                        if sc_start > sc_idx or sc_idx > sc_end:
-                            sc_idx += 1
-                            continue
-                        tmp.append(sc_record)
+        ch_idx += 1
 
     logger.debug(msg.PROC_SUCCESS.format(proc=PROC))
     return tmp

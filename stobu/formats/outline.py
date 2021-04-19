@@ -70,7 +70,7 @@ def format_outlines_data(outlines_data: OutlinesData) -> list:
     for record in outlines_data.get_data():
         assert isinstance(record, OutlineRecord)
         if current is not record.type:
-            tmp.append(head_string_from_elm(record.type, record.title))
+            tmp.append(head_string_from_elm(record.type, 'outlines'))
             current = record.type
         tmp.extend(_conv_output_record(record))
 
@@ -102,7 +102,7 @@ def _record_outline_of(record: OutlineRecord) -> str:
     indent = "    "
     if "\n" in outline:
         lines = outline.split('\n')
-        return indent + f"\n{indent}".join(lines) * "\n"
+        return indent + f"\n{indent}".join(lines) + "\n"
     else:
         return indent + outline + "\n"
 
