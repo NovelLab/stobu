@@ -69,7 +69,7 @@ def format_plots_data(plots_data: PlotsData) -> list:
     for record in plots_data.get_data():
         assert isinstance(record, PlotRecord)
         if current is not record.type:
-            tmp.append(head_string_from_elm(record.type, record.title))
+            tmp.append(head_string_from_elm(record.type, 'plots'))
             current = record.type
         tmp.extend(_conv_output_record(record))
 

@@ -52,7 +52,12 @@ def plots_data_from(story_data: StoryData) -> PlotsData:
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"plots data in {PROC}"))
         return None
 
-    return PlotsData(tmp)
+    reordered = _reorder_plots_data(PlotsData(tmp))
+    if not reordered or not reordered.has_data():
+        logger.error(msg.ERR_FAILED_PROC.format(proc=f"reorder data in {PROC}"))
+        return None
+
+    return reordered
 
 
 def outputs_data_from_plots_data(plots_data: PlotsData, tags: dict) -> OutputsData:
@@ -145,3 +150,17 @@ def _get_plot_item_of(record: StoryRecord, item: PlotItem) -> str:
         return ""
 
     return data[key]
+
+
+def _reorder_plots_data(plots_data: PlotsData) -> PlotsData:
+    assert isinstance(plots_data, PlotsData)
+
+    tmp = []
+
+    for elm in ENABLE_ELMS:
+        for record in plots_data.get_data():
+            assert isinstance(record, PlotRecord)
+            if elm is record.type:
+                tmp.append(record)
+
+    return PlotsData(tmp)
