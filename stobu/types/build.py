@@ -16,6 +16,7 @@ class BuildType(Enum):
     OUTLINE = 'outline'
     PLOT = 'plot'
     SCRIPT = 'script'
+    STRUCT = 'struct'
 
     def __str__(self):
         return self.value

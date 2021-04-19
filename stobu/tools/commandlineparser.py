@@ -75,6 +75,7 @@ def _set_parser_options(parser: ArgumentParser) -> bool:
     parser.add_argument('-o', '--outline', help='outline output', action='store_true')
     parser.add_argument('-p', '--plot', help='plot output', action='store_true')
     parser.add_argument('-i', '--info', help='scene info output', action='store_true')
+    parser.add_argument('-t', '--struct', help='struct output', action='store_true')
     parser.add_argument('-s', '--script', help='script output', action='store_true')
     parser.add_argument('-n', '--novel', help='novel output', action='store_true')
     parser.add_argument('-r', '--rubi', help='output with rubi', action='store_true')

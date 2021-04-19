@@ -27,6 +27,7 @@ PROC = 'COMMON COUNTS'
 NOVEL_BUILDS = [
         BuildType.NOVEL,
         BuildType.SCRIPT,
+        BuildType.STRUCT,
         ]
 
 
