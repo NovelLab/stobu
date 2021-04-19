@@ -24,14 +24,13 @@ ToDo List
 * Add character's attributes in scene
 * Event table
 * Foreshadow and payoff feature.
-* Mod people using.
 * Aozora bunko format.
 * detail (time and camera) output mode in Script build.
 
 ## Bugs
 
-* Show outline invalid indent when multi-line strings
 * Cannot Move to trashbox when same name already exists
 * Invalid index in scene info.
 * Invalid cache in scene info same.
 * Invalid format in scene info.
+* Part devide.

@@ -102,7 +102,7 @@ def _record_outline_of(record: OutlineRecord) -> str:
     indent = "    "
     if "\n" in outline:
         lines = outline.split('\n')
-        return indent + f"\n{indent}".join(lines) * "\n"
+        return indent + f"\n{indent}".join(lines) + "\n"
     else:
         return indent + outline + "\n"
 
