@@ -35,8 +35,11 @@ def format_contents_data(contents_data: ContentsData) -> list:
 
     for record in contents:
         assert isinstance(record, ContentRecord)
-        space = _get_format_space(record.type)
-        tmp.append(f"{space}{record.index}. {record.title}\n")
+        if ElmType.BOOK is record.type:
+            tmp.append(f"### {record.title}\n\n")
+        else:
+            space = _get_format_space(record.type)
+            tmp.append(f"{space}{record.index}. {record.title}\n")
 
     logger.debug(msg.PROC_SUCCESS.format(proc=PROC))
     return tmp
