@@ -348,6 +348,7 @@ def _record_as_text_from(line: str) -> ActionRecord:
     return ActionRecord(
             ActType.DO,
             ActDataType.TEXT,
+            '',
             line)
 
 

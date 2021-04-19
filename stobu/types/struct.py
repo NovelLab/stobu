@@ -24,6 +24,8 @@ class StructType(Enum):
     ACTION = auto()
     COMMENT = auto()
     SCENE_DATA = auto()
+    SCENE_END = auto()
+    ITEM_DATA = auto()
     TEXT = auto()
     TITLE_BOOK = auto()
     TITLE_CHAPTER = auto()

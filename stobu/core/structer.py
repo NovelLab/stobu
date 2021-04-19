@@ -38,7 +38,8 @@ ACT_TITLES = [
 
 
 # Main
-def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
+def structs_data_from(actions_data: ActionsData, tags: dict,
+        is_detail: bool = False) -> StructsData:
     assert isinstance(actions_data, ActionsData)
     assert isinstance(tags, dict)
 
@@ -48,7 +49,12 @@ def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
 
     updated = update_data_tags(base_data, tags)
 
-    eliminated = _eliminate_empty_records(updated)
+    updated_data = update_scene_data(updated)
+
+    eliminated = _eliminate_empty_records(updated_data)
+
+    if is_detail:
+        scene_info = _get_scene_transition(eliminated)
 
     logger.debug(msg.PROC_SUCCESS.format(proc=PROC))
     return StructsData(eliminated)
@@ -88,6 +94,34 @@ def update_data_tags(origin_data: list, tags: dict) -> list:
     return tmp
 
 
+def update_scene_data(origin_data: list) -> list:
+    assert isinstance(origin_data, list)
+
+    tmp = []
+    cache = {'person': [],
+            'item': [],
+            }
+    def reset_cache():
+        cache['person'] = []
+        cache['item'] = []
+
+    for record in origin_data:
+        assert isinstance(record, StructRecord)
+        if StructType.ACTION is record.type:
+            tmp.append(record)
+            if record.subject:
+                cache['person'].append(record.subject)
+        elif StructType.SCENE_DATA is record.type:
+            tmp.append(record)
+        elif StructType.SCENE_END is record.type:
+            tmp.append(_conv_item_data_record(cache))
+            reset_cache()
+        else:
+            tmp.append(record)
+
+    return tmp
+
+
 # Private Functions
 def _base_structs_data_from(actions_data: ActionsData) -> list:
     assert isinstance(actions_data, ActionsData)
@@ -117,6 +151,7 @@ def _base_structs_data_from(actions_data: ActionsData) -> list:
                     cache['camera'], cache['stage'], cache['year'],
                     cache['date'], cache['time']))
             elif ActDataType.SCENE_END is record.subtype:
+                tmp.append(_get_record_as_scene_end())
                 reset_cache()
             elif ActDataType.SCENE_CAMERA is record.subtype:
                 cache['camera'] = record
@@ -153,6 +188,21 @@ def _base_structs_data_from(actions_data: ActionsData) -> list:
     return tmp
 
 
+def _conv_item_data_record(data: dict) -> StructRecord:
+    assert isinstance(data, dict)
+
+    persons = data['person']
+    items = data['item']
+    return StructRecord(
+            StructType.ITEM_DATA,
+            ActType.NONE,
+            '',
+            '',
+            {'person': persons,
+                'item': items,
+                })
+
+
 def _eliminate_empty_records(base_data: list) -> list:
     assert isinstance(base_data, list)
 
@@ -173,6 +223,15 @@ def _eliminate_empty_records(base_data: list) -> list:
         else:
             tmp.append(record)
 
+    return tmp
+
+
+def _get_record_as_scene_end() -> StructRecord:
+    return StructRecord(StructType.SCENE_END, ActType.NONE, '', '', '')
+
+
+def _get_scene_transition(base_data: list) -> list:
+    tmp = []
     return tmp
 
 
