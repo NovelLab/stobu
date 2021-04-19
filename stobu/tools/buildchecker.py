@@ -27,5 +27,7 @@ def has_build_of(args: Namespace, build: BuildType) -> bool:
         return args.plot
     elif BuildType.SCRIPT is build:
         return args.script
+    elif BuildType.STRUCT is build:
+        return args.struct
     else:
         return False

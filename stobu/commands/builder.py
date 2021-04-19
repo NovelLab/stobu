@@ -14,6 +14,7 @@ from stobu.core.outliner import outlines_data_from, outputs_data_from_outlines_d
 from stobu.core.plotter import plots_data_from, outputs_data_from_plots_data
 from stobu.core.scripter import outputs_data_from_scripts_data, scripts_data_from
 from stobu.core.storydatacreator import story_data_from
+from stobu.core.structer import structs_data_from, outputs_data_from_structs_data
 from stobu.syss import messages as msg
 from stobu.tools.buildchecker import has_build_of
 from stobu.tools.cmdchecker import has_cmd_of
@@ -45,6 +46,7 @@ BUILD_FILENAMES = {
         BuildType.OUTLINE: 'outline',
         BuildType.PLOT: 'plot',
         BuildType.SCRIPT: 'script',
+        BuildType.STRUCT: 'struct',
         }
 
 
@@ -102,6 +104,18 @@ def build_project(args: Namespace) -> bool:
     actions_data = actions_data_from(story_data)
     if not actions_data or not actions_data.has_data():
         logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"actions data in {PROC}"))
+
+    if has_build_of(args, BuildType.STRUCT):
+        logger.debug(msg.PROC_START.format(proc=f"build struct in {PROC}"))
+        structs = structs_data_from(actions_data, tags)
+        if not structs or not structs.has_data():
+            logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"structs data in {PROC}"))
+            return False
+
+        outputs = output_contents_data.cloned() + outputs_data_from_structs_data(structs, tags)
+        if not _output_data(BuildType.STRUCT, outputs):
+            logger.error(msg.PROC_FAILED.format(proc=f"struct in {PROC}"))
+            return False
 
     if has_build_of(args, BuildType.SCRIPT):
         logger.debug(msg.PROC_START.format(proc=f"build script in {PROC}"))

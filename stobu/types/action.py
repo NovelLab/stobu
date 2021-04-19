@@ -25,8 +25,10 @@ class ActType(Enum):
     COME = 'come'
     DO = 'do'
     DRAW = 'draw'
+    DISCARD = 'discard'
     EXPLAIN = 'explain'
     GO = 'go'
+    HAVE = 'have'
     OCCUR = 'occur'
     TALK = 'talk'
     THINK = 'think'
@@ -39,10 +41,12 @@ class ActType(Enum):
 NORMAL_ACTIONS = [
         ActType.BE,
         ActType.COME,
+        ActType.DISCARD,
         ActType.DO,
         ActType.DRAW,
         ActType.EXPLAIN,
         ActType.GO,
+        ActType.HAVE,
         ActType.OCCUR,
         ActType.TALK,
         ActType.THINK,
