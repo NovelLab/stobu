@@ -222,7 +222,7 @@ def _get_elm_part(order_part: str) -> ElmPart:
             _, start, end = tmp[0], tmp[1], tmp[2]
         else:
             _, start = tmp[0], tmp[1]
-            end = -1
+            end = start
         _start = 0 if int(start) < 0 else int(start)
         _end = MAX_NUM if int(end) < 0 else int(end)
         if 'c' == key:
