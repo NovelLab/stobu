@@ -13,6 +13,7 @@ __all__ = (
         'get_indent_text',
         'is_numeric',
         'just_string_of',
+        'rid_head_space',
         'rid_rn',
         )
 
@@ -120,6 +121,12 @@ def just_string_of(text: str, limit: int, padding: str = ' ', is_right: bool=Fal
         padding_num = limit - (single + multi)
         _padding = padding * padding_num
         return _padding + text if is_right else text + _padding
+
+
+def rid_head_space(src: str) -> str:
+    assert isinstance(src, str)
+
+    return src.lstrip()
 
 
 def rid_rn(src: str) -> str:

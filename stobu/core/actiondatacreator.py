@@ -13,7 +13,7 @@ from stobu.types.element import ElmType
 from stobu.types.story import StoryData, StoryRecord
 from stobu.utils import assertion
 from stobu.utils.log import logger
-from stobu.utils.strings import rid_rn
+from stobu.utils.strings import rid_rn, rid_head_space
 
 
 __all__ = (
@@ -262,7 +262,7 @@ def _record_as_action_from(line: str) -> ActionRecord:
             ActDataType.NONE,
             subject,
             outline,
-            desc,
+            rid_head_space(desc),
             note=comment)
 
 
@@ -349,7 +349,8 @@ def _record_as_text_from(line: str) -> ActionRecord:
             ActType.DO,
             ActDataType.TEXT,
             '',
-            line)
+            rid_head_space(line),
+            rid_head_space(line))
 
 
 def _record_as_title_from(record: StoryRecord) -> ActionRecord:
