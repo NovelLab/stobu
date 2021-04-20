@@ -15,6 +15,7 @@ from stobu.core.plotter import plots_data_from, outputs_data_from_plots_data
 from stobu.core.scripter import outputs_data_from_scripts_data, scripts_data_from
 from stobu.core.storydatacreator import story_data_from
 from stobu.core.structer import structs_data_from, outputs_data_from_structs_data
+from stobu.core.structer import scene_transition_data_from
 from stobu.syss import messages as msg
 from stobu.tools.buildchecker import has_build_of
 from stobu.tools.cmdchecker import has_cmd_of
@@ -202,7 +203,12 @@ def _conv_build_struct_outputs(contents: OutputsData, actions_data: ActionsData,
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"structs data in {PROC}"))
         return None
 
-    return contents + outputs_data_from_structs_data(structs, tags)
+    transition = scene_transition_data_from(structs)
+    if not transition or not transition.has_data():
+        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"transition data in {PROC}"))
+        return None
+
+    return contents + transition + outputs_data_from_structs_data(structs, tags)
 
 
 def _output_data(build_type: BuildType, outputs_data: OutputsData) -> bool:

@@ -25,6 +25,7 @@ class StructType(Enum):
     COMMENT = auto()
     SCENE_DATA = auto()
     SCENE_END = auto()
+    SCENE_TRANSITION = auto()
     ITEM_DATA = auto()
     TEXT = auto()
     TITLE_BOOK = auto()
