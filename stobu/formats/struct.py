@@ -74,10 +74,15 @@ def format_structs_data(structs_data: StructsData) -> list:
         assert isinstance(record, StructRecord)
         if record.type in TITLES:
             tmp.append(get_format_record_as_br())
+            tmp.append(get_breakline())
             tmp.append(_record_as_title_from(record))
             tmp.append(get_format_record_as_br(2))
         elif StructType.SCENE_DATA is record.type:
             tmp.append(_record_as_scene_data_from(record))
+            tmp.append(get_format_record_as_br())
+        elif StructType.ITEM_DATA is record.type:
+            tmp.append(get_format_record_as_br())
+            tmp.append(_record_as_item_data_from(record))
             tmp.append(get_format_record_as_br())
         elif StructType.COMMENT is record.type:
             tmp.append(get_format_record_as_comment(record.subject))
@@ -86,6 +91,8 @@ def format_structs_data(structs_data: StructsData) -> list:
             tmp.append(_record_as_action_from(record))
             tmp.append(get_format_record_as_br())
         elif StructType.NONE is record.type:
+            continue
+        elif StructType.SCENE_END is record.type:
             continue
         else:
             logger.warning(msg.ERR_FAIL_INVALID_DATA_WITH_DATA.format(data=f"struct type in {PROC}"), record.type)
@@ -145,6 +152,15 @@ def _record_as_action_from(record: StructRecord) -> str:
         return ""
 
 
+def _record_as_item_data_from(record: StructRecord) -> str:
+    assert isinstance(record, StructRecord)
+
+    persons = ", ".join(sorted(list(set(record.note['person']))))
+    items = ''
+
+    return f"| _PERSONS_ | {persons} |\n| _ITEMS_   | {items} |"
+
+
 def _record_as_scene_data_from(record: StructRecord) -> str:
     assert isinstance(record, StructRecord)
 
@@ -153,6 +169,7 @@ def _record_as_scene_data_from(record: StructRecord) -> str:
     year = record.note['year']
     date = record.note['date']
     time = record.note['time']
+
     return f"○{stage}（{time}）- {date}/{year} ＜{camera}＞"
 
 

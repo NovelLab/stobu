@@ -5,6 +5,7 @@
 
 # My Modules
 from stobu.core.nametagcreator import get_calling_tags
+from stobu.formats.common import get_breakline
 from stobu.formats.struct import format_structs_data
 from stobu.syss import messages as msg
 from stobu.tools.translater import translate_tags_text_list
@@ -15,10 +16,11 @@ from stobu.types.output import OutputsData
 from stobu.types.struct import StructRecord, StructsData, StructType
 from stobu.utils.dicts import dict_sorted
 from stobu.utils.log import logger
-from stobu.utils.strings import translate_by_dict
+from stobu.utils.strings import translate_by_dict, just_string_of
 
 
 __all__ = (
+        'scene_transition_data_from',
         'structs_data_from',
         'outputs_data_from_structs_data',
         )
@@ -38,6 +40,47 @@ ACT_TITLES = [
 
 
 # Main
+def scene_transition_data_from(structs_data: StructsData) -> OutputsData:
+    assert isinstance(structs_data, StructsData)
+
+    _PROC = f"{PROC}: transtion data"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+    tmp = []
+    cache = {
+            'camera': '',
+            'stage': '',
+            'year': '',
+            'date': '',
+            'time': '',
+            }
+    tmp.append("# SCENE TRANSITIONS\n\n")
+
+    for record in structs_data.get_data():
+        assert isinstance(record, StructRecord)
+        if StructType.SCENE_DATA is record.type:
+            camera = record.subject
+            stage = record.outline
+            year = record.note['year']
+            date = record.note['date']
+            time = record.note['time']
+            tmp.append(_format_transition_record_as_compare(
+                camera, stage, year, date, time, cache))
+            tmp.append("\n")
+            tmp.append(_format_transition_record(camera, stage, year, date, time))
+            tmp.append("\n")
+            cache['camera'] = camera
+            cache['stage'] = stage
+            cache['year'] = year
+            cache['date'] = date
+            cache['time'] = time
+
+    tmp.append("\n")
+    tmp.append(get_breakline())
+
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+    return OutputsData(tmp)
+
+
 def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
     assert isinstance(actions_data, ActionsData)
     assert isinstance(tags, dict)
@@ -48,7 +91,9 @@ def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
 
     updated = update_data_tags(base_data, tags)
 
-    eliminated = _eliminate_empty_records(updated)
+    updated_data = update_scene_data(updated)
+
+    eliminated = _eliminate_empty_records(updated_data)
 
     logger.debug(msg.PROC_SUCCESS.format(proc=PROC))
     return StructsData(eliminated)
@@ -88,6 +133,34 @@ def update_data_tags(origin_data: list, tags: dict) -> list:
     return tmp
 
 
+def update_scene_data(origin_data: list) -> list:
+    assert isinstance(origin_data, list)
+
+    tmp = []
+    cache = {'person': [],
+            'item': [],
+            }
+    def reset_cache():
+        cache['person'] = []
+        cache['item'] = []
+
+    for record in origin_data:
+        assert isinstance(record, StructRecord)
+        if StructType.ACTION is record.type:
+            tmp.append(record)
+            if record.subject:
+                cache['person'].append(record.subject)
+        elif StructType.SCENE_DATA is record.type:
+            tmp.append(record)
+        elif StructType.SCENE_END is record.type:
+            tmp.append(_conv_item_data_record(cache))
+            reset_cache()
+        else:
+            tmp.append(record)
+
+    return tmp
+
+
 # Private Functions
 def _base_structs_data_from(actions_data: ActionsData) -> list:
     assert isinstance(actions_data, ActionsData)
@@ -117,6 +190,7 @@ def _base_structs_data_from(actions_data: ActionsData) -> list:
                     cache['camera'], cache['stage'], cache['year'],
                     cache['date'], cache['time']))
             elif ActDataType.SCENE_END is record.subtype:
+                tmp.append(_get_record_as_scene_end())
                 reset_cache()
             elif ActDataType.SCENE_CAMERA is record.subtype:
                 cache['camera'] = record
@@ -153,6 +227,21 @@ def _base_structs_data_from(actions_data: ActionsData) -> list:
     return tmp
 
 
+def _conv_item_data_record(data: dict) -> StructRecord:
+    assert isinstance(data, dict)
+
+    persons = data['person']
+    items = data['item']
+    return StructRecord(
+            StructType.ITEM_DATA,
+            ActType.NONE,
+            '',
+            '',
+            {'person': persons,
+                'item': items,
+                })
+
+
 def _eliminate_empty_records(base_data: list) -> list:
     assert isinstance(base_data, list)
 
@@ -174,6 +263,51 @@ def _eliminate_empty_records(base_data: list) -> list:
             tmp.append(record)
 
     return tmp
+
+
+def _format_transition_record(camera: str, stage: str, year: str, date: str,
+        time: str) -> str:
+    assert isinstance(camera, str)
+    assert isinstance(stage, str)
+    assert isinstance(year, str)
+    assert isinstance(date, str)
+    assert isinstance(time, str)
+
+    _camera = just_string_of(camera, 16)
+    _stage = just_string_of(stage, 16)
+    _year = just_string_of(year, 8)
+    _date = just_string_of(date, 8)
+    _time = just_string_of(time, 8)
+
+    return f"| {_stage} | {_time} | {_date} | {_year} | {_camera} |"
+
+
+def _format_transition_record_as_compare(camera: str, stage: str, year: str,
+        date: str, time: str, cache: dict) -> str:
+    assert isinstance(camera, str)
+    assert isinstance(stage, str)
+    assert isinstance(year, str)
+    assert isinstance(date, str)
+    assert isinstance(time, str)
+    assert isinstance(cache, dict)
+
+    def _diff(a: str, b: str) -> str:
+        if a != b:
+            return '↓'
+        else:
+            return '…'
+
+    _camera = _diff(camera, cache['camera'])
+    _stage = _diff(stage, cache['stage'])
+    _year = _diff(year, cache['year'])
+    _date = _diff(date, cache['date'])
+    _time = _diff(time, cache['time'])
+
+    return _format_transition_record(_camera, _stage, _year, _date, _time)
+
+
+def _get_record_as_scene_end() -> StructRecord:
+    return StructRecord(StructType.SCENE_END, ActType.NONE, '', '', '')
 
 
 def _record_as_comment_from(record: ActionRecord):
