@@ -67,14 +67,15 @@ def scripts_data_from(actions_data: ActionsData, tags: dict) -> ScriptsData:
     return ScriptsData(eliminated)
 
 
-def outputs_data_from_scripts_data(scripts_data: ScriptsData, tags: dict) -> OutputsData:
+def outputs_data_from_scripts_data(scripts_data: ScriptsData, tags: dict,
+        is_comment: bool = False) -> OutputsData:
     assert isinstance(scripts_data, ScriptsData)
     assert isinstance(tags, dict)
 
     _PROC = f"{PROC}: convert outputs data"
     logger.debug(msg.PROC_START.format(proc=_PROC))
 
-    formatted = format_scripts_data(scripts_data)
+    formatted = format_scripts_data(scripts_data, is_comment)
 
     translated = translate_tags_text_list(formatted, tags)
 

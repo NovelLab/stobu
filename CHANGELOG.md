@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Scene transition
 - Mob tags
+- Flag info (foreshadow and payoff)
+- Item info
 ### Fixed
 - Invalid plot order
 - Invalid part order

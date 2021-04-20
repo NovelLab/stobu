@@ -33,6 +33,8 @@ class StructType(Enum):
     TITLE_EPISODE = auto()
     TITLE_SCENE = auto()
     TITLE_TEXT = auto()
+    FLAG_FORESHADOW = auto()
+    FLAG_PAYOFF = auto()
 
 
 @dataclass

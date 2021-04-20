@@ -9,11 +9,12 @@ from stobu.elms.scenes import SceneItem
 from stobu.syss import messages as msg
 from stobu.tools.storydatareader import elm_title_of, scene_item_of, elm_data_of
 from stobu.types.action import ActionsData, ActionRecord, ActType, ActDataType
+from stobu.types.action import NORMAL_ACTIONS
 from stobu.types.element import ElmType
 from stobu.types.story import StoryData, StoryRecord
 from stobu.utils import assertion
 from stobu.utils.log import logger
-from stobu.utils.strings import rid_rn
+from stobu.utils.strings import rid_rn, rid_head_space
 
 
 __all__ = (
@@ -28,10 +29,12 @@ PROC = 'ACTION DATA CREATOR'
 ACT_TYPE_TABLE = {
         ActType.BE: ('be',),
         ActType.COME: ('come',),
+        ActType.DISCARD: ('discard',),
         ActType.DO: ('do',),
         ActType.DRAW: ('d', 'draw',),
         ActType.EXPLAIN: ('ex', 'explain',),
         ActType.GO: ('go',),
+        ActType.HAVE: ('have',),
         ActType.OCCUR: ('occur',),
         ActType.TALK: ('t', 'talk',),
         ActType.THINK: ('think',),
@@ -66,24 +69,10 @@ LINE_INSTRUCTION = '#! '
 LINE_ACTION = '['
 
 
-SCENE_ACTIONS = [
-        ActType.BE,
-        ActType.COME,
-        ActType.DO,
-        ActType.DRAW,
-        ActType.EXPLAIN,
-        ActType.GO,
-        ActType.OCCUR,
-        ActType.SAME,
-        ActType.TALK,
-        ActType.THINK,
-        ActType.VOICE,
-        ]
-
-
 # Main
-def actions_data_from(story_data: StoryData) -> ActionsData:
+def actions_data_from(story_data: StoryData, tags: dict) -> ActionsData:
     assert isinstance(story_data, StoryData)
+    assert isinstance(tags, dict)
 
     logger.debug(msg.PROC_START.format(proc=PROC))
 
@@ -97,7 +86,7 @@ def actions_data_from(story_data: StoryData) -> ActionsData:
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"update action data in {PROC}"))
         return None
 
-    applied = actions_data_apply_instructions(updated)
+    applied = actions_data_apply_instructions(updated, tags)
     if not applied or not isinstance(applied, ActionsData) or not applied.has_data():
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"apply action data in {PROC}"))
         return None
@@ -134,7 +123,7 @@ def update_actions_data_if_same(actions_data: ActionsData) -> ActionsData:
         assert isinstance(record, ActionRecord)
         if record.type in [ActType.DATA, ActType.NONE]:
             tmp.append(record)
-        elif record.type in SCENE_ACTIONS:
+        elif record.type in NORMAL_ACTIONS + [ActType.SAME,]:
             ret = _copy_action_record_if_same(record, cache)
             if ret:
                 tmp.append(ret)
@@ -262,7 +251,7 @@ def _record_as_action_from(line: str) -> ActionRecord:
             ActDataType.NONE,
             subject,
             outline,
-            desc,
+            rid_head_space(desc),
             note=comment)
 
 
@@ -349,7 +338,8 @@ def _record_as_text_from(line: str) -> ActionRecord:
             ActType.DO,
             ActDataType.TEXT,
             '',
-            line)
+            rid_head_space(line),
+            rid_head_space(line))
 
 
 def _record_as_title_from(record: StoryRecord) -> ActionRecord:

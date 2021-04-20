@@ -5,7 +5,7 @@ import os
 
 
 # Define Shared Constants
-__version__ = "0.0.5-3"
+__version__ = "0.0.5-4"
 """str: Application version number."""
 
 __app_base_dir__ = os.path.dirname(__file__)

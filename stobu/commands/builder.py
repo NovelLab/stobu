@@ -15,7 +15,7 @@ from stobu.core.plotter import plots_data_from, outputs_data_from_plots_data
 from stobu.core.scripter import outputs_data_from_scripts_data, scripts_data_from
 from stobu.core.storydatacreator import story_data_from
 from stobu.core.structer import structs_data_from, outputs_data_from_structs_data
-from stobu.core.structer import scene_transition_data_from
+from stobu.core.structer import scene_transition_data_from, scene_info_data_from
 from stobu.syss import messages as msg
 from stobu.tools.buildchecker import has_build_of
 from stobu.tools.cmdchecker import has_cmd_of
@@ -67,15 +67,12 @@ def build_project(args: Namespace) -> bool:
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"story data in {PROC}"))
         return False
 
-    contents_data = contents_data_from(story_data, tags)
-    if not contents_data or not isinstance(contents_data, ContentsData) or not contents_data.has_data():
-        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"contents datain {PROC}"))
-        return False
-
-    output_contents_data = outputs_data_from_contents_data(contents_data)
-    if not output_contents_data or not isinstance(output_contents_data, OutputsData) or not output_contents_data.has_data():
+    output_contents_data = _output_contents_data_from(story_data, tags)
+    if not output_contents_data or not output_contents_data.has_data():
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"output contents data in {PROC}"))
         return False
+
+    is_comment = args.comment
 
     if has_build_of(args, BuildType.OUTLINE):
         outputs = _conv_build_outline_outputs(output_contents_data.cloned(), story_data, tags)
@@ -89,24 +86,27 @@ def build_project(args: Namespace) -> bool:
             logger.error(msg.PROC_FAILED.format(proc=f"plot in {PROC}"))
             return False
 
-    actions_data = actions_data_from(story_data)
+    actions_data = actions_data_from(story_data, tags)
     if not actions_data or not actions_data.has_data():
         logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"actions data in {PROC}"))
 
     if has_build_of(args, BuildType.STRUCT):
-        outputs = _conv_build_struct_outputs(output_contents_data.cloned(), actions_data, tags)
+        outputs = _conv_build_struct_outputs(
+                output_contents_data.cloned(), actions_data, tags, is_comment)
         if not outputs or not _output_data(BuildType.STRUCT, outputs):
             logger.error(msg.PROC_FAILED.format(proc=f"struct in {PROC}"))
             return False
 
     if has_build_of(args, BuildType.SCRIPT):
-        outputs = _conv_build_script_outputs(output_contents_data.cloned(), actions_data, tags)
+        outputs = _conv_build_script_outputs(
+                output_contents_data.cloned(), actions_data, tags, is_comment)
         if not outputs or not _output_data(BuildType.SCRIPT, outputs):
             logger.error(msg.PROC_FAILED.format(proc=f"script in {PROC}"))
             return False
 
     if has_build_of(args, BuildType.NOVEL):
-        outputs = _conv_build_novel_outputs(output_contents_data.cloned(), actions_data, tags)
+        outputs = _conv_build_novel_outputs(
+                output_contents_data.cloned(), actions_data, tags, is_comment)
         if not outputs or not _output_data(BuildType.NOVEL, outputs):
             logger.error(msg.PROC_FAILED.format(proc=f"novel in {PROC}"))
             return False
@@ -128,10 +128,11 @@ def build_project(args: Namespace) -> bool:
 
 # Private Functions
 def _conv_build_novel_outputs(contents: OutputsData, actions_data: ActionsData,
-        tags: dict) -> OutputsData:
+        tags: dict, is_comment: bool) -> OutputsData:
     assert isinstance(contents, OutputsData)
     assert isinstance(actions_data, ActionsData)
     assert isinstance(tags, dict)
+    assert isinstance(is_comment, bool)
 
     logger.debug(msg.PROC_START.format(proc=f"build novel in {PROC}"))
     novels = novels_data_from(actions_data, tags)
@@ -139,7 +140,7 @@ def _conv_build_novel_outputs(contents: OutputsData, actions_data: ActionsData,
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"novels data in {PROC}"))
         return None
 
-    return contents + outputs_data_from_novels_data(novels, tags)
+    return contents + outputs_data_from_novels_data(novels, tags, is_comment)
 
 
 def _conv_build_outline_outputs(contents: OutputsData, story_data: StoryData,
@@ -176,10 +177,11 @@ def _conv_build_plot_outputs(contents: OutputsData, story_data: StoryData,
 
 
 def _conv_build_script_outputs(contents: OutputsData, actions_data: ActionsData,
-        tags: dict) -> OutputsData:
+        tags: dict, is_comment: bool) -> OutputsData:
     assert isinstance(contents, OutputsData)
     assert isinstance(actions_data, ActionsData)
     assert isinstance(tags, dict)
+    assert isinstance(is_comment, bool)
 
     logger.debug(msg.PROC_START.format(proc=f"build script in {PROC}"))
 
@@ -188,14 +190,15 @@ def _conv_build_script_outputs(contents: OutputsData, actions_data: ActionsData,
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"scripts data in {PROC}"))
         return None
 
-    return contents + outputs_data_from_scripts_data(scripts, tags)
+    return contents + outputs_data_from_scripts_data(scripts, tags, is_comment)
 
 
 def _conv_build_struct_outputs(contents: OutputsData, actions_data: ActionsData,
-        tags: dict) -> OutputsData:
+        tags: dict, is_comment: bool) -> OutputsData:
     assert isinstance(contents, OutputsData)
     assert isinstance(actions_data, ActionsData)
     assert isinstance(tags, dict)
+    assert isinstance(is_comment, bool)
 
     logger.debug(msg.PROC_START.format(proc=f"build struct in {PROC}"))
     structs = structs_data_from(actions_data, tags)
@@ -208,7 +211,32 @@ def _conv_build_struct_outputs(contents: OutputsData, actions_data: ActionsData,
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"transition data in {PROC}"))
         return None
 
-    return contents + transition + outputs_data_from_structs_data(structs, tags)
+    scene_info = scene_info_data_from(structs)
+    if not scene_info or not scene_info.has_data():
+        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"scene info data in {PROC}"))
+        return None
+
+    return contents + transition + scene_info + outputs_data_from_structs_data(structs, tags, is_comment)
+
+
+def _output_contents_data_from(story_data: StoryData, tags: dict) -> OutputsData:
+    assert isinstance(story_data, StoryData)
+    assert isinstance(tags, dict)
+
+    _PROC = f"{PROC}: contents data"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+    contents_data = contents_data_from(story_data, tags)
+    if not contents_data or not isinstance(contents_data, ContentsData) or not contents_data.has_data():
+        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"contents datain {PROC}"))
+        return None
+
+    output_contents_data = outputs_data_from_contents_data(contents_data)
+    if not output_contents_data or not isinstance(output_contents_data, OutputsData) or not output_contents_data.has_data():
+        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"output contents data in {PROC}"))
+        return None
+
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+    return output_contents_data
 
 
 def _output_data(build_type: BuildType, outputs_data: OutputsData) -> bool:

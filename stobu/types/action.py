@@ -74,6 +74,8 @@ class ActDataType(Enum):
     BR = auto()
     PARAGRAPH_START = auto()
     PARAGRAPH_END = auto()
+    FORESHADOW = auto()
+    PAYOFF = auto()
 
 
 @dataclass
