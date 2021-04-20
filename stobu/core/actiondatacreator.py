@@ -82,8 +82,9 @@ SCENE_ACTIONS = [
 
 
 # Main
-def actions_data_from(story_data: StoryData) -> ActionsData:
+def actions_data_from(story_data: StoryData, tags: dict) -> ActionsData:
     assert isinstance(story_data, StoryData)
+    assert isinstance(tags, dict)
 
     logger.debug(msg.PROC_START.format(proc=PROC))
 
@@ -97,7 +98,7 @@ def actions_data_from(story_data: StoryData) -> ActionsData:
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"update action data in {PROC}"))
         return None
 
-    applied = actions_data_apply_instructions(updated)
+    applied = actions_data_apply_instructions(updated, tags)
     if not applied or not isinstance(applied, ActionsData) or not applied.has_data():
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"apply action data in {PROC}"))
         return None

@@ -86,7 +86,7 @@ def build_project(args: Namespace) -> bool:
             logger.error(msg.PROC_FAILED.format(proc=f"plot in {PROC}"))
             return False
 
-    actions_data = actions_data_from(story_data)
+    actions_data = actions_data_from(story_data, tags)
     if not actions_data or not actions_data.has_data():
         logger.error(msg.ERR_FAIL_MISSING_DATA.format(data=f"actions data in {PROC}"))
 

@@ -94,6 +94,10 @@ def format_structs_data(structs_data: StructsData, is_comment: bool) -> list:
         elif StructType.ACTION is record.type:
             tmp.append(_record_as_action_from(record))
             tmp.append(get_format_record_as_br())
+        elif StructType.FLAG_FORESHADOW is record.type:
+            continue
+        elif StructType.FLAG_PAYOFF is record.type:
+            continue
         elif StructType.NONE is record.type:
             continue
         elif StructType.SCENE_END is record.type:
@@ -161,8 +165,20 @@ def _record_as_item_data_from(record: StructRecord) -> str:
 
     persons = ", ".join(sorted(list(set(record.note['person']))))
     items = ''
+    flags = ''
+    deflags = ''
 
-    return f"| _PERSONS_ | {persons} |\n| _ITEMS_   | {items} |"
+    for flag in record.note['flag']:
+        subject, outline = flag.split(':')
+        flags += f"（{subject}）{outline}／"
+    for deflag in record.note['deflag']:
+        subject, outline = deflag.split(':')
+        deflags += f"（{subject}）{outline}／"
+
+    return f"| _PERSONS_ | {persons} |\n" \
+            + f"| _ITEMS_   | {items} |\n" \
+            + f"| _FLAGS_   | {flags} |\n" \
+            + f"| _DEFLAGS_ | {deflags} |"
 
 
 def _record_as_scene_data_from(record: StructRecord) -> str:

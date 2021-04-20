@@ -148,17 +148,26 @@ def update_scene_data(origin_data: list) -> list:
     tmp = []
     cache = {'person': [],
             'item': [],
+            'flag': [],
+            'deflag': [],
             }
     def reset_cache():
         cache['person'] = []
         cache['item'] = []
+        cache['flag'] = []
+        cache['deflag'] = []
 
     for record in origin_data:
         assert isinstance(record, StructRecord)
         if StructType.ACTION is record.type:
+            # NOTE: item pickup
             tmp.append(record)
             if record.subject:
                 cache['person'].append(record.subject)
+        elif StructType.FLAG_FORESHADOW is record.type:
+            cache['flag'].append(f"{record.subject}:{record.outline}")
+        elif StructType.FLAG_PAYOFF is record.type:
+            cache['deflag'].append(f"{record.subject}:{record.outline}")
         elif StructType.SCENE_DATA is record.type:
             tmp.append(record)
         elif StructType.SCENE_END is record.type:
@@ -219,6 +228,10 @@ def _base_structs_data_from(actions_data: ActionsData) -> list:
                 continue
             elif ActDataType.PARAGRAPH_END is record.subtype:
                 continue
+            elif ActDataType.FORESHADOW is record.subtype:
+                tmp.append(_record_as_foreshadow_from(record))
+            elif ActDataType.PAYOFF is record.subtype:
+                tmp.append(_record_as_payoff_from(record))
             elif ActDataType.TEXT is record.subtype:
                 tmp.append(_record_as_text_from(record))
             else:
@@ -241,6 +254,9 @@ def _conv_item_data_record(data: dict) -> StructRecord:
 
     persons = data['person']
     items = data['item']
+    flags = data['flag']
+    deflags = data['deflag']
+
     return StructRecord(
             StructType.ITEM_DATA,
             ActType.NONE,
@@ -248,6 +264,8 @@ def _conv_item_data_record(data: dict) -> StructRecord:
             '',
             {'person': persons,
                 'item': items,
+                'flag': flags,
+                'deflag': deflags,
                 })
 
 
@@ -319,7 +337,7 @@ def _get_record_as_scene_end() -> StructRecord:
     return StructRecord(StructType.SCENE_END, ActType.NONE, '', '', '')
 
 
-def _record_as_comment_from(record: ActionRecord):
+def _record_as_comment_from(record: ActionRecord) -> StructRecord:
     assert isinstance(record, ActionRecord)
 
     return StructRecord(
@@ -330,12 +348,34 @@ def _record_as_comment_from(record: ActionRecord):
             record.note)
 
 
-def _record_as_action_from(record: ActionRecord):
+def _record_as_action_from(record: ActionRecord) -> StructRecord:
     assert isinstance(record, ActionRecord)
 
     return StructRecord(
             StructType.ACTION,
             record.type,
+            record.subject,
+            record.outline,
+            record.note)
+
+
+def _record_as_foreshadow_from(record: ActionRecord) -> StructRecord:
+    assert isinstance(record, ActionRecord)
+
+    return StructRecord(
+            StructType.FLAG_FORESHADOW,
+            ActType.DATA,
+            record.subject,
+            record.outline,
+            record.note)
+
+
+def _record_as_payoff_from(record: ActionRecord) -> StructRecord:
+    assert isinstance(record, ActionRecord)
+
+    return StructRecord(
+            StructType.FLAG_PAYOFF,
+            ActType.DATA,
             record.subject,
             record.outline,
             record.note)
