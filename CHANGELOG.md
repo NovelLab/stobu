@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - Scene transition
+- Mob tags
 ### Fixed
 - Invalid plot order
 - Invalid part order
+- Invalid translate tag
 
 ## [0.0.5] - 2021-04-19
 ### Added
