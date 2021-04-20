@@ -69,14 +69,16 @@ def novels_data_from(actions_data: ActionsData, tags: dict) -> NovelsData:
     return NovelsData(eliminated)
 
 
-def outputs_data_from_novels_data(novels_data: NovelsData, tags: dict) -> OutputsData:
+def outputs_data_from_novels_data(novels_data: NovelsData, tags: dict,
+        is_comment: bool = False) -> OutputsData:
     assert isinstance(novels_data, NovelsData)
     assert isinstance(tags, dict)
+    assert isinstance(is_comment, bool)
 
     _PROC = f"{PROC}: convert outputs data"
     logger.debug(msg.PROC_START.format(proc=_PROC))
 
-    formatted = format_novels_data(novels_data)
+    formatted = format_novels_data(novels_data, is_comment)
 
     translated = translate_tags_text_list(formatted, tags)
 

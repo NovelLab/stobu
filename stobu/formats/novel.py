@@ -70,8 +70,9 @@ def format_novels_charcounts_data(counts_data: CountsData) -> list:
     return tmp
 
 
-def format_novels_data(novels_data: NovelsData) -> list:
+def format_novels_data(novels_data: NovelsData, is_comment: bool) -> list:
     assert isinstance(novels_data, NovelsData)
+    assert isinstance(is_comment, bool)
 
     logger.debug(msg.PROC_START.format(proc=PROC))
 
@@ -108,7 +109,10 @@ def format_novels_data(novels_data: NovelsData) -> list:
                 has_first_indent = True
             # descriptions
             if NovelType.COMMENT is record.type:
-                tmp.append(get_format_record_as_comment(record.subject))
+                if is_comment:
+                    tmp.append(get_format_record_as_comment(record.subject))
+                else:
+                    continue
             elif NovelType.DESCRIPTION is record.type:
                 tmp.append(get_format_record_as_description(record.desc))
             elif NovelType.DIALOGUE is record.type:

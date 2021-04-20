@@ -63,8 +63,9 @@ def format_structs_charcounts_data(counts_data: CountsData) -> list:
     return tmp
 
 
-def format_structs_data(structs_data: StructsData) -> list:
+def format_structs_data(structs_data: StructsData, is_comment: bool) -> list:
     assert isinstance(structs_data, StructsData)
+    assert isinstance(is_comment, bool)
 
     logger.debug(msg.PROC_START.format(proc=PROC))
 
@@ -85,8 +86,11 @@ def format_structs_data(structs_data: StructsData) -> list:
             tmp.append(_record_as_item_data_from(record))
             tmp.append(get_format_record_as_br())
         elif StructType.COMMENT is record.type:
-            tmp.append(get_format_record_as_comment(record.subject))
-            tmp.append(get_format_record_as_br())
+            if is_comment:
+                tmp.append(get_format_record_as_comment(record.subject))
+                tmp.append(get_format_record_as_br())
+            else:
+                continue
         elif StructType.ACTION is record.type:
             tmp.append(_record_as_action_from(record))
             tmp.append(get_format_record_as_br())

@@ -102,14 +102,16 @@ def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
     return StructsData(eliminated)
 
 
-def outputs_data_from_structs_data(structs_data: StructsData, tags: dict) -> OutputsData:
+def outputs_data_from_structs_data(structs_data: StructsData, tags: dict,
+        is_comment: bool = False) -> OutputsData:
     assert isinstance(structs_data, StructsData)
     assert isinstance(tags, dict)
+    assert isinstance(is_comment, bool)
 
     _PROC = f"{PROC}: convert outputs data"
     logger.debug(msg.PROC_START.format(proc=_PROC))
 
-    formatted = format_structs_data(structs_data)
+    formatted = format_structs_data(structs_data, is_comment)
 
     translated = translate_tags_text_list(formatted, tags)
 

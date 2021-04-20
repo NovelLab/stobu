@@ -76,8 +76,9 @@ def format_scripts_charcounts_data(counts_data: CountsData) -> list:
     return tmp
 
 
-def format_scripts_data(scripts_data: ScriptsData) -> list:
+def format_scripts_data(scripts_data: ScriptsData, is_comment: bool) -> list:
     assert isinstance(scripts_data, ScriptsData)
+    assert isinstance(is_comment, bool)
 
     logger.debug(msg.PROC_START.format(proc=PROC))
 
@@ -119,7 +120,10 @@ def format_scripts_data(scripts_data: ScriptsData) -> list:
                 has_first_indent = True
             # descriptions
             if ScriptType.COMMENT is record.type:
-                tmp.append(_record_as_comment_from(record))
+                if is_comment:
+                    tmp.append(_record_as_comment_from(record))
+                else:
+                    continue
             elif ScriptType.DESCRIPTION is record.type:
                 tmp.append(_record_as_description_from(record))
             elif ScriptType.DIALOGUE is record.type:
