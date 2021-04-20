@@ -30,7 +30,3 @@ ToDo List
 ## Bugs
 
 * Cannot Move to trashbox when same name already exists
-* Invalid index in scene info.
-* Invalid cache in scene info same.
-* Invalid format in scene info.
-* Part devide.

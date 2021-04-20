@@ -6,6 +6,7 @@ target  : 対象
 size    : 何文字想定
 columns : 20
 rows    : 20
+mobs    : 20
 contest : コンテスト情報
 caution : 注意書き
 sites   :

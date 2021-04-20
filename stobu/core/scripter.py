@@ -7,14 +7,13 @@
 from stobu.core.nametagcreator import get_calling_tags
 from stobu.formats.script import format_scripts_data
 from stobu.syss import messages as msg
-from stobu.tools.translater import translate_tags_text_list
+from stobu.tools.translater import translate_tags_text_list, translate_tags_str
 from stobu.types.action import ActDataType, ActionRecord, ActionsData, ActType
 from stobu.types.action import NORMAL_ACTIONS
 from stobu.types.output import OutputsData
 from stobu.types.script import ScriptRecord, ScriptsData, ScriptType
 from stobu.utils.dicts import dict_sorted
 from stobu.utils.log import logger
-from stobu.utils.strings import translate_by_dict
 
 
 __all__ = (
@@ -314,12 +313,16 @@ def _update_tags_desc_record(record: ScriptRecord, tags: dict,
         calling = dict_sorted(callings[record.subject], True)
         return ScriptRecord(
             record.type,
-            translate_by_dict(record.subject, tags, True),
-            translate_by_dict(record.desc, calling),
-            translate_by_dict(record.note, calling),
+            translate_tags_str(record.subject, tags, True, None),
+            translate_tags_str(record.desc, calling),
+            translate_tags_str(record.note, calling),
             )
     else:
-        return record
+        return ScriptRecord(
+                record.type,
+                translate_tags_str(record.subject, tags, True, None),
+                record.desc,
+                record.note)
 
 
 def _update_tags_spin_record(record: ScriptRecord, tags: dict) -> ScriptRecord:
@@ -328,7 +331,7 @@ def _update_tags_spin_record(record: ScriptRecord, tags: dict) -> ScriptRecord:
 
     return ScriptRecord(
             record.type,
-            translate_by_dict(record.subject, tags, True),
-            translate_by_dict(record.desc, tags, True),
-            translate_by_dict(record.note, tags, True),
+            translate_tags_str(record.subject, tags, True, None),
+            translate_tags_str(record.desc, tags, True, None),
+            translate_tags_str(record.note, tags, True, None),
             )

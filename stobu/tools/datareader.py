@@ -22,6 +22,7 @@ from stobu.utils.log import logger
 
 __all__ = (
         'get_basefile_data',
+        'get_book_data',
         'get_mob_data',
         'get_order_data',
         'get_person_data',
@@ -61,6 +62,10 @@ def get_basefile_data(elm: ElmType) -> dict:
         return read_markdown_data_as_yaml(data)
     else:
         return read_yaml_data(data)
+
+
+def get_book_data() -> dict:
+    return get_basefile_data(ElmType.BOOK)
 
 
 def get_mob_data() -> dict:

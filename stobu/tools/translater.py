@@ -20,11 +20,16 @@ PROC = 'TRANSLATE TAG'
 
 
 # Main
-def translate_tags_str(text: str, tags: dict) -> str:
+def translate_tags_str(text: str, tags: dict, is_fullmatch: bool = False, prefix: str = '$') -> str:
     assert isinstance(text, str)
     assert isinstance(tags, dict)
+    assert isinstance(is_fullmatch, bool)
 
-    return _conv_text_by_tag(text, tags)
+    if prefix:
+        assert isinstance(prefix, str)
+        return _conv_text_by_tag_with_prefix(text, tags, is_fullmatch, prefix)
+    else:
+        return _conv_text_by_tag(text, tags, is_fullmatch)
 
 
 def translate_tags_text_list(textlist: list, tags: dict) -> list:
@@ -35,24 +40,36 @@ def translate_tags_text_list(textlist: list, tags: dict) -> list:
 
     for text in textlist:
         assert isinstance(text, str)
-        tmp.append(_conv_text_by_tag(text, tags))
+        tmp.append(_conv_text_by_tag_with_prefix(text, tags))
 
     return tmp
 
 
 # Private Functions
-def _conv_text_by_tag(text: str, tags: dict, prefix: str = '$') -> str:
+def _conv_text_by_tag(text: str, tags: dict, is_fullmatch: bool = False) -> str:
     assert isinstance(text, str)
     assert isinstance(tags, dict)
+    assert isinstance(is_fullmatch, bool)
+
+    tmp = text
+
+    for key, val in tags.items():
+        if is_fullmatch and key == tmp or not is_fullmatch and key in tmp:
+            tmp = re.sub(r'{}'.format(key), val, tmp)
+    return tmp
+
+
+def _conv_text_by_tag_with_prefix(text: str, tags: dict, is_fullmatch: bool = False, prefix: str = '$') -> str:
+    assert isinstance(text, str)
+    assert isinstance(tags, dict)
+    assert isinstance(is_fullmatch, bool)
+    assert isinstance(prefix, str)
 
     tmp = text
 
     for key, val in tags.items():
         if prefix in tmp:
             tag_key = f"{prefix}{key}"
-            if tag_key in tmp:
-                if prefix:
-                    tmp = re.sub(r'\{}{}'.format(prefix, key), val, tmp)
-                else:
-                    tmp = re.sub(key, val, tmp)
+            if is_fullmatch and tag_key == tmp or not is_fullmatch and tag_key in tmp:
+                tmp = re.sub(r'\{}'.format(tag_key), val, tmp)
     return tmp
