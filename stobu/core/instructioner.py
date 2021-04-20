@@ -7,6 +7,7 @@
 from stobu.syss import messages as msg
 from stobu.tools.translater import translate_tags_str
 from stobu.types.action import ActDataType, ActionRecord, ActionsData, ActType
+from stobu.types.action import NORMAL_ACTIONS
 from stobu.utils.log import logger
 
 
@@ -18,19 +19,6 @@ __all__ = (
 # Define Constants
 PROC = 'INSTRUCTION'
 
-
-NORMAL_ACTIONS = [
-        ActType.BE,
-        ActType.COME,
-        ActType.DO,
-        ActType.DRAW,
-        ActType.EXPLAIN,
-        ActType.GO,
-        ActType.OCCUR,
-        ActType.TALK,
-        ActType.THINK,
-        ActType.VOICE,
-        ]
 
 INST_PARAGRAPH_START = ('P', 'pr')
 
