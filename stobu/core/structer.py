@@ -201,6 +201,10 @@ def update_scene_data(origin_data: list) -> list:
             tmp.append(record)
             if record.subject:
                 cache['person'].append(record.subject)
+            if ActType.DISCARD is record.act:
+                cache['item'].append(f"{record.subject}:-{record.outline}")
+            elif ActType.HAVE is record.act:
+                cache['item'].append(f"{record.subject}:{record.outline}")
         elif StructType.FLAG_FORESHADOW is record.type:
             cache['flag'].append(f"{record.subject}:{record.outline}")
             tmp.append(record)

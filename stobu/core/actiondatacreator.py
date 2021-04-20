@@ -9,6 +9,7 @@ from stobu.elms.scenes import SceneItem
 from stobu.syss import messages as msg
 from stobu.tools.storydatareader import elm_title_of, scene_item_of, elm_data_of
 from stobu.types.action import ActionsData, ActionRecord, ActType, ActDataType
+from stobu.types.action import NORMAL_ACTIONS
 from stobu.types.element import ElmType
 from stobu.types.story import StoryData, StoryRecord
 from stobu.utils import assertion
@@ -28,10 +29,12 @@ PROC = 'ACTION DATA CREATOR'
 ACT_TYPE_TABLE = {
         ActType.BE: ('be',),
         ActType.COME: ('come',),
+        ActType.DISCARD: ('discard',),
         ActType.DO: ('do',),
         ActType.DRAW: ('d', 'draw',),
         ActType.EXPLAIN: ('ex', 'explain',),
         ActType.GO: ('go',),
+        ActType.HAVE: ('have',),
         ActType.OCCUR: ('occur',),
         ActType.TALK: ('t', 'talk',),
         ActType.THINK: ('think',),
@@ -64,21 +67,6 @@ LINE_HEAD = '## '
 LINE_INSTRUCTION = '#! '
 
 LINE_ACTION = '['
-
-
-SCENE_ACTIONS = [
-        ActType.BE,
-        ActType.COME,
-        ActType.DO,
-        ActType.DRAW,
-        ActType.EXPLAIN,
-        ActType.GO,
-        ActType.OCCUR,
-        ActType.SAME,
-        ActType.TALK,
-        ActType.THINK,
-        ActType.VOICE,
-        ]
 
 
 # Main
@@ -135,7 +123,7 @@ def update_actions_data_if_same(actions_data: ActionsData) -> ActionsData:
         assert isinstance(record, ActionRecord)
         if record.type in [ActType.DATA, ActType.NONE]:
             tmp.append(record)
-        elif record.type in SCENE_ACTIONS:
+        elif record.type in NORMAL_ACTIONS + [ActType.SAME,]:
             ret = _copy_action_record_if_same(record, cache)
             if ret:
                 tmp.append(ret)

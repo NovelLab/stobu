@@ -168,9 +168,14 @@ def _record_as_item_data_from(record: StructRecord) -> str:
     flags = ''
     deflags = ''
 
+    for item in record.note['item']:
+        subject, outline = item.split(':')
+        items += f"（{subject}）{outline}／"
+
     for flag in record.note['flag']:
         subject, outline = flag.split(':')
         flags += f"（{subject}）{outline}／"
+
     for deflag in record.note['deflag']:
         subject, outline = deflag.split(':')
         deflags += f"（{subject}）{outline}／"
