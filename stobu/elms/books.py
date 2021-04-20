@@ -18,6 +18,7 @@ class BookItem(Enum):
     SIZE = 'size'
     COLUMNS = 'columns'
     ROWS = 'rows'
+    MOBS = 'mobs'
     CONTEST = 'contest'
     CAUTION = 'caution'
     SITES = 'sites'

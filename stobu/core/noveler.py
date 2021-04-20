@@ -7,14 +7,13 @@
 from stobu.core.nametagcreator import get_calling_tags
 from stobu.formats.novel import format_novels_data
 from stobu.syss import messages as msg
-from stobu.tools.translater import translate_tags_text_list
+from stobu.tools.translater import translate_tags_text_list, translate_tags_str
 from stobu.types.action import ActDataType, ActionRecord, ActionsData, ActType
 from stobu.types.action import NORMAL_ACTIONS
 from stobu.types.novel import NovelRecord, NovelsData, NovelType
 from stobu.types.output import OutputsData
 from stobu.utils.dicts import dict_sorted
 from stobu.utils.log import logger
-from stobu.utils.strings import translate_by_dict
 
 
 __all__ = (
@@ -239,9 +238,13 @@ def _update_tags_desc_record(record: NovelRecord, tags: dict, callings: dict) ->
         calling = dict_sorted(callings[record.subject], True)
         return NovelRecord(
                 record.type,
-                translate_by_dict(record.subject, tags, True),
-                translate_by_dict(record.desc, calling),
-                translate_by_dict(record.note, calling),
+                translate_tags_str(record.subject, tags, True, None),
+                translate_tags_str(record.desc, calling),
+                translate_tags_str(record.note, calling),
                 )
     else:
-        return record
+        return NovelRecord(
+                record.type,
+                translate_tags_str(record.subject, tags, True, None),
+                record.desc,
+                record.note)

@@ -203,7 +203,7 @@ def _conv_build_struct_outputs(contents: OutputsData, actions_data: ActionsData,
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"structs data in {PROC}"))
         return None
 
-    transition = scene_transition_data_from(structs)
+    transition = scene_transition_data_from(structs, tags)
     if not transition or not transition.has_data():
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"transition data in {PROC}"))
         return None

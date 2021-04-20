@@ -4,13 +4,14 @@
 
 
 # My Modules
+from stobu.elms.books import BookItem
 from stobu.elms.events import EventItem
 from stobu.elms.items import ItemItem
 from stobu.elms.persons import PersonItem
 from stobu.elms.stages import StageItem
 from stobu.elms.words import WordItem
 from stobu.syss import messages as msg
-from stobu.tools.datareader import get_person_data, get_mob_data, get_time_data
+from stobu.tools.datareader import get_person_data, get_mob_data, get_time_data, get_book_data
 from stobu.tools.filedatareader import read_markdown_data_as_yaml
 from stobu.tools.pathgetter import filepaths_by_elm
 from stobu.types.element import ElmType
@@ -19,6 +20,7 @@ from stobu.utils.dicts import combine_dicts, dict_sorted
 from stobu.utils.fileio import read_file
 from stobu.utils.filepath import basename_of
 from stobu.utils.log import logger
+from stobu.utils.strings import hankaku_to_zenkaku
 
 
 __all__ = (
@@ -99,10 +101,13 @@ def get_nametags() -> dict:
 
 # Private Functions
 def _add_mob_tags() -> dict:
+    mobs = get_book_data()[str(BookItem.MOBS)]
     data = assertion.is_dict(get_mob_data())
     tmp = {}
     for key, val in data.items():
         tmp[key] = val['name']
+        for i in range(int(mobs)):
+            tmp[key + str(i)] = val['name'] + hankaku_to_zenkaku(str(i))
     return tmp
 
 

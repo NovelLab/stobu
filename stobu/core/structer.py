@@ -8,7 +8,7 @@ from stobu.core.nametagcreator import get_calling_tags
 from stobu.formats.common import get_breakline
 from stobu.formats.struct import format_structs_data
 from stobu.syss import messages as msg
-from stobu.tools.translater import translate_tags_text_list
+from stobu.tools.translater import translate_tags_text_list, translate_tags_str
 from stobu.types.action import ActionsData, ActionRecord, ActDataType, ActType
 from stobu.types.action import NORMAL_ACTIONS
 from stobu.types.element import ElmType
@@ -16,7 +16,7 @@ from stobu.types.output import OutputsData
 from stobu.types.struct import StructRecord, StructsData, StructType
 from stobu.utils.dicts import dict_sorted
 from stobu.utils.log import logger
-from stobu.utils.strings import translate_by_dict, just_string_of
+from stobu.utils.strings import just_string_of
 
 
 __all__ = (
@@ -40,8 +40,9 @@ ACT_TITLES = [
 
 
 # Main
-def scene_transition_data_from(structs_data: StructsData) -> OutputsData:
+def scene_transition_data_from(structs_data: StructsData, tags: dict) -> OutputsData:
     assert isinstance(structs_data, StructsData)
+    assert isinstance(tags, dict)
 
     _PROC = f"{PROC}: transtion data"
     logger.debug(msg.PROC_START.format(proc=_PROC))
@@ -77,8 +78,10 @@ def scene_transition_data_from(structs_data: StructsData) -> OutputsData:
     tmp.append("\n")
     tmp.append(get_breakline())
 
+    translated = translate_tags_text_list(tmp, tags)
+
     logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
-    return OutputsData(tmp)
+    return OutputsData(translated)
 
 
 def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
@@ -397,12 +400,18 @@ def _update_tags_action_record(record: StructRecord, tags: dict,
         return StructRecord(
             record.type,
             record.act,
-            translate_by_dict(record.subject, tags, True),
-            translate_by_dict(record.outline, calling),
-            translate_by_dict(record.note, calling),
+            translate_tags_str(record.subject, tags, True, None),
+            translate_tags_str(record.outline, calling),
+            translate_tags_str(record.note, calling),
             )
     else:
-        return record
+        return StructRecord(
+                record.type,
+                record.act,
+                translate_tags_str(record.subject, tags, True, None),
+                record.outline,
+                record.note,
+                )
 
 
 def _update_tags_scene_data_record(record: StructRecord, tags: dict) -> StructRecord:
@@ -416,10 +425,10 @@ def _update_tags_scene_data_record(record: StructRecord, tags: dict) -> StructRe
     return StructRecord(
             record.type,
             record.act,
-            translate_by_dict(record.subject, tags, True),
-            translate_by_dict(record.outline, tags, True),
+            translate_tags_str(record.subject, tags, True, None),
+            translate_tags_str(record.outline, tags, True, None),
             {
-                'year': translate_by_dict(year, tags, True),
-                'date': translate_by_dict(date, tags, True),
-                'time': translate_by_dict(time, tags, True),
+                'year': translate_tags_str(year, tags, True, None),
+                'date': translate_tags_str(date, tags, True, None),
+                'time': translate_tags_str(time, tags, True, None),
             })
