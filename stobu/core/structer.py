@@ -74,6 +74,10 @@ def scene_transition_data_from(structs_data: StructsData, tags: dict) -> Outputs
             cache['year'] = year
             cache['date'] = date
             cache['time'] = time
+        elif StructType.TITLE_EPISODE is record.type:
+            line = '----'
+            tmp.append(_format_transition_record(line, line, line, line, line))
+            tmp.append("\n")
 
     tmp.append("\n")
     tmp.append(get_breakline())
