@@ -10,7 +10,7 @@ from stobu.formats.struct import format_structs_data
 from stobu.syss import messages as msg
 from stobu.tools.translater import translate_tags_text_list, translate_tags_str
 from stobu.types.action import ActionsData, ActionRecord, ActDataType, ActType
-from stobu.types.action import NORMAL_ACTIONS
+from stobu.types.action import NORMAL_ACTIONS, TITLE_ACTIONS
 from stobu.types.element import ElmType
 from stobu.types.output import OutputsData
 from stobu.types.struct import StructRecord, StructsData, StructType
@@ -29,15 +29,6 @@ __all__ = (
 
 # Define Constants
 PROC = 'BUILD STRUCT'
-
-
-ACT_TITLES = [
-        ActDataType.BOOK_TITLE,
-        ActDataType.CHAPTER_TITLE,
-        ActDataType.EPISODE_TITLE,
-        ActDataType.SCENE_TITLE,
-        ActDataType.SCENE_HEAD,
-        ]
 
 
 # Main
@@ -244,7 +235,7 @@ def _base_structs_data_from(actions_data: ActionsData) -> list:
     for record in actions_data.get_data():
         assert isinstance(record, ActionRecord)
         if record.type is ActType.DATA:
-            if record.subtype in ACT_TITLES:
+            if record.subtype in TITLE_ACTIONS:
                 tmp.append(_record_as_title_from(record))
             elif ActDataType.SCENE_START is record.subtype:
                 tmp.append(_record_as_scene_data_from(
@@ -411,23 +402,23 @@ def _get_format_scene_info_of_breakline() -> str:
     return f"| {index} | {line1} | {line2} | {line1} | {line2} |"
 
 
-def _record_as_comment_from(record: ActionRecord) -> StructRecord:
-    assert isinstance(record, ActionRecord)
-
-    return StructRecord(
-            StructType.COMMENT,
-            ActType.DATA,
-            record.subject,
-            record.outline,
-            record.note)
-
-
 def _record_as_action_from(record: ActionRecord) -> StructRecord:
     assert isinstance(record, ActionRecord)
 
     return StructRecord(
             StructType.ACTION,
             record.type,
+            record.subject,
+            record.outline,
+            record.note)
+
+
+def _record_as_comment_from(record: ActionRecord) -> StructRecord:
+    assert isinstance(record, ActionRecord)
+
+    return StructRecord(
+            StructType.COMMENT,
+            ActType.DATA,
             record.subject,
             record.outline,
             record.note)

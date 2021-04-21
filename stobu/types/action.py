@@ -78,6 +78,15 @@ class ActDataType(Enum):
     PAYOFF = auto()
 
 
+TITLE_ACTIONS = [
+        ActDataType.BOOK_TITLE,
+        ActDataType.CHAPTER_TITLE,
+        ActDataType.EPISODE_TITLE,
+        ActDataType.SCENE_TITLE,
+        ActDataType.SCENE_HEAD,
+        ]
+
+
 @dataclass
 class ActionRecord(object):
     type: ActType
