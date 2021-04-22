@@ -12,10 +12,10 @@ from stobu.core.nametagcreator import get_nametags
 from stobu.core.noveler import novels_data_from, outputs_data_from_novels_data
 from stobu.core.outliner import outlines_data_from, outputs_data_from_outlines_data
 from stobu.core.plotter import plots_data_from, outputs_data_from_plots_data
-from stobu.core.sceneinfocollector import sceneinfos_data_from, outputs_data_from_sceneinfos_data
 from stobu.core.scripter import outputs_data_from_scripts_data, scripts_data_from
 from stobu.core.storydatacreator import story_data_from
 from stobu.core.structer import structs_data_from, outputs_data_from_structs_data
+from stobu.infos.informationer import infos_data_from, outputs_data_from_infos_data
 from stobu.syss import messages as msg
 from stobu.tools.buildchecker import has_build_of
 from stobu.tools.cmdchecker import has_cmd_of
@@ -194,9 +194,12 @@ def _conv_build_sceneinfo_outputs(contents: OutputsData, actions_data: ActionsDa
     _PROC = f"{PROC}: build scene info"
     logger.debug(msg.PROC_START.format(proc=_PROC))
 
-    infos = sceneinfos_data_from(actions_data, tags)
+    infos = infos_data_from(actions_data, tags)
+    if not infos or not infos.has_data():
+        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"info data in {PROC}"))
+        return None
 
-    outputs = contents + outputs_data_from_sceneinfos_data(infos, tags, is_comment)
+    outputs = contents + outputs_data_from_infos_data(infos, tags, is_comment)
 
     logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
     return outputs

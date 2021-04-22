@@ -35,11 +35,15 @@ ACT_TYPE_TABLE = {
         ActType.EXPLAIN: ('ex', 'explain',),
         ActType.GO: ('go',),
         ActType.HAVE: ('have',),
+        ActType.KNOW: ('know',),
+        ActType.KNOWN: ('known',),
         ActType.OCCUR: ('occur',),
+        ActType.REMEMBER: ('remember',),
         ActType.TALK: ('t', 'talk',),
         ActType.THINK: ('think',),
         ActType.VOICE: ('voice',),
         ActType.SAME: ('-', 'same'),
+        ActType.WEAR: ('wear',),
         }
 
 

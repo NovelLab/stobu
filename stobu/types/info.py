@@ -18,6 +18,8 @@ __all__ = (
         'SceneInfo',
         'FlagType',
         'FlagInfo',
+        'StoryInfo',
+        'StoryInfoType',
         )
 
 
@@ -86,6 +88,25 @@ class FlagInfo(object):
     subject: str = None
     flag: str = None
     note: str = None
+
+
+class StoryInfoType(object):
+    NONE = auto()
+    BACKGROUND = auto()
+    CHARACTER = auto()
+    EVENT = auto()
+    INFO = auto()
+    ITEM = auto()
+    SKIN = auto()
+
+
+@dataclass
+class StoryInfo(object):
+    type: StoryInfoType
+    act: ActType
+    subject: str
+    outline: str
+    note: str
 
 
 @dataclass

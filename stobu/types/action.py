@@ -21,18 +21,29 @@ __all__ = (
 class ActType(Enum):
     NONE = 'none'
     # basic act
+    DO = 'do'
+    # stage drawing
+    DRAW = 'draw'
+    EXPLAIN = 'explain'
+    # person exists
     BE = 'be'
     COME = 'come'
-    DO = 'do'
-    DRAW = 'draw'
-    DISCARD = 'discard'
-    EXPLAIN = 'explain'
     GO = 'go'
+    # item owns
     HAVE = 'have'
+    DISCARD = 'discard'
+    # info
+    KNOW = 'know'
+    KNOWN = 'known'
+    REMEMBER = 'remember'
+    # event
     OCCUR = 'occur'
+    # dialogue like
     TALK = 'talk'
     THINK = 'think'
     VOICE = 'voice'
+    # skin
+    WEAR = 'wear'
     # control
     DATA = 'data'
     SAME = 'same'
@@ -46,11 +57,14 @@ NORMAL_ACTIONS = [
         ActType.DRAW,
         ActType.EXPLAIN,
         ActType.GO,
+        ActType.KNOW,
+        ActType.KNOWN,
         ActType.HAVE,
         ActType.OCCUR,
         ActType.TALK,
         ActType.THINK,
         ActType.VOICE,
+        ActType.WEAR,
         ]
 
 

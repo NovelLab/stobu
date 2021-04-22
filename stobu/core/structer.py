@@ -20,8 +20,6 @@ from stobu.utils.strings import just_string_of
 
 
 __all__ = (
-        'scene_info_data_from',
-        'scene_transition_data_from',
         'structs_data_from',
         'outputs_data_from_structs_data',
         )
@@ -32,90 +30,6 @@ PROC = 'BUILD STRUCT'
 
 
 # Main
-def scene_info_data_from(structs_data: StructsData) -> OutputsData:
-    assert isinstance(structs_data, StructsData)
-
-    _PROC = f"{PROC}: scene info data"
-    logger.debug(msg.PROC_START.format(proc=_PROC))
-
-    tmp = []
-    index = 0
-    tmp.append("# SCENE INFOS\n\n")
-
-    for record in structs_data.get_data():
-        assert isinstance(record, StructRecord)
-        if StructType.FLAG_FORESHADOW is record.type:
-            tmp.append(_format_scene_info_of_foreshadow_record(record, index))
-            tmp.append('\n')
-        elif StructType.FLAG_PAYOFF is record.type:
-            tmp.append(_format_scene_info_of_payoff_record(record, index))
-            tmp.append('\n')
-        elif StructType.TITLE_EPISODE is record.type:
-            tmp.append(_get_format_scene_info_of_breakline())
-            tmp.append('\n')
-        elif StructType.TITLE_SCENE is record.type:
-            index += 1
-        else:
-            continue
-
-    tmp.append("\n")
-    tmp.append(get_breakline())
-
-    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
-    return OutputsData(tmp)
-
-
-def scene_transition_data_from(structs_data: StructsData, tags: dict) -> OutputsData:
-    assert isinstance(structs_data, StructsData)
-    assert isinstance(tags, dict)
-
-    _PROC = f"{PROC}: transition data"
-    logger.debug(msg.PROC_START.format(proc=_PROC))
-
-    tmp = []
-    cache = {
-            'camera': '',
-            'stage': '',
-            'year': '',
-            'date': '',
-            'time': '',
-            }
-    tmp.append("# SCENE TRANSITIONS\n\n")
-
-    for record in structs_data.get_data():
-        assert isinstance(record, StructRecord)
-        if StructType.SCENE_DATA is record.type:
-            camera = record.subject
-            stage = record.outline
-            year = record.note['year']
-            date = record.note['date']
-            time = record.note['time']
-            tmp.append(_format_transition_record_as_compare(
-                camera, stage, year, date, time, cache))
-            tmp.append("\n")
-            tmp.append(_format_transition_record(camera, stage, year, date, time))
-            tmp.append("\n")
-            cache['camera'] = camera
-            cache['stage'] = stage
-            cache['year'] = year
-            cache['date'] = date
-            cache['time'] = time
-        elif StructType.TITLE_EPISODE is record.type:
-            line = '----'
-            tmp.append(_format_transition_record(line, line, line, line, line))
-            tmp.append("\n")
-        else:
-            continue
-
-    tmp.append("\n")
-    tmp.append(get_breakline())
-
-    translated = translate_tags_text_list(tmp, tags)
-
-    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
-    return OutputsData(translated)
-
-
 def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
     assert isinstance(actions_data, ActionsData)
     assert isinstance(tags, dict)

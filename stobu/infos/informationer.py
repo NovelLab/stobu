@@ -1,4 +1,4 @@
-"""Scene info collection module."""
+"""Information creator module."""
 
 # Official Libraries
 
@@ -6,13 +6,14 @@
 # My Modules
 from stobu.core.nametagcreator import get_calling_tags
 from stobu.formats.info import format_infos_data
+from stobu.infos.flaginfos import flag_infos_from
+from stobu.infos.transitions import scene_transition_data_from
 from stobu.syss import messages as msg
 from stobu.tools.translater import translate_tags_text_list, translate_tags_str
 from stobu.types.action import ActDataType, ActionRecord, ActionsData, ActType
-from stobu.types.action import NORMAL_ACTIONS, TITLE_ACTIONS
+from stobu.types.action import TITLE_ACTIONS, NORMAL_ACTIONS
 from stobu.types.info import InfoRecord, InfosData, InfoType
 from stobu.types.info import SceneInfo
-from stobu.types.info import FlagInfo, FlagType
 from stobu.types.output import OutputsData
 from stobu.utils import assertion
 from stobu.utils.dicts import dict_sorted
@@ -20,39 +21,40 @@ from stobu.utils.log import logger
 
 
 __all__ = (
-        'sceneinfos_data_from',
-        'outputs_data_from_sceneinfos_data',
+        'infos_data_from',
+        'outputs_data_from_infos_data',
         )
 
 
 # Define Constants
-PROC = 'SCENE INFO COLLECTOR'
+PROC = 'INFORAMATIONER'
 
 
 # Main
-def sceneinfos_data_from(actions_data: ActionsData, tags: dict) -> InfosData:
+def infos_data_from(actions_data: ActionsData, tags: dict) -> InfosData:
     assert isinstance(actions_data, ActionsData)
     assert isinstance(tags, dict)
 
     logger.debug(msg.PROC_START.format(proc=PROC))
 
-    base_data = _base_info_data_from(actions_data)
+    base_data = _base_data_from(actions_data)
 
     updated = update_data_tags(base_data, tags)
 
-    transition = _conv_scene_transition_data_from(updated)
+    transitions = scene_transition_data_from(updated)
 
-    flag_info = _conv_scene_flags_data_from(updated)
+    flags = flag_infos_from(updated)
 
-    data_set = transition + flag_info
+    data_set = transitions + flags
 
     eliminated = _eliminate_empty_records(data_set)
 
     logger.debug(msg.PROC_SUCCESS.format(proc=PROC))
-    return InfosData(eliminated)
+
+    return eliminated
 
 
-def outputs_data_from_sceneinfos_data(infos_data: InfosData, tags: dict,
+def outputs_data_from_infos_data(infos_data: InfosData, tags: dict,
         is_comment: bool = False) -> OutputsData:
     assert isinstance(infos_data, InfosData)
     assert isinstance(tags, dict)
@@ -69,9 +71,12 @@ def outputs_data_from_sceneinfos_data(infos_data: InfosData, tags: dict,
     return OutputsData(translated)
 
 
-def update_data_tags(origin_data: list, tags: dict) -> list:
+def update_data_tags(origin_data: list, tags: dict) -> InfosData:
     assert isinstance(origin_data, list)
     assert isinstance(tags, dict)
+
+    _PROC = f"{PROC}: update tags"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
 
     tmp = []
     callings = get_calling_tags()
@@ -85,12 +90,17 @@ def update_data_tags(origin_data: list, tags: dict) -> list:
         else:
             tmp.append(record)
 
-    return tmp
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+
+    return InfosData(tmp)
 
 
 # Private Functions
-def _base_info_data_from(actions_data: ActionsData) -> list:
+def _base_data_from(actions_data: ActionsData) -> list:
     assert isinstance(actions_data, ActionsData)
+
+    _PROC = f"{PROC}: base data"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
 
     tmp = []
     cache = SceneInfo()
@@ -141,79 +151,16 @@ def _base_info_data_from(actions_data: ActionsData) -> list:
         else:
             continue
 
-    return tmp
-
-
-def _conv_scene_flags_data_from(base_data: list) -> InfosData:
-    assert isinstance(base_data, list)
-
-    _PROC = f"{PROC}: flag data"
-    logger.debug(msg.PROC_START.format(proc=_PROC))
-
-    tmp = []
-    index = 0
-
-    tmp.append(_get_record_as_splitter())
-    tmp.append(InfoRecord(
-        InfoType.DATA_TITLE, ActType.DATA, '## SCENE FLAG INFOS', '', ''))
-
-    for record in base_data:
-        assert isinstance(record, InfoRecord)
-        if InfoType.ACTION is record.type:
-            continue
-        elif InfoType.FLAG_FORESHADOW is record.type:
-            tmp.append(_record_as_flag_info_from(record, index, FlagType.FLAG))
-        elif InfoType.FLAG_PAYOFF is record.type:
-            tmp.append(_record_as_flag_info_from(record, index, FlagType.DEFLAG))
-        elif InfoType.TITLE_EPISODE is record.type:
-            tmp.append(_get_record_as_flag_info_split())
-        elif InfoType.TITLE_SCENE is record.type:
-            index += 1
-        else:
-            continue
-
     logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
     return tmp
 
 
-def _conv_scene_transition_data_from(base_data: list) -> InfosData:
-    assert isinstance(base_data, list)
-
-    _PROC = f"{PROC}: scene transition"
-    logger.debug(msg.PROC_START.format(proc=_PROC))
-
-    tmp = []
-    cache = SceneInfo()
-
-    tmp.append(_get_record_as_splitter())
-    tmp.append(InfoRecord(
-        InfoType.DATA_TITLE, ActType.DATA, '## SCENE TRANSITIONS', '', ''))
-
-    for record in base_data:
-        assert isinstance(record, InfoRecord)
-        if InfoType.SCENE_HEAD is record.type:
-            tmp.append(_record_of_scene_transition_from(record, cache))
-            tmp.append(
-                    InfoRecord(InfoType.SCENE_TRANSITION, record.act,
-                        record.subject, record.outline, record.note))
-            cache = record.note
-        elif InfoType.TITLE_EPISODE is record.type:
-            tmp.append(_get_record_as_transition_split())
-        elif InfoType.TITLE_SCENE is record.type:
-            continue
-        else:
-            continue
-
-    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
-    return tmp
-
-
-def _eliminate_empty_records(base_data: list) -> list:
-    assert isinstance(base_data, list)
+def _eliminate_empty_records(base_data: InfosData) -> InfosData:
+    assert isinstance(base_data, InfosData)
 
     tmp = []
 
-    for record in base_data:
+    for record in base_data.get_data():
         assert isinstance(record, InfoRecord)
         if record.type in [InfoType.COMMENT,]:
             if InfoType.COMMENT is record.type:
@@ -225,28 +172,11 @@ def _eliminate_empty_records(base_data: list) -> list:
         else:
             tmp.append(record)
 
-    return tmp
-
-
-def _get_record_as_flag_info_split() -> InfoRecord:
-    info = FlagInfo(FlagType.NONE, 0, '', '', '')
-
-    return InfoRecord(InfoType.FLAG_INFO, ActType.DATA, '', '', info)
+    return InfosData(tmp)
 
 
 def _get_record_as_scene_end() -> InfoRecord:
     return InfoRecord(InfoType.SCENE_END, ActType.DATA, '', '', '')
-
-
-def _get_record_as_splitter() -> InfoRecord:
-    return InfoRecord(InfoType.SPLITTER, ActType.DATA, '', '', '')
-
-
-def _get_record_as_transition_split() -> InfoRecord:
-    line = '---'
-    info = SceneInfo(line, line, line, line, line)
-
-    return InfoRecord(InfoType.SCENE_TRANSITION, ActType.DATA, '', '', info)
 
 
 def _record_as_action_from(record: ActionRecord) -> InfoRecord:
@@ -267,19 +197,6 @@ def _record_as_comment_from(record: ActionRecord) -> InfoRecord:
             record.subject,
             record.outline,
             record.note)
-
-
-def _record_as_flag_info_from(record: InfoRecord, index: int,
-        flag_type: FlagType) -> InfoRecord:
-    assert isinstance(record, InfoRecord)
-    assert isinstance(index, int)
-    assert isinstance(flag_type, FlagType)
-
-    return InfoRecord(
-            InfoType.FLAG_INFO,
-            ActType.DATA,
-            '', '',
-            FlagInfo(flag_type, index, record.subject, record.outline, record.note))
 
 
 def _record_as_foreshadow_from(record: ActionRecord) -> InfoRecord:
@@ -319,30 +236,6 @@ def _record_as_title_from(record: ActionRecord) -> InfoRecord:
             record.subject,
             record.outline,
             record.note)
-
-
-def _record_of_scene_transition_from(record: InfoRecord,
-        cache: SceneInfo) -> InfoRecord:
-    assert isinstance(record, InfoRecord)
-    assert isinstance(cache, SceneInfo)
-
-    def _diff(a: str, b: str) -> str:
-        if a != b:
-            return '↓'
-        else:
-            return '…'
-
-    base = assertion.is_instance(record.note, SceneInfo)
-
-    dif = SceneInfo()
-
-    dif.camera = _diff(base.camera, cache.camera)
-    dif.stage = _diff(base.stage, cache.stage)
-    dif.year = _diff(base.year, cache.year)
-    dif.date = _diff(base.date, cache.date)
-    dif.time = _diff(base.time, cache.time)
-
-    return InfoRecord(InfoType.SCENE_TRANSITION, ActType.DATA, '', '', dif)
 
 
 def _title_from(record: ActionRecord) -> InfoType:
