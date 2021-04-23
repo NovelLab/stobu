@@ -20,6 +20,8 @@ __all__ = (
         'PersonInfo', 'PersonInfoType',
         'FashionInfo',
         'KnowledgeInfo', 'KnowledgeInfoType',
+        'StageInfo', 'StageInfoType',
+        'ItemInfo', 'ItemInfoType',
         )
 
 
@@ -38,10 +40,14 @@ class InfoType(Enum):
     TITLE_TEXT = auto()
     FLAG_FORESHADOW = auto()
     FLAG_PAYOFF = auto()
+    # info
     FLAG_INFO = auto()
     PERSON_INFO = auto()
     FASHION_INFO = auto()
     KNOWLEDGE_INFO = auto()
+    STAGE_INFO = auto()
+    ITEM_INFO = auto()
+    # data
     SPLITTER = auto()
     DATA_TITLE = auto()
 
@@ -128,6 +134,38 @@ class KnowledgeInfoType(Enum):
 @dataclass
 class KnowledgeInfo(object):
     type: KnowledgeInfoType
+    index: int
+    subject: str = None
+    outline: str = None
+    note: str = None
+
+
+class StageInfoType(Enum):
+    NONE = auto()
+    DRAW = auto()
+    PUT = auto()
+    RID = auto()
+
+
+@dataclass
+class StageInfo(object):
+    type: StageInfoType
+    index: int
+    stage: str = None
+    subject: str = None
+    outline: str = None
+    note: str = None
+
+
+class ItemInfoType(Enum):
+    NONE = auto()
+    HAVE = auto()
+    DISCARD = auto()
+
+
+@dataclass
+class ItemInfo(object):
+    type: ItemInfoType
     index: int
     subject: str = None
     outline: str = None

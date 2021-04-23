@@ -14,6 +14,8 @@ from stobu.types.info import FlagInfo, FlagType
 from stobu.types.info import PersonInfo, PersonInfoType
 from stobu.types.info import FashionInfo
 from stobu.types.info import KnowledgeInfo, KnowledgeInfoType
+from stobu.types.info import StageInfo, StageInfoType
+from stobu.types.info import ItemInfo, ItemInfoType
 from stobu.utils import assertion
 from stobu.utils.log import logger
 from stobu.utils.strings import just_string_of
@@ -68,6 +70,16 @@ def format_infos_data(infos_data: InfosData, is_comment: bool) -> list:
                 tmp.append(get_format_record_as_br())
         elif InfoType.KNOWLEDGE_INFO is record.type:
             ret = _record_as_knowledge_info_from(record)
+            if ret:
+                tmp.append(ret)
+                tmp.append(get_format_record_as_br())
+        elif InfoType.STAGE_INFO is record.type:
+            ret = _record_as_stage_info_from(record)
+            if ret:
+                tmp.append(ret)
+                tmp.append(get_format_record_as_br())
+        elif InfoType.ITEM_INFO is record.type:
+            ret = _record_as_item_info_from(record)
             if ret:
                 tmp.append(ret)
                 tmp.append(get_format_record_as_br())
@@ -155,6 +167,33 @@ def _record_as_flag_info_from(record: InfoRecord) -> str:
     return f"| {_head} | {_subject_a} | {_flag} | {_subject_b} | {_deflag} |"
 
 
+def _record_as_item_info_from(record: InfoRecord) -> str:
+    assert isinstance(record, InfoRecord)
+
+    info = assertion.is_instance(record.note, ItemInfo)
+
+    head = info.index
+    subject = info.subject
+    outline = info.outline
+    out_subject = ''
+
+    if ItemInfoType.HAVE is info.type:
+        subject = f"（{subject}）[{outline}]"
+    elif ItemInfoType.DISCARD is info.type:
+        out_subject = f"（{subject}）[{outline}]"
+        subject = ''
+    elif ItemInfoType.NONE is info.type:
+        head = subject = outline = out_subject = '----'
+    else:
+        return None
+
+    _head = just_string_of(str(head), 4)
+    _subject = just_string_of(subject, 32)
+    _out_subject = just_string_of(out_subject, 32)
+
+    return f"| {_head} | {_subject} | {_out_subject} |"
+
+
 def _record_as_knowledge_info_from(record: InfoRecord) -> str:
     assert isinstance(record, InfoRecord)
 
@@ -215,6 +254,38 @@ def _record_as_person_info_from(record: InfoRecord) -> str:
     _outline = just_string_of(outline, 48)
 
     return f"| {_head} | {_subject} | {_outline} |"
+
+
+def _record_as_stage_info_from(record: InfoRecord) -> str:
+    assert isinstance(record, InfoRecord)
+
+    info = assertion.is_instance(record.note, StageInfo)
+
+    head = info.index
+    stage = info.stage
+    subject = info.subject
+    outline = info.outline
+    out_subject = ''
+
+    if StageInfoType.DRAW is info.type:
+        subject = f"（{subject}）" if subject else ''
+    elif StageInfoType.PUT is info.type:
+        subject = f"[{subject}]"
+    elif StageInfoType.RID is info.type:
+        out_subject = f"[{subject}]"
+        subject = ''
+    elif StageInfoType.NONE is info.type:
+        head = stage = subject = outline = '----'
+    else:
+        return None
+
+    _head = just_string_of(str(head), 4)
+    _stage = just_string_of(stage, 16)
+    _subject = just_string_of(subject, 16)
+    _outline = just_string_of(outline, 48)
+    _out_subject = just_string_of(out_subject, 16)
+
+    return f"| {_head} | {_stage} | {_subject} | {_outline} | {_out_subject} |"
 
 
 def _record_as_transition_from(record: InfoRecord) -> str:

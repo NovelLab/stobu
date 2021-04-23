@@ -24,6 +24,8 @@ class ActType(Enum):
     DO = 'do'
     # stage drawing
     DRAW = 'draw'
+    PUT = 'put'
+    RID = 'rid'
     # person exists
     BE = 'be'
     COME = 'come'
@@ -61,7 +63,9 @@ NORMAL_ACTIONS = [
         ActType.KNOWN,
         ActType.HAVE,
         ActType.OCCUR,
+        ActType.PUT,
         ActType.REMEMBER,
+        ActType.RID,
         ActType.TALK,
         ActType.THINK,
         ActType.VOICE,
