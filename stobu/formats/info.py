@@ -13,6 +13,7 @@ from stobu.types.info import INFO_TITLES
 from stobu.types.info import FlagInfo, FlagType
 from stobu.types.info import PersonInfo, PersonInfoType
 from stobu.types.info import FashionInfo
+from stobu.types.info import KnowledgeInfo, KnowledgeInfoType
 from stobu.utils import assertion
 from stobu.utils.log import logger
 from stobu.utils.strings import just_string_of
@@ -62,6 +63,11 @@ def format_infos_data(infos_data: InfosData, is_comment: bool) -> list:
                 tmp.append(get_format_record_as_br())
         elif InfoType.FASHION_INFO is record.type:
             ret = _record_as_fashion_info_from(record)
+            if ret:
+                tmp.append(ret)
+                tmp.append(get_format_record_as_br())
+        elif InfoType.KNOWLEDGE_INFO is record.type:
+            ret = _record_as_knowledge_info_from(record)
             if ret:
                 tmp.append(ret)
                 tmp.append(get_format_record_as_br())
@@ -147,6 +153,42 @@ def _record_as_flag_info_from(record: InfoRecord) -> str:
     _deflag = just_string_of(deflag, 32)
 
     return f"| {_head} | {_subject_a} | {_flag} | {_subject_b} | {_deflag} |"
+
+
+def _record_as_knowledge_info_from(record: InfoRecord) -> str:
+    assert isinstance(record, InfoRecord)
+
+    info = assertion.is_instance(record.note, KnowledgeInfo)
+
+    head = info.index
+    subject = info.subject
+    outline = info.outline
+    old_know = ''
+
+    if KnowledgeInfoType.EXPLAIN is info.type:
+        subject = f"{subject}"
+        outline = f"※{outline}"
+    elif KnowledgeInfoType.KNOW is info.type:
+        subject = f"{subject}"
+    elif KnowledgeInfoType.KNOWN is info.type:
+        subject = f"{subject}"
+        old_know = f"（{outline}）"
+        outline = ''
+    elif KnowledgeInfoType.REMEMBER is info.type:
+        subject = f"{subject}"
+        old_know = f"〜{outline}"
+        outline = ''
+    elif KnowledgeInfoType.NONE is info.type:
+        head = subject = outline = old_know = '----'
+    else:
+        return None
+
+    _head = just_string_of(str(head), 4)
+    _subject = just_string_of(subject, 16)
+    _outline = just_string_of(outline, 32)
+    _old_know = just_string_of(old_know, 32)
+
+    return f"| {_head} | {_subject} | {_outline} | {_old_know} |"
 
 
 def _record_as_person_info_from(record: InfoRecord) -> str:

@@ -16,11 +16,10 @@ __all__ = (
         'InfoRecord',
         'InfosData',
         'SceneInfo',
-        'FlagType',
-        'FlagInfo',
-        'PersonInfo',
-        'PersonInfoType',
+        'FlagInfo', 'FlagType',
+        'PersonInfo', 'PersonInfoType',
         'FashionInfo',
+        'KnowledgeInfo', 'KnowledgeInfoType',
         )
 
 
@@ -42,6 +41,7 @@ class InfoType(Enum):
     FLAG_INFO = auto()
     PERSON_INFO = auto()
     FASHION_INFO = auto()
+    KNOWLEDGE_INFO = auto()
     SPLITTER = auto()
     DATA_TITLE = auto()
 
@@ -111,6 +111,23 @@ class PersonInfo(object):
 
 @dataclass
 class FashionInfo(object):
+    index: int
+    subject: str = None
+    outline: str = None
+    note: str = None
+
+
+class KnowledgeInfoType(Enum):
+    NONE = auto()
+    EXPLAIN = auto()
+    KNOW = auto()
+    KNOWN = auto()
+    REMEMBER = auto()
+
+
+@dataclass
+class KnowledgeInfo(object):
+    type: KnowledgeInfoType
     index: int
     subject: str = None
     outline: str = None

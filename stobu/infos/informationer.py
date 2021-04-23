@@ -8,6 +8,7 @@ from stobu.core.nametagcreator import get_calling_tags
 from stobu.formats.info import format_infos_data
 from stobu.infos.fashioninfos import fashion_infos_from
 from stobu.infos.flaginfos import flag_infos_from
+from stobu.infos.knowledgeinfos import knowledge_infos_from
 from stobu.infos.personinfos import person_infos_from
 from stobu.infos.transitions import scene_transition_data_from
 from stobu.syss import messages as msg
@@ -51,7 +52,9 @@ def infos_data_from(actions_data: ActionsData, tags: dict) -> InfosData:
 
     fashions = fashion_infos_from(updated)
 
-    data_set = transitions + flags + persons + fashions
+    knowledges = knowledge_infos_from(updated)
+
+    data_set = transitions + flags + persons + fashions + knowledges
 
     eliminated = _eliminate_empty_records(data_set)
 

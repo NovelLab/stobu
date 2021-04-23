@@ -38,7 +38,7 @@ ACT_TYPE_TABLE = {
         ActType.KNOW: ('know',),
         ActType.KNOWN: ('known',),
         ActType.OCCUR: ('occur',),
-        ActType.REMEMBER: ('remember',),
+        ActType.REMEMBER: ('rem', 'remember',),
         ActType.TALK: ('t', 'talk',),
         ActType.THINK: ('think',),
         ActType.VOICE: ('voice',),

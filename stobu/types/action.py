@@ -24,7 +24,6 @@ class ActType(Enum):
     DO = 'do'
     # stage drawing
     DRAW = 'draw'
-    EXPLAIN = 'explain'
     # person exists
     BE = 'be'
     COME = 'come'
@@ -33,6 +32,7 @@ class ActType(Enum):
     HAVE = 'have'
     DISCARD = 'discard'
     # info
+    EXPLAIN = 'explain'
     KNOW = 'know'
     KNOWN = 'known'
     REMEMBER = 'remember'
@@ -61,6 +61,7 @@ NORMAL_ACTIONS = [
         ActType.KNOWN,
         ActType.HAVE,
         ActType.OCCUR,
+        ActType.REMEMBER,
         ActType.TALK,
         ActType.THINK,
         ActType.VOICE,
