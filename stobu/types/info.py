@@ -18,8 +18,9 @@ __all__ = (
         'SceneInfo',
         'FlagType',
         'FlagInfo',
-        'StoryInfo',
-        'StoryInfoType',
+        'PersonInfo',
+        'PersonInfoType',
+        'FashionInfo',
         )
 
 
@@ -39,6 +40,8 @@ class InfoType(Enum):
     FLAG_FORESHADOW = auto()
     FLAG_PAYOFF = auto()
     FLAG_INFO = auto()
+    PERSON_INFO = auto()
+    FASHION_INFO = auto()
     SPLITTER = auto()
     DATA_TITLE = auto()
 
@@ -90,23 +93,28 @@ class FlagInfo(object):
     note: str = None
 
 
-class StoryInfoType(object):
+class PersonInfoType(Enum):
     NONE = auto()
-    BACKGROUND = auto()
-    CHARACTER = auto()
-    EVENT = auto()
-    INFO = auto()
-    ITEM = auto()
-    SKIN = auto()
+    BE = auto()
+    COME = auto()
+    GO = auto()
 
 
 @dataclass
-class StoryInfo(object):
-    type: StoryInfoType
-    act: ActType
-    subject: str
-    outline: str
-    note: str
+class PersonInfo(object):
+    type: PersonInfoType
+    index: int
+    subject: str = None
+    outline: str = None
+    note: str = None
+
+
+@dataclass
+class FashionInfo(object):
+    index: int
+    subject: str = None
+    outline: str = None
+    note: str = None
 
 
 @dataclass

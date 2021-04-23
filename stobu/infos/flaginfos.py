@@ -4,6 +4,7 @@
 
 
 # My Modules
+from stobu.infos.common import get_record_as_splitter, get_record_as_data_title
 from stobu.syss import messages as msg
 from stobu.types.action import ActType
 from stobu.types.info import InfoRecord, InfosData, InfoType
@@ -29,9 +30,8 @@ def flag_infos_from(infos_data: InfosData) -> InfosData:
     tmp = []
     index = 0
 
-    tmp.append(_get_record_as_splitter())
-    tmp.append(InfoRecord(
-        InfoType.DATA_TITLE, ActType.DATA, '## SCENE FLAG INFOS', '', ''))
+    tmp.append(get_record_as_splitter())
+    tmp.append(get_record_as_data_title('SCENE FLAG INFOS'))
 
     for record in infos_data.get_data():
         assert isinstance(record, InfoRecord)
@@ -58,10 +58,6 @@ def _get_record_as_flag_info_split() -> InfoRecord:
     info = FlagInfo(FlagType.NONE, 0, '', '', '')
 
     return InfoRecord(InfoType.FLAG_INFO, ActType.DATA, '', '', info)
-
-
-def _get_record_as_splitter() -> InfoRecord:
-    return InfoRecord(InfoType.SPLITTER, ActType.DATA, '', '', '')
 
 
 def _record_as_flag_info_from(record: InfoRecord, index: int,

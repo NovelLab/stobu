@@ -4,6 +4,7 @@
 
 
 # My Modules
+from stobu.infos.common import get_record_as_splitter
 from stobu.syss import messages as msg
 from stobu.types.action import ActType
 from stobu.types.info import InfoRecord, InfosData, InfoType
@@ -30,7 +31,7 @@ def scene_transition_data_from(infos_data: InfosData) -> InfosData:
     tmp = []
     cache = SceneInfo()
 
-    tmp.append(_get_record_as_splitter())
+    tmp.append(get_record_as_splitter())
     tmp.append(InfoRecord(
         InfoType.DATA_TITLE, ActType.DATA, '## SCENE TRANSITIONS', '', ''))
 
@@ -55,10 +56,6 @@ def scene_transition_data_from(infos_data: InfosData) -> InfosData:
 
 
 # Private Functions
-def _get_record_as_splitter() -> InfoRecord:
-    return InfoRecord(InfoType.SPLITTER, ActType.DATA, '', '', '')
-
-
 def _get_record_as_transition_split() -> InfoRecord:
     line = '---'
     info = SceneInfo(line, line, line, line, line)

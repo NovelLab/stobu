@@ -11,6 +11,8 @@ from stobu.syss import messages as msg
 from stobu.types.info import InfoRecord, InfosData, InfoType, SceneInfo
 from stobu.types.info import INFO_TITLES
 from stobu.types.info import FlagInfo, FlagType
+from stobu.types.info import PersonInfo, PersonInfoType
+from stobu.types.info import FashionInfo
 from stobu.utils import assertion
 from stobu.utils.log import logger
 from stobu.utils.strings import just_string_of
@@ -44,11 +46,25 @@ def format_infos_data(infos_data: InfosData, is_comment: bool) -> list:
         elif InfoType.SCENE_HEAD is record.type:
             pass
         elif InfoType.SCENE_TRANSITION is record.type:
-            tmp.append(_record_as_transition_from(record))
-            tmp.append(get_format_record_as_br())
+            ret = _record_as_transition_from(record)
+            if ret:
+                tmp.append(ret)
+                tmp.append(get_format_record_as_br())
         elif InfoType.FLAG_INFO is record.type:
-            tmp.append(_record_as_flag_info_from(record))
-            tmp.append(get_format_record_as_br())
+            ret = _record_as_flag_info_from(record)
+            if ret:
+                tmp.append(ret)
+                tmp.append(get_format_record_as_br())
+        elif InfoType.PERSON_INFO is record.type:
+            ret = _record_as_person_info_from(record)
+            if ret:
+                tmp.append(ret)
+                tmp.append(get_format_record_as_br())
+        elif InfoType.FASHION_INFO is record.type:
+            ret = _record_as_fashion_info_from(record)
+            if ret:
+                tmp.append(ret)
+                tmp.append(get_format_record_as_br())
         elif InfoType.COMMENT is record.type:
             if is_comment:
                 pass
@@ -81,6 +97,27 @@ def _record_as_data_title_from(record: InfoRecord) -> str:
     return f"{record.subject}"
 
 
+def _record_as_fashion_info_from(record: InfoRecord) -> str:
+    assert isinstance(record, InfoRecord)
+
+    info = assertion.is_instance(record.note, FashionInfo)
+
+    head = info.index
+    subject = info.subject
+    outline = info.outline
+
+    if head < 0:
+        head = subject = outline = '----'
+    else:
+        outline = f"[{outline}]"
+
+    _head = just_string_of(str(head), 4)
+    _subject = just_string_of(subject, 16)
+    _outline = just_string_of(outline, 32)
+
+    return f"| {_head} | {_subject} | {_outline} |"
+
+
 def _record_as_flag_info_from(record: InfoRecord) -> str:
     assert isinstance(record, InfoRecord)
 
@@ -110,6 +147,32 @@ def _record_as_flag_info_from(record: InfoRecord) -> str:
     _deflag = just_string_of(deflag, 32)
 
     return f"| {_head} | {_subject_a} | {_flag} | {_subject_b} | {_deflag} |"
+
+
+def _record_as_person_info_from(record: InfoRecord) -> str:
+    assert isinstance(record, InfoRecord)
+
+    info = assertion.is_instance(record.note, PersonInfo)
+
+    head = info.index
+    info_sub = ''
+    subject = info.subject
+    outline = info.outline
+
+    if PersonInfoType.BE is info.type:
+        info_sub = f"［{subject}］"
+    elif PersonInfoType.COME is info.type:
+        info_sub = f"in {subject}"
+    elif PersonInfoType.GO is info.type:
+        info_sub = f"out {subject}"
+    else:
+        head = info_sub = outline = '----'
+
+    _head = just_string_of(str(head), 4)
+    _subject = just_string_of(info_sub, 16)
+    _outline = just_string_of(outline, 48)
+
+    return f"| {_head} | {_subject} | {_outline} |"
 
 
 def _record_as_transition_from(record: InfoRecord) -> str:
