@@ -15,6 +15,7 @@ class BuildType(Enum):
     NOVEL = 'novel'
     OUTLINE = 'outline'
     PLOT = 'plot'
+    SCENE_INFO = 'sceneinfo'
     SCRIPT = 'script'
     STRUCT = 'struct'
 

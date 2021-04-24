@@ -15,7 +15,7 @@ from stobu.core.plotter import plots_data_from, outputs_data_from_plots_data
 from stobu.core.scripter import outputs_data_from_scripts_data, scripts_data_from
 from stobu.core.storydatacreator import story_data_from
 from stobu.core.structer import structs_data_from, outputs_data_from_structs_data
-from stobu.core.structer import scene_transition_data_from, scene_info_data_from
+from stobu.infos.informationer import infos_data_from, outputs_data_from_infos_data
 from stobu.syss import messages as msg
 from stobu.tools.buildchecker import has_build_of
 from stobu.tools.cmdchecker import has_cmd_of
@@ -49,6 +49,7 @@ BUILD_FILENAMES = {
         BuildType.PLOT: 'plot',
         BuildType.SCRIPT: 'script',
         BuildType.STRUCT: 'struct',
+        BuildType.SCENE_INFO: 'sceneinfo',
         }
 
 
@@ -95,6 +96,13 @@ def build_project(args: Namespace) -> bool:
                 output_contents_data.cloned(), actions_data, tags, is_comment)
         if not outputs or not _output_data(BuildType.STRUCT, outputs):
             logger.error(msg.PROC_FAILED.format(proc=f"struct in {PROC}"))
+            return False
+
+    if has_build_of(args, BuildType.SCENE_INFO):
+        outputs = _conv_build_sceneinfo_outputs(
+                output_contents_data.cloned(), actions_data, tags, is_comment)
+        if not outputs or not _output_data(BuildType.SCENE_INFO, outputs):
+            logger.error(msg.PROC_FAILED.format(proc=f"scene info in {PROC}"))
             return False
 
     if has_build_of(args, BuildType.SCRIPT):
@@ -176,6 +184,27 @@ def _conv_build_plot_outputs(contents: OutputsData, story_data: StoryData,
     return contents + outputs_data_from_plots_data(plots, tags)
 
 
+def _conv_build_sceneinfo_outputs(contents: OutputsData, actions_data: ActionsData,
+        tags: dict, is_comment: bool) -> OutputsData:
+    assert isinstance(contents, OutputsData)
+    assert isinstance(actions_data, ActionsData)
+    assert isinstance(tags, dict)
+    assert isinstance(is_comment, bool)
+
+    _PROC = f"{PROC}: build scene info"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+
+    infos = infos_data_from(actions_data, tags)
+    if not infos or not infos.has_data():
+        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"info data in {PROC}"))
+        return None
+
+    outputs = contents + outputs_data_from_infos_data(infos, tags, is_comment)
+
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+    return outputs
+
+
 def _conv_build_script_outputs(contents: OutputsData, actions_data: ActionsData,
         tags: dict, is_comment: bool) -> OutputsData:
     assert isinstance(contents, OutputsData)
@@ -200,23 +229,18 @@ def _conv_build_struct_outputs(contents: OutputsData, actions_data: ActionsData,
     assert isinstance(tags, dict)
     assert isinstance(is_comment, bool)
 
-    logger.debug(msg.PROC_START.format(proc=f"build struct in {PROC}"))
+    _PROC = f"{PROC}: build struct"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+
     structs = structs_data_from(actions_data, tags)
     if not structs or not structs.has_data():
         logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"structs data in {PROC}"))
         return None
 
-    transition = scene_transition_data_from(structs, tags)
-    if not transition or not transition.has_data():
-        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"transition data in {PROC}"))
-        return None
+    outputs = contents + outputs_data_from_structs_data(structs, tags, is_comment)
 
-    scene_info = scene_info_data_from(structs)
-    if not scene_info or not scene_info.has_data():
-        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"scene info data in {PROC}"))
-        return None
-
-    return contents + transition + scene_info + outputs_data_from_structs_data(structs, tags, is_comment)
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+    return outputs
 
 
 def _output_contents_data_from(story_data: StoryData, tags: dict) -> OutputsData:

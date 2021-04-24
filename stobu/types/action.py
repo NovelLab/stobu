@@ -21,18 +21,31 @@ __all__ = (
 class ActType(Enum):
     NONE = 'none'
     # basic act
+    DO = 'do'
+    # stage drawing
+    DRAW = 'draw'
+    PUT = 'put'
+    RID = 'rid'
+    # person exists
     BE = 'be'
     COME = 'come'
-    DO = 'do'
-    DRAW = 'draw'
-    DISCARD = 'discard'
-    EXPLAIN = 'explain'
     GO = 'go'
+    # item owns
     HAVE = 'have'
+    DISCARD = 'discard'
+    # info
+    EXPLAIN = 'explain'
+    KNOW = 'know'
+    KNOWN = 'known'
+    REMEMBER = 'remember'
+    # event
     OCCUR = 'occur'
+    # dialogue like
     TALK = 'talk'
     THINK = 'think'
     VOICE = 'voice'
+    # skin
+    WEAR = 'wear'
     # control
     DATA = 'data'
     SAME = 'same'
@@ -46,11 +59,17 @@ NORMAL_ACTIONS = [
         ActType.DRAW,
         ActType.EXPLAIN,
         ActType.GO,
+        ActType.KNOW,
+        ActType.KNOWN,
         ActType.HAVE,
         ActType.OCCUR,
+        ActType.PUT,
+        ActType.REMEMBER,
+        ActType.RID,
         ActType.TALK,
         ActType.THINK,
         ActType.VOICE,
+        ActType.WEAR,
         ]
 
 
@@ -76,6 +95,15 @@ class ActDataType(Enum):
     PARAGRAPH_END = auto()
     FORESHADOW = auto()
     PAYOFF = auto()
+
+
+TITLE_ACTIONS = [
+        ActDataType.BOOK_TITLE,
+        ActDataType.CHAPTER_TITLE,
+        ActDataType.EPISODE_TITLE,
+        ActDataType.SCENE_TITLE,
+        ActDataType.SCENE_HEAD,
+        ]
 
 
 @dataclass

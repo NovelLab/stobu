@@ -26,6 +26,8 @@ ToDo List
 * Foreshadow and payoff feature.
 * Aozora bunko format.
 * detail (time and camera) output mode in Script build.
+* Scene info
+* Rubi
 
 ## Bugs
 

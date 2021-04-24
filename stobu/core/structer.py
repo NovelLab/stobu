@@ -10,18 +10,20 @@ from stobu.formats.struct import format_structs_data
 from stobu.syss import messages as msg
 from stobu.tools.translater import translate_tags_text_list, translate_tags_str
 from stobu.types.action import ActionsData, ActionRecord, ActDataType, ActType
-from stobu.types.action import NORMAL_ACTIONS
+from stobu.types.action import NORMAL_ACTIONS, TITLE_ACTIONS
 from stobu.types.element import ElmType
+from stobu.types.info import SceneInfo
 from stobu.types.output import OutputsData
 from stobu.types.struct import StructRecord, StructsData, StructType
+from stobu.types.struct import STRUCT_TITLES
+from stobu.types.struct import SceneDataInfo, DataInfoType
+from stobu.utils import assertion
 from stobu.utils.dicts import dict_sorted
 from stobu.utils.log import logger
 from stobu.utils.strings import just_string_of
 
 
 __all__ = (
-        'scene_info_data_from',
-        'scene_transition_data_from',
         'structs_data_from',
         'outputs_data_from_structs_data',
         )
@@ -31,100 +33,7 @@ __all__ = (
 PROC = 'BUILD STRUCT'
 
 
-ACT_TITLES = [
-        ActDataType.BOOK_TITLE,
-        ActDataType.CHAPTER_TITLE,
-        ActDataType.EPISODE_TITLE,
-        ActDataType.SCENE_TITLE,
-        ActDataType.SCENE_HEAD,
-        ]
-
-
 # Main
-def scene_info_data_from(structs_data: StructsData) -> OutputsData:
-    assert isinstance(structs_data, StructsData)
-
-    _PROC = f"{PROC}: scene info data"
-    logger.debug(msg.PROC_START.format(proc=_PROC))
-
-    tmp = []
-    index = 0
-    tmp.append("# SCENE INFOS\n\n")
-
-    for record in structs_data.get_data():
-        assert isinstance(record, StructRecord)
-        if StructType.FLAG_FORESHADOW is record.type:
-            tmp.append(_format_scene_info_of_foreshadow_record(record, index))
-            tmp.append('\n')
-        elif StructType.FLAG_PAYOFF is record.type:
-            tmp.append(_format_scene_info_of_payoff_record(record, index))
-            tmp.append('\n')
-        elif StructType.TITLE_EPISODE is record.type:
-            tmp.append(_get_format_scene_info_of_breakline())
-            tmp.append('\n')
-        elif StructType.TITLE_SCENE is record.type:
-            index += 1
-        else:
-            continue
-
-    tmp.append("\n")
-    tmp.append(get_breakline())
-
-    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
-    return OutputsData(tmp)
-
-
-def scene_transition_data_from(structs_data: StructsData, tags: dict) -> OutputsData:
-    assert isinstance(structs_data, StructsData)
-    assert isinstance(tags, dict)
-
-    _PROC = f"{PROC}: transition data"
-    logger.debug(msg.PROC_START.format(proc=_PROC))
-
-    tmp = []
-    cache = {
-            'camera': '',
-            'stage': '',
-            'year': '',
-            'date': '',
-            'time': '',
-            }
-    tmp.append("# SCENE TRANSITIONS\n\n")
-
-    for record in structs_data.get_data():
-        assert isinstance(record, StructRecord)
-        if StructType.SCENE_DATA is record.type:
-            camera = record.subject
-            stage = record.outline
-            year = record.note['year']
-            date = record.note['date']
-            time = record.note['time']
-            tmp.append(_format_transition_record_as_compare(
-                camera, stage, year, date, time, cache))
-            tmp.append("\n")
-            tmp.append(_format_transition_record(camera, stage, year, date, time))
-            tmp.append("\n")
-            cache['camera'] = camera
-            cache['stage'] = stage
-            cache['year'] = year
-            cache['date'] = date
-            cache['time'] = time
-        elif StructType.TITLE_EPISODE is record.type:
-            line = '----'
-            tmp.append(_format_transition_record(line, line, line, line, line))
-            tmp.append("\n")
-        else:
-            continue
-
-    tmp.append("\n")
-    tmp.append(get_breakline())
-
-    translated = translate_tags_text_list(tmp, tags)
-
-    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
-    return OutputsData(translated)
-
-
 def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
     assert isinstance(actions_data, ActionsData)
     assert isinstance(tags, dict)
@@ -135,9 +44,9 @@ def structs_data_from(actions_data: ActionsData, tags: dict) -> StructsData:
 
     updated = update_data_tags(base_data, tags)
 
-    updated_data = update_scene_data(updated)
+    data_updated = update_scene_info(updated)
 
-    eliminated = _eliminate_empty_records(updated_data)
+    eliminated = _eliminate_empty_records(data_updated)
 
     logger.debug(msg.PROC_SUCCESS.format(proc=PROC))
     return StructsData(eliminated)
@@ -179,46 +88,72 @@ def update_data_tags(origin_data: list, tags: dict) -> list:
     return tmp
 
 
-def update_scene_data(origin_data: list) -> list:
-    assert isinstance(origin_data, list)
+def update_scene_info(base_data: list) -> list:
+    assert isinstance(base_data, list)
+
+    _PROC = f"{PROC}: update scene info"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
 
     tmp = []
-    cache = {'person': [],
-            'item': [],
-            'flag': [],
-            'deflag': [],
-            }
-    def reset_cache():
-        cache['person'] = []
-        cache['item'] = []
-        cache['flag'] = []
-        cache['deflag'] = []
+    actions = []
 
-    for record in origin_data:
+    person_data = SceneDataInfo(DataInfoType.PERSON)
+    item_data = SceneDataInfo(DataInfoType.ITEM)
+    event_data = SceneDataInfo(DataInfoType.EVENT)
+
+    def _data_reset():
+        person_data.reset()
+        item_data.reset()
+        event_data.reset()
+
+    for record in base_data:
         assert isinstance(record, StructRecord)
         if StructType.ACTION is record.type:
-            # NOTE: item pickup
-            tmp.append(record)
-            if record.subject:
-                cache['person'].append(record.subject)
-            if ActType.DISCARD is record.act:
-                cache['item'].append(f"{record.subject}:-{record.outline}")
+            actions.append(record)
+            if ActType.BE is record.act:
+                if record.subject:
+                    person_data.append(record.subject)
+            elif ActType.COME is record.act:
+                if record.subject:
+                    person_data.append(f"IN {record.subject}")
+            elif ActType.GO is record.act:
+                if record.subject:
+                    person_data.append(f"OUT {record.subject}")
             elif ActType.HAVE is record.act:
-                cache['item'].append(f"{record.subject}:{record.outline}")
-        elif StructType.FLAG_FORESHADOW is record.type:
-            cache['flag'].append(f"{record.subject}:{record.outline}")
-            tmp.append(record)
-        elif StructType.FLAG_PAYOFF is record.type:
-            cache['deflag'].append(f"{record.subject}:{record.outline}")
-            tmp.append(record)
+                if record.subject and record.outline:
+                    item_data.append(f"IN {record.outline}")
+                elif record.subject:
+                    item_data.append(f"IN {record.subject}")
+            elif ActType.DISCARD is record.act:
+                if record.subject and record.outline:
+                    item_data.append(f"OUT {record.outline}")
+                elif record.subject:
+                    item_data.append(f"OUT {record.subject}")
+            elif ActType.PUT is record.act:
+                if record.subject:
+                    item_data.append(record.subject)
+            elif ActType.RID is record.act:
+                if record.subject:
+                    item_data.append(f"RM {record.subject}")
+            elif ActType.OCCUR is record.act:
+                if record.subject:
+                    event_data.append(record.subject)
         elif StructType.SCENE_DATA is record.type:
             tmp.append(record)
         elif StructType.SCENE_END is record.type:
-            tmp.append(_conv_item_data_record(cache))
-            reset_cache()
+            tmp.append(_record_as_data_info_from(person_data.cloned()))
+            tmp.append(_record_as_data_info_from(item_data.cloned()))
+            tmp.append(_record_as_data_info_from(event_data.cloned()))
+            _data_reset()
+            tmp.extend(actions)
+            tmp.append(record)
+            actions = []
+        elif record.type in STRUCT_TITLES:
+            tmp.append(record)
         else:
             tmp.append(record)
 
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
     return tmp
 
 
@@ -227,56 +162,36 @@ def _base_structs_data_from(actions_data: ActionsData) -> list:
     assert isinstance(actions_data, ActionsData)
 
     tmp = []
-    cache = {
-            'camera': None,
-            'stage': None,
-            'year': None,
-            'date': None,
-            'time': None,
-            }
-    def reset_cache():
-        cache['camera'] = None
-        cache['stage'] = None
-        cache['year'] = None
-        cache['date'] = None
-        cache['time'] = None
+    cache = SceneInfo()
 
     for record in actions_data.get_data():
         assert isinstance(record, ActionRecord)
         if record.type is ActType.DATA:
-            if record.subtype in ACT_TITLES:
+            if record.subtype in TITLE_ACTIONS:
                 tmp.append(_record_as_title_from(record))
             elif ActDataType.SCENE_START is record.subtype:
-                tmp.append(_record_as_scene_data_from(
-                    cache['camera'], cache['stage'], cache['year'],
-                    cache['date'], cache['time']))
+                tmp.append(_record_as_scene_data_from(cache))
             elif ActDataType.SCENE_END is record.subtype:
                 tmp.append(_get_record_as_scene_end())
-                reset_cache()
+                cache.reset()
             elif ActDataType.SCENE_CAMERA is record.subtype:
-                cache['camera'] = record
+                cache.camera = record.subject
             elif ActDataType.SCENE_STAGE is record.subtype:
-                cache['stage'] = record
+                cache.stage = record.subject
             elif ActDataType.SCENE_YEAR is record.subtype:
-                cache['year'] = record
+                cache.year = record.subject
             elif ActDataType.SCENE_DATE is record.subtype:
-                cache['date'] = record
+                cache.date = record.subject
             elif ActDataType.SCENE_TIME is record.subtype:
-                cache['time'] = record
+                cache.time = record.subject
             elif ActDataType.COMMENT is record.subtype:
                 tmp.append(_record_as_comment_from(record))
-            elif ActDataType.BR is record.subtype:
-                continue
-            elif ActDataType.PARAGRAPH_START is record.subtype:
-                continue
-            elif ActDataType.PARAGRAPH_END is record.subtype:
-                continue
-            elif ActDataType.FORESHADOW is record.subtype:
-                tmp.append(_record_as_foreshadow_from(record))
-            elif ActDataType.PAYOFF is record.subtype:
-                tmp.append(_record_as_payoff_from(record))
             elif ActDataType.TEXT is record.subtype:
                 tmp.append(_record_as_text_from(record))
+            elif record.subtype in [ActDataType.BR,
+                    ActDataType.FORESHADOW, ActDataType.PAYOFF,
+                    ActDataType.PARAGRAPH_START, ActDataType.PARAGRAPH_END,]:
+                continue
             else:
                 logger.warning(msg.ERR_FAIL_UNKNOWN_DATA.format(data=f"act data sub type in {PROC}"))
                 continue
@@ -290,26 +205,6 @@ def _base_structs_data_from(actions_data: ActionsData) -> list:
             continue
 
     return tmp
-
-
-def _conv_item_data_record(data: dict) -> StructRecord:
-    assert isinstance(data, dict)
-
-    persons = data['person']
-    items = data['item']
-    flags = data['flag']
-    deflags = data['deflag']
-
-    return StructRecord(
-            StructType.ITEM_DATA,
-            ActType.NONE,
-            '',
-            '',
-            {'person': persons,
-                'item': items,
-                'flag': flags,
-                'deflag': deflags,
-                })
 
 
 def _eliminate_empty_records(base_data: list) -> list:
@@ -335,91 +230,8 @@ def _eliminate_empty_records(base_data: list) -> list:
     return tmp
 
 
-def _format_scene_info_of_foreshadow_record(record: StructRecord, index: int) -> str:
-    assert isinstance(record, StructRecord)
-    assert isinstance(index, int)
-
-    _subject = just_string_of(record.subject, 16)
-    _outline = just_string_of(record.outline, 32)
-    _index = just_string_of(str(index), 4)
-
-    return f"| {_index} | {_subject} | {_outline} | {just_string_of('', 16)} | {just_string_of('', 32)} |"
-
-
-def _format_scene_info_of_payoff_record(record: StructRecord, index: int) -> str:
-    assert isinstance(record, StructRecord)
-    assert isinstance(index, int)
-
-    _subject = just_string_of(record.subject, 16)
-    _outline = just_string_of(record.outline, 32)
-    _index = just_string_of(str(index), 4)
-
-    return f"| {_index} | {just_string_of('', 16)} | {just_string_of('', 32)} | {_subject} | {_outline} |"
-
-
-def _format_transition_record(camera: str, stage: str, year: str, date: str,
-        time: str) -> str:
-    assert isinstance(camera, str)
-    assert isinstance(stage, str)
-    assert isinstance(year, str)
-    assert isinstance(date, str)
-    assert isinstance(time, str)
-
-    _camera = just_string_of(camera, 16)
-    _stage = just_string_of(stage, 16)
-    _year = just_string_of(year, 8)
-    _date = just_string_of(date, 8)
-    _time = just_string_of(time, 8)
-
-    return f"| {_stage} | {_time} | {_date} | {_year} | {_camera} |"
-
-
-def _format_transition_record_as_compare(camera: str, stage: str, year: str,
-        date: str, time: str, cache: dict) -> str:
-    assert isinstance(camera, str)
-    assert isinstance(stage, str)
-    assert isinstance(year, str)
-    assert isinstance(date, str)
-    assert isinstance(time, str)
-    assert isinstance(cache, dict)
-
-    def _diff(a: str, b: str) -> str:
-        if a != b:
-            return '↓'
-        else:
-            return '…'
-
-    _camera = _diff(camera, cache['camera'])
-    _stage = _diff(stage, cache['stage'])
-    _year = _diff(year, cache['year'])
-    _date = _diff(date, cache['date'])
-    _time = _diff(time, cache['time'])
-
-    return _format_transition_record(_camera, _stage, _year, _date, _time)
-
-
 def _get_record_as_scene_end() -> StructRecord:
     return StructRecord(StructType.SCENE_END, ActType.NONE, '', '', '')
-
-
-def _get_format_scene_info_of_breakline() -> str:
-
-    line1 = just_string_of('----', 16)
-    line2 = just_string_of('----', 32)
-    index = just_string_of('----', 4)
-
-    return f"| {index} | {line1} | {line2} | {line1} | {line2} |"
-
-
-def _record_as_comment_from(record: ActionRecord) -> StructRecord:
-    assert isinstance(record, ActionRecord)
-
-    return StructRecord(
-            StructType.COMMENT,
-            ActType.DATA,
-            record.subject,
-            record.outline,
-            record.note)
 
 
 def _record_as_action_from(record: ActionRecord) -> StructRecord:
@@ -427,46 +239,37 @@ def _record_as_action_from(record: ActionRecord) -> StructRecord:
 
     return StructRecord(
             StructType.ACTION,
-            record.type,
-            record.subject,
-            record.outline,
-            record.note)
+            record.type, record.subject, record.outline, record.note)
 
 
-def _record_as_foreshadow_from(record: ActionRecord) -> StructRecord:
+def _record_as_comment_from(record: ActionRecord) -> StructRecord:
     assert isinstance(record, ActionRecord)
 
     return StructRecord(
-            StructType.FLAG_FORESHADOW,
-            ActType.DATA,
-            record.subject,
-            record.outline,
-            record.note)
+            StructType.COMMENT,
+            ActType.DATA, record.subject, record.outline, record.note)
 
 
-def _record_as_payoff_from(record: ActionRecord) -> StructRecord:
-    assert isinstance(record, ActionRecord)
+def _record_as_data_info_from(info: SceneDataInfo) -> StructRecord:
+    assert isinstance(info, SceneDataInfo)
+
+    type = StructType.NONE
+
+    if DataInfoType.PERSON is info.type:
+        type = StructType.PERSON_DATA
+    elif DataInfoType.ITEM is info.type:
+        type = StructType.ITEM_DATA
+    elif DataInfoType.EVENT is info.type:
+        type = StructType.EVENT_DATA
+
+    return StructRecord(type, ActType.DATA, '', '', info)
+
+
+def _record_as_scene_data_from(info: SceneInfo) -> StructRecord:
+    assert isinstance(info, SceneInfo)
 
     return StructRecord(
-            StructType.FLAG_PAYOFF,
-            ActType.DATA,
-            record.subject,
-            record.outline,
-            record.note)
-
-
-def _record_as_scene_data_from(camera: ActionRecord, stage: ActionRecord,
-        year: ActionRecord, date: ActionRecord, time: ActionRecord) -> StructRecord:
-
-    return StructRecord(
-            StructType.SCENE_DATA,
-            ActType.DATA,
-            camera.subject,
-            stage.subject,
-            {'year': year.subject,
-                'date': date.subject,
-                'time': time.subject,
-                })
+            StructType.SCENE_DATA, ActType.DATA, info.camera, info.stage, info.cloned())
 
 
 def _record_as_text_from(record: ActionRecord) -> StructRecord:
@@ -474,10 +277,7 @@ def _record_as_text_from(record: ActionRecord) -> StructRecord:
 
     return StructRecord(
             StructType.TEXT,
-            ActType.DO,
-            record.subject,
-            record.outline,
-            record.note)
+            ActType.DO, record.subject, record.outline, record.note)
 
 
 def _record_as_title_from(record: ActionRecord) -> StructRecord:
@@ -485,10 +285,7 @@ def _record_as_title_from(record: ActionRecord) -> StructRecord:
 
     return StructRecord(
             _title_type_of(record),
-            ActType.DATA,
-            record.subject,
-            record.outline,
-            record.note)
+            ActType.DATA, record.subject, record.outline, record.note)
 
 
 def _title_type_of(record: ActionRecord) -> StructType:
@@ -538,17 +335,18 @@ def _update_tags_scene_data_record(record: StructRecord, tags: dict) -> StructRe
     assert isinstance(record, StructRecord)
     assert isinstance(tags, dict)
 
-    year = str(record.note['year'])
-    date = str(record.note['date'])
-    time = str(record.note['time'])
+    info = assertion.is_instance(record.note, SceneInfo)
+    updated = SceneInfo()
+
+    updated.camera = translate_tags_str(info.camera, tags, True, None)
+    updated.stage = translate_tags_str(info.stage, tags, True, None)
+    updated.year = translate_tags_str(str(info.year), tags, True, None)
+    updated.date = translate_tags_str(str(info.date), tags, True, None)
+    updated.time = translate_tags_str(str(info.time), tags, True, None)
 
     return StructRecord(
             record.type,
             record.act,
             translate_tags_str(record.subject, tags, True, None),
             translate_tags_str(record.outline, tags, True, None),
-            {
-                'year': translate_tags_str(year, tags, True, None),
-                'date': translate_tags_str(date, tags, True, None),
-                'time': translate_tags_str(time, tags, True, None),
-            })
+            updated)

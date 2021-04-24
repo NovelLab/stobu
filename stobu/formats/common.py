@@ -14,6 +14,7 @@ from stobu.utils.strings import just_string_of
 
 __all__ = (
         'conv_charcounts_from',
+        'eliminated_empty_format_records_from',
         'get_breakline',
         'get_breakline_list',
         'get_format_record_as_br',
@@ -51,6 +52,18 @@ def conv_charcounts_from(record: CountRecord) -> str:
     papers = round(record.papers, 3)
 
     return f"- {just_string_of(title, 16)}: {papers}p/{lines}n [{total}c ({real}/{space})c]"
+
+
+def eliminated_empty_format_records_from(origin_data: list) -> list:
+    assert isinstance(origin_data, list)
+
+    tmp = []
+
+    for record in origin_data:
+        if record and isinstance(record, str):
+            tmp.append(record)
+
+    return tmp
 
 
 def get_breakline(num: int = 8) -> str:

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Mob tags
 - Flag info (foreshadow and payoff)
 - Item info
+### Changed
+- struct mode
 ### Fixed
 - Invalid plot order
 - Invalid part order
