@@ -1,7 +1,7 @@
 """Define struct data and record."""
 
 # Official Libraries
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import auto, Enum
 from typing import Any
 
@@ -15,6 +15,8 @@ __all__ = (
         'StructType',
         'StructRecord',
         'StructsData',
+        'STRUCT_TITLES',
+        'SceneDataInfo',
         )
 
 
@@ -23,18 +25,49 @@ class StructType(Enum):
     NONE = auto()
     ACTION = auto()
     COMMENT = auto()
-    SCENE_DATA = auto()
     SCENE_END = auto()
-    SCENE_TRANSITION = auto()
-    ITEM_DATA = auto()
     TEXT = auto()
     TITLE_BOOK = auto()
     TITLE_CHAPTER = auto()
     TITLE_EPISODE = auto()
     TITLE_SCENE = auto()
     TITLE_TEXT = auto()
-    FLAG_FORESHADOW = auto()
-    FLAG_PAYOFF = auto()
+    # DATA
+    SCENE_DATA = auto()
+    PERSON_DATA = auto()
+    ITEM_DATA = auto()
+    EVENT_DATA = auto()
+
+
+STRUCT_TITLES = [
+        StructType.TITLE_BOOK,
+        StructType.TITLE_CHAPTER,
+        StructType.TITLE_EPISODE,
+        StructType.TITLE_SCENE,
+        StructType.TITLE_TEXT,
+        ]
+
+
+class DataInfoType(Enum):
+    NONE = auto()
+    PERSON = auto()
+    ITEM = auto()
+    EVENT = auto()
+
+
+@dataclass
+class SceneDataInfo(object):
+    type: DataInfoType
+    data: list = field(default_factory=list)
+
+    def append(self, val):
+        self.data.append(val)
+
+    def cloned(self):
+        return SceneDataInfo(self.type, self.data)
+
+    def reset(self):
+        self.data = []
 
 
 @dataclass
