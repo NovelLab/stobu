@@ -1,0 +1,64 @@
+angry:
+  name: 怒っている
+bored:
+  name: 退屈している
+calm:
+  name: 落ち着いている
+cold:
+  name: 寒い
+confused:
+  name: 困惑している
+disppointed:
+  name: がっかりしている
+embrassed:
+  name: 恥ずかしい
+excited:
+  name: 興奮している
+glad:
+  name: 嬉しい
+happy:
+  name: 幸福だ
+hot:
+  name: 暑い
+hungry:
+  name: お腹が空いている
+hurt:
+  name: 痛い
+interested:
+  name: 興味がある
+irritated:
+  name: いらついている
+jealous:
+  name: 嫉妬している
+lonely:
+  name: 孤独だ
+moved:
+  name: 感動している
+nervous:
+  name: 緊張している
+noisy:
+  name: うるさい
+sad:
+  name: 悲しい
+satisfied:
+  name: 満足している
+scared:
+  name: 怖がっている
+shocked:
+  name: ショックを受けている
+sick:
+  name: 病気だ
+sleepy:
+  name: 眠い
+surprised:
+  name: 驚いている
+thirsty:
+  name: 喉が渇いている
+tired:
+  name: 疲れている
+unhappy:
+  name: 不幸だ
+well:
+  name: 調子がいい
+worried:
+  name: 心配している

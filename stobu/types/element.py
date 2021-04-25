@@ -38,6 +38,7 @@ class ElmType(Enum):
     MATERIAL = 'material'
     MOB = 'mob'
     RUBI = 'rubi'
+    STATE = 'state'
     TERM = 'term'
     TIME = 'time'
     TODO = 'todo'
@@ -55,6 +56,7 @@ BASE_FILES = [
         ElmType.MOB,
         ElmType.ORDER,
         ElmType.RUBI,
+        ElmType.STATE,
         ElmType.TERM,
         ElmType.TIME,
         ElmType.TODO,
