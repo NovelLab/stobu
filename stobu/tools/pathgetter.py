@@ -10,7 +10,7 @@ from stobu.paths.projects import APP_DIR
 from stobu.paths.projects import PROJECT_DIR
 from stobu.paths.projects import BASE_FILE_TABLE, DIRS_TABLE, EXT_TABLE
 from stobu.syss import messages as msg
-from stobu.types.element import ElmType
+from stobu.types.element import ElmType, BASE_FILES
 from stobu.utils.filepath import basename_of, filenames_with_number
 from stobu.utils.log import logger
 
@@ -30,17 +30,6 @@ __all__ = (
 
 # Define Constants
 PROC = 'TOOL PATH GETTER'
-
-
-BASE_FILES = [
-        ElmType.BOOK,
-        ElmType.MOB,
-        ElmType.ORDER,
-        ElmType.PROJECT,
-        ElmType.RUBI,
-        ElmType.TIME,
-        ElmType.TODO,
-        ]
 
 
 # Main

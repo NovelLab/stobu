@@ -12,6 +12,7 @@ from stobu.elms.stages import StageItem
 from stobu.elms.words import WordItem
 from stobu.syss import messages as msg
 from stobu.tools.datareader import get_person_data, get_mob_data, get_time_data, get_book_data
+from stobu.tools.datareader import get_fixture_data, get_term_data
 from stobu.tools.filedatareader import read_markdown_data_as_yaml
 from stobu.tools.pathgetter import filepaths_by_elm
 from stobu.types.element import ElmType
@@ -82,7 +83,11 @@ def get_nametags() -> dict:
 
     tmp = _add_mob_tags()
 
-    tmp = _add_time_tags(tmp)
+    tmp = combine_dicts(tmp, _add_time_tags())
+
+    tmp = combine_dicts(tmp, _add_fixture_tags())
+
+    tmp = combine_dicts(tmp, _add_term_tags())
 
     for elm in NAME_ELMS:
         paths = filepaths_by_elm(elm)
@@ -100,6 +105,14 @@ def get_nametags() -> dict:
 
 
 # Private Functions
+def _add_fixture_tags() -> dict:
+    data = assertion.is_dict(get_fixture_data())
+    tmp = {}
+    for key, val in data.items():
+        tmp[key] = val['name']
+    return tmp
+
+
 def _add_mob_tags() -> dict:
     mobs = get_book_data()[str(BookItem.MOBS)]
     data = assertion.is_dict(get_mob_data())
@@ -111,15 +124,20 @@ def _add_mob_tags() -> dict:
     return tmp
 
 
-def _add_time_tags(data: dict) -> dict:
-    assert isinstance(data, dict)
-
-    times = assertion.is_dict(get_time_data())
+def _add_term_tags() -> dict:
+    data = assertion.is_dict(get_term_data())
     tmp = {}
-    for key, val in times.items():
+    for key, val in data.items():
         tmp[key] = val['name']
+    return tmp
 
-    return combine_dicts(data, tmp)
+
+def _add_time_tags() -> dict:
+    data = assertion.is_dict(get_time_data())
+    tmp = {}
+    for key, val in data.items():
+        tmp[key] = val['name']
+    return tmp
 
 
 def _append_key_and_value(data: dict, key: str, value: str) -> bool:

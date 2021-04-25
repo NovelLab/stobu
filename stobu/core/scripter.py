@@ -10,6 +10,7 @@ from stobu.syss import messages as msg
 from stobu.tools.translater import translate_tags_text_list, translate_tags_str
 from stobu.types.action import ActDataType, ActionRecord, ActionsData, ActType
 from stobu.types.action import NORMAL_ACTIONS
+from stobu.types.action import TITLE_ACTIONS
 from stobu.types.output import OutputsData
 from stobu.types.script import ScriptRecord, ScriptsData, ScriptType
 from stobu.utils.dicts import dict_sorted
@@ -24,15 +25,6 @@ __all__ = (
 
 # Define Constants
 PROC = 'BUILD SCRIPT'
-
-
-ACT_TITLES = [
-        ActDataType.BOOK_TITLE,
-        ActDataType.CHAPTER_TITLE,
-        ActDataType.EPISODE_TITLE,
-        ActDataType.SCENE_TITLE,
-        ActDataType.SCENE_HEAD,
-        ]
 
 
 ACT_TALKS = [
@@ -124,7 +116,7 @@ def _base_scripts_data_from(actions_data: ActionsData) -> list:
     for record in actions_data.get_data():
         assert isinstance(record, ActionRecord)
         if record.type is ActType.DATA:
-            if record.subtype in ACT_TITLES:
+            if record.subtype in TITLE_ACTIONS:
                 tmp.append(_record_as_title_from(record))
             elif ActDataType.SCENE_START is record.subtype:
                 tmp.append(
@@ -153,8 +145,10 @@ def _base_scripts_data_from(actions_data: ActionsData) -> list:
                 tmp.append(_get_record_as_paragraph_end())
             elif ActDataType.TEXT is record.subtype:
                 tmp.append(_record_as_description_from(record))
+            elif record.subtype in [ActDataType.FORESHADOW, ActDataType.PAYOFF]:
+                continue
             else:
-                logger.warning(msg.ERR_FAIL_UNKNOWN_DATA.format(data=f"act data sub type in {PROC}"))
+                logger.warning(msg.ERR_FAIL_INVALID_DATA_WITH_DATA.format(data=f"act data sub type in {PROC}"), record.subtype)
                 continue
         elif record.type in NORMAL_ACTIONS:
             if record.type in ACT_TALKS:

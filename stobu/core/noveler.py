@@ -10,6 +10,7 @@ from stobu.syss import messages as msg
 from stobu.tools.translater import translate_tags_text_list, translate_tags_str
 from stobu.types.action import ActDataType, ActionRecord, ActionsData, ActType
 from stobu.types.action import NORMAL_ACTIONS
+from stobu.types.action import TITLE_ACTIONS
 from stobu.types.novel import NovelRecord, NovelsData, NovelType
 from stobu.types.output import OutputsData
 from stobu.utils.dicts import dict_sorted
@@ -24,15 +25,6 @@ __all__ = (
 
 # Define Constants
 PROC = 'BUILD NOVEL'
-
-
-ACT_TITLES = [
-        ActDataType.BOOK_TITLE,
-        ActDataType.CHAPTER_TITLE,
-        ActDataType.EPISODE_TITLE,
-        ActDataType.SCENE_TITLE,
-        ActDataType.SCENE_HEAD,
-        ]
 
 
 SCENE_DATAS = [
@@ -112,7 +104,7 @@ def _base_novels_data_from(actions_data: ActionsData) -> list:
     for record in actions_data.get_data():
         assert isinstance(record, ActionRecord)
         if ActType.DATA is record.type:
-            if record.subtype in ACT_TITLES:
+            if record.subtype in TITLE_ACTIONS:
                 tmp.append(_record_as_title_from(record))
             elif ActDataType.SCENE_START is record.subtype:
                 tmp.append(_get_record_as_br())
@@ -131,8 +123,10 @@ def _base_novels_data_from(actions_data: ActionsData) -> list:
             elif record.subtype in SCENE_DATAS:
                 # NOTE: 何か利用する場合はここでキャッシュ
                 continue
+            elif record.subtype in [ActDataType.FORESHADOW, ActDataType.PAYOFF]:
+                continue
             else:
-                logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"act type in {PROC}"))
+                logger.warning(msg.ERR_FAIL_INVALID_DATA_WITH_DATA.format(data=f"act data type in {PROC}"), record.subtype)
                 continue
         elif record.type in NORMAL_ACTIONS:
             if ActType.TALK is record.type:
