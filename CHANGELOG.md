@@ -11,12 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Mob tags
 - Flag info (foreshadow and payoff)
 - Item info
+- Fixture and term file
 ### Changed
 - struct mode
 ### Fixed
 - Invalid plot order
 - Invalid part order
 - Invalid translate tag
+- Missing act data type in novel, script build
 
 ## [0.0.5] - 2021-04-19
 ### Added
