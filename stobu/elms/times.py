@@ -10,18 +10,8 @@ __all__ = (
 
 
 class TimeItem(Enum):
-    EARLYMORNING = 'earlymorning'
-    MORNING = 'morning'
-    MIDMORNING = 'midmorning'
-    NOON = 'noon'
-    AFTERNOON = 'afternoon'
-    AFTERSCHOOL = 'afterschool'
-    EVENING = 'evening'
-    NIGHT = 'night'
-    LATEIGHT = 'latenight'
-    MIDNIGHT = 'midnight'
-    DEEPNIGHT = 'deepnight'
-    DAWN = 'dawn'
+    NAME = 'name'
+    TIME = 'time'
 
     def __str__(self) -> str:
         return self.value

@@ -1,26 +1,45 @@
 baby:
+  type: mob
   name: 赤ん坊
 child:
+  type: mob
   name: 子供
 girl:
+  type: mob
   name: 少女
 boy:
+  type: mob
   name: 少年
 man:
+  type: mob
   name: 男性
 lady:
+  type: mob
   name: 女性
 oldman:
+  type: mob
   name: 老人
 oldlady:
+  type: mob
   name: 老婦人
 police:
+  type: mob
   name: 警官
 shopper:
+  type: mob
   name: 店員
 dog:
+  type: mob
   name: 犬
 cat:
+  type: mob
   name: 猫
 bird:
+  type: mob
   name: 鳥
+dad:
+  type: general
+  name: 父親
+mam:
+  type: general
+  name: 母親
