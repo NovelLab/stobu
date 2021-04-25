@@ -15,7 +15,7 @@ from stobu.tools.pathgetter import filepath_of
 from stobu.tools.pathgetter import dirpath_of
 from stobu.tools.templater import get_template_data
 from stobu.types.command import CmdType
-from stobu.types.element import ElmType
+from stobu.types.element import ElmType, BASE_FILES
 from stobu.utils.fileio import write_file
 from stobu.utils.filepath import is_exists_path
 from stobu.utils.log import logger
@@ -28,17 +28,6 @@ __all__ = (
 
 # Define Constants
 PROC = 'INITIALIZER'
-
-
-BASE_FILES = [
-        ElmType.BOOK,
-        ElmType.MOB,
-        ElmType.ORDER,
-        ElmType.PROJECT,
-        ElmType.RUBI,
-        ElmType.TIME,
-        ElmType.TODO,
-        ]
 
 
 DEFAULT_FILES = [

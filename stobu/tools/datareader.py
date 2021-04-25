@@ -15,7 +15,7 @@ from stobu.syss import messages as msg
 from stobu.syss.settings import PROJECT
 from stobu.tools.filedatareader import read_markdown_data_as_yaml, read_yaml_data
 from stobu.tools.pathgetter import filepath_of
-from stobu.types.element import ElmType
+from stobu.types.element import ElmType, BASE_FILES
 from stobu.utils.fileio import read_file
 from stobu.utils.log import logger
 
@@ -35,17 +35,6 @@ __all__ = (
 
 # Define Constants
 PROC = 'TOOL DATA READER'
-
-
-BASE_FILES = [
-        ElmType.BOOK,
-        ElmType.MOB,
-        ElmType.ORDER,
-        ElmType.PROJECT,
-        ElmType.RUBI,
-        ElmType.TIME,
-        ElmType.TODO,
-        ]
 
 
 # Main Functions
@@ -68,6 +57,8 @@ def get_book_data() -> dict:
     return get_basefile_data(ElmType.BOOK)
 
 
+def get_fixture_data() -> dict:
+    return get_basefile_data(ElmType.FIXTURE)
 def get_mob_data() -> dict:
     return read_yaml_data(read_file(filepath_of(ElmType.MOB, '')))
 
@@ -86,6 +77,10 @@ def get_person_data(fname: str) -> dict:
 def get_project_data() -> dict:
     data = read_file(filepath_of(ElmType.PROJECT, ''))
     return yaml.safe_load(data)[PROJECT]
+
+
+def get_term_data() -> dict:
+    return get_basefile_data(ElmType.TERM)
 
 
 def get_time_data() -> dict:
