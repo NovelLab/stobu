@@ -7,8 +7,10 @@
 from stobu.elms.books import BookItem
 from stobu.elms.events import EventItem
 from stobu.elms.items import ItemItem
+from stobu.elms.mobs import MobItem, MobType
 from stobu.elms.persons import PersonItem
 from stobu.elms.stages import StageItem
+from stobu.elms.times import TimeItem
 from stobu.elms.words import WordItem
 from stobu.syss import messages as msg
 from stobu.tools.datareader import get_person_data, get_mob_data, get_time_data, get_book_data
@@ -114,13 +116,18 @@ def _add_fixture_tags() -> dict:
 
 
 def _add_mob_tags() -> dict:
-    mobs = get_book_data()[str(BookItem.MOBS)]
+    mob_num = get_book_data()[str(BookItem.MOBS)]
     data = assertion.is_dict(get_mob_data())
     tmp = {}
+
     for key, val in data.items():
-        tmp[key] = val['name']
-        for i in range(int(mobs)):
-            tmp[key + str(i)] = val['name'] + hankaku_to_zenkaku(str(i))
+        type = val[str(MobItem.TYPE)]
+        name = val[str(MobItem.NAME)]
+        tmp[key] = name
+
+        if type == str(MobType.MOB):
+            for i in range(int(mob_num)):
+                tmp[key + str(i)] = name + hankaku_to_zenkaku(str(i))
     return tmp
 
 
@@ -136,7 +143,7 @@ def _add_time_tags() -> dict:
     data = assertion.is_dict(get_time_data())
     tmp = {}
     for key, val in data.items():
-        tmp[key] = val['name']
+        tmp[key] = val[str(TimeItem.NAME)]
     return tmp
 
 

@@ -22,6 +22,8 @@ __all__ = (
         'KnowledgeInfo', 'KnowledgeInfoType',
         'StageInfo', 'StageInfoType',
         'ItemInfo', 'ItemInfoType',
+        'PersonStateInfo', 'PersonStateType',
+        'StageStateInfo', 'StageStateType',
         )
 
 
@@ -47,6 +49,8 @@ class InfoType(Enum):
     KNOWLEDGE_INFO = auto()
     STAGE_INFO = auto()
     ITEM_INFO = auto()
+    PERSON_STATE_INFO = auto()
+    STAGE_STATE_INFO = auto()
     # data
     SPLITTER = auto()
     DATA_TITLE = auto()
@@ -185,3 +189,34 @@ class InfosData(_BaseData):
 
     def __init__(self, data: list):
         super().__init__(data, InfoRecord)
+
+
+class PersonStateType(Enum):
+    NONE = auto()
+    SKIN = auto()
+    STATE = auto()
+    INFO = auto()
+
+
+@dataclass
+class PersonStateInfo(object):
+    type: PersonInfoType
+    index: int
+    subject: str = None
+    outline: str = None
+    note: str = None
+
+
+class StageStateType(Enum):
+    NONE = auto()
+    ITEM = auto()
+    VIEW = auto()
+
+
+@dataclass
+class StageStateInfo(object):
+    type: StageStateType
+    index: int
+    stage: str = None
+    outline: str = None
+    note: str = None

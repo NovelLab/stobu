@@ -1,17 +1,17 @@
-"""Define data name of time file."""
+"""Define data name of state file."""
 
-# Official Librariees
+# Official Libraries
 from enum import Enum
 
 
 __all__ = (
-        'TimeItem',
+        'StateItem',
         )
 
 
-class TimeItem(Enum):
+# Main
+class StateItem(Enum):
     NAME = 'name'
-    TIME = 'time'
 
     def __str__(self) -> str:
         return self.value

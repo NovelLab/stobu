@@ -6,12 +6,15 @@
 # My Modules
 from stobu.core.nametagcreator import get_calling_tags
 from stobu.formats.info import format_infos_data
+from stobu.formats.statusinfo import format_status_info_data
 from stobu.infos.fashioninfos import fashion_infos_from
 from stobu.infos.flaginfos import flag_infos_from
 from stobu.infos.iteminfos import item_infos_from
 from stobu.infos.knowledgeinfos import knowledge_infos_from
 from stobu.infos.personinfos import person_infos_from
 from stobu.infos.stageinfos import stage_infos_from
+from stobu.infos.statusinfomations import person_status_info_from
+from stobu.infos.statusinfomations import stage_status_info_from
 from stobu.infos.transitions import scene_transition_data_from
 from stobu.syss import messages as msg
 from stobu.tools.translater import translate_tags_text_list, translate_tags_str
@@ -28,6 +31,8 @@ from stobu.utils.log import logger
 __all__ = (
         'infos_data_from',
         'outputs_data_from_infos_data',
+        'status_infos_data_from',
+        'outputs_data_from_status_infos_data',
         )
 
 
@@ -46,21 +51,10 @@ def infos_data_from(actions_data: ActionsData, tags: dict) -> InfosData:
 
     updated = update_data_tags(base_data, tags)
 
-    transitions = scene_transition_data_from(updated)
-
-    flags = flag_infos_from(updated)
-
-    persons = person_infos_from(updated)
-
-    fashions = fashion_infos_from(updated)
-
-    knowledges = knowledge_infos_from(updated)
-
-    stages = stage_infos_from(updated)
-
-    items = item_infos_from(updated)
-
-    data_set = transitions + flags + persons + fashions + knowledges + stages + items
+    data_set = _get_info_data_set(updated)
+    if not data_set or not data_set.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"data set in {PROC}"))
+        return None
 
     eliminated = _eliminate_empty_records(data_set)
 
@@ -86,6 +80,46 @@ def outputs_data_from_infos_data(infos_data: InfosData, tags: dict,
     return OutputsData(translated)
 
 
+def outputs_data_from_status_infos_data(infos_data: InfosData, tags: dict,
+        is_comment: bool = False) -> OutputsData:
+    assert isinstance(infos_data, InfosData)
+    assert isinstance(tags, dict)
+    assert isinstance(is_comment, bool)
+
+    _PROC = f"INFO STATUS: convert outputs data"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+
+    formatted = format_status_info_data(infos_data, is_comment)
+
+    translated = translate_tags_text_list(formatted, tags)
+
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+    return OutputsData(translated)
+
+
+def status_infos_data_from(actions_data: ActionsData, tags: dict) -> InfosData:
+    assert isinstance(actions_data, ActionsData)
+    assert isinstance(tags, dict)
+
+    _PROC = f"{PROC}: status info"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+
+    base_data = _base_data_from(actions_data)
+
+    updated = update_data_tags(base_data, tags)
+
+    data_set = _get_status_info_data_set(updated)
+    if not data_set or not data_set.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"data set in {_PROC}"))
+        return None
+
+    eliminated = _eliminate_empty_records(data_set)
+
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+
+    return eliminated
+
+
 def update_data_tags(origin_data: list, tags: dict) -> InfosData:
     assert isinstance(origin_data, list)
     assert isinstance(tags, dict)
@@ -108,6 +142,78 @@ def update_data_tags(origin_data: list, tags: dict) -> InfosData:
     logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
 
     return InfosData(tmp)
+
+
+# Sub processes
+def _get_info_data_set(base_data: InfosData) -> InfosData:
+    assert isinstance(base_data, InfosData)
+
+    _PROC = f"{PROC}: info data set"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+
+    transitions = scene_transition_data_from(base_data)
+    if not transitions or not transitions.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"transition data in {_PROC}"))
+        return None
+
+    flags = flag_infos_from(base_data)
+    if not flags or not flags.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"flag data in {_PROC}"))
+        return None
+
+    persons = person_infos_from(base_data)
+    if not persons or not persons.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"person data in {_PROC}"))
+        return None
+
+    fashions = fashion_infos_from(base_data)
+    if not fashions or not fashions.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"fashion data in {_PROC}"))
+        return None
+
+    knowledges = knowledge_infos_from(base_data)
+    if not knowledges or not knowledges.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"knowledge data in {_PROC}"))
+        return None
+
+    stages = stage_infos_from(base_data)
+    if not stages or not stages.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"stage data in {_PROC}"))
+        return None
+
+    items = item_infos_from(base_data)
+    if not items or not items.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"item data in {_PROC}"))
+        return None
+
+    data_set = transitions + flags + persons + fashions + knowledges + stages + items
+    assert isinstance(data_set, InfosData)
+
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+    return data_set
+
+
+def _get_status_info_data_set(infos_data: InfosData) -> InfosData:
+    assert isinstance(infos_data, InfosData)
+
+    _PROC = f"{PROC}: status info set"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+
+    persons = person_status_info_from(infos_data)
+    if not persons or not persons.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"persons status data in {_PROC}"))
+        return None
+
+    stages = stage_status_info_from(infos_data)
+    if not stages or not stages.has_data():
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"stages status data in {_PROC}"))
+        return None
+
+    data_set = persons + stages
+
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+
+    return data_set
 
 
 # Private Functions

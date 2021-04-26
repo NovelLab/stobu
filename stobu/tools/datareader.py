@@ -10,6 +10,7 @@ from stobu.elms.books import BookItem
 from stobu.elms.orders import OrderItem
 from stobu.elms.persons import PersonItem
 from stobu.elms.projects import ProjectItem
+from stobu.elms.stages import StageItem
 from stobu.paths.projects import EXT_TABLE, MARKDOWN_EXT, YAML_EXT
 from stobu.syss import messages as msg
 from stobu.syss.settings import PROJECT
@@ -30,6 +31,7 @@ __all__ = (
         'get_time_data',
         'person_item_of',
         'project_item_of',
+        'stage_item_of',
         )
 
 
@@ -91,7 +93,8 @@ def person_item_of(fname: str, item: PersonItem) -> Any:
     assert isinstance(fname, str)
     assert isinstance(item, PersonItem)
 
-    data = yaml.safe_load(read_file(filepath_of(ElmType.PERSON, fname)))
+    data = read_markdown_data_as_yaml(
+            read_file(filepath_of(ElmType.PERSON, fname)))
     if str(item) in data:
         return data[str(item)]
     else:
@@ -103,3 +106,16 @@ def project_item_of(item: ProjectItem) -> Any:
     assert isinstance(item, ProjectItem)
 
     return get_project_data()[str(item)]
+
+
+def stage_item_of(fname: str, item: StageItem) -> Any:
+    assert isinstance(fname, str)
+    assert isinstance(item, StageItem)
+
+    data = read_markdown_data_as_yaml(
+            read_file(filepath_of(ElmType.STAGE, fname)))
+    if str(item) in data:
+        return data[str(item)]
+    else:
+        logger.warning(msg.ERR_FAIL_INVALID_DATA.format(data=f"{item} in {PROC}"))
+        return ""
