@@ -212,6 +212,8 @@ def _record_as_person_info_from(index: int, record: InfoRecord) -> InfoRecord:
 
     if ActType.WEAR is record.act:
         info_type = PersonStateType.SKIN
+    elif ActType.FACE is record.act:
+        info_type = PersonStateType.SKIN
     elif ActType.KNOW is record.act:
         info_type = PersonStateType.INFO
     elif ActType.KNOWN is record.act:

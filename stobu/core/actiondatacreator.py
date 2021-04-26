@@ -33,6 +33,7 @@ ACT_TYPE_TABLE = {
         ActType.DO: ('do',),
         ActType.DRAW: ('d', 'draw',),
         ActType.EXPLAIN: ('ex', 'explain',),
+        ActType.FACE: ('face',),
         ActType.FEEL: ('feel',),
         ActType.GO: ('go',),
         ActType.HAVE: ('have',),

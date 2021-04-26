@@ -45,6 +45,7 @@ class ActType(Enum):
     THINK = 'think'
     VOICE = 'voice'
     # skin
+    FACE = 'face'
     WEAR = 'wear'
     # status
     FEEL = 'feel'
@@ -60,6 +61,7 @@ NORMAL_ACTIONS = [
         ActType.DO,
         ActType.DRAW,
         ActType.EXPLAIN,
+        ActType.FACE,
         ActType.FEEL,
         ActType.GO,
         ActType.KNOW,

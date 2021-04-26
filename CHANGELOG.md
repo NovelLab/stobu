@@ -12,8 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Flag info (foreshadow and payoff)
 - Item info
 - Fixture and term file
+- Status info
 ### Changed
 - struct mode
+- mob name type
 ### Fixed
 - Invalid plot order
 - Invalid part order
