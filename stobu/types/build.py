@@ -15,9 +15,10 @@ class BuildType(Enum):
     NOVEL = 'novel'
     OUTLINE = 'outline'
     PLOT = 'plot'
-    SCENE_INFO = 'sceneinfo'
     SCRIPT = 'script'
     STRUCT = 'struct'
+    SCENE_INFO = 'sceneinfo'
+    STATUS_INFO = 'statusinfo'
 
     def __str__(self):
         return self.value

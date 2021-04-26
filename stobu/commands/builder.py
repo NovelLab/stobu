@@ -16,6 +16,7 @@ from stobu.core.scripter import outputs_data_from_scripts_data, scripts_data_fro
 from stobu.core.storydatacreator import story_data_from
 from stobu.core.structer import structs_data_from, outputs_data_from_structs_data
 from stobu.infos.informationer import infos_data_from, outputs_data_from_infos_data
+from stobu.infos.informationer import status_infos_data_from, outputs_data_from_status_infos_data
 from stobu.syss import messages as msg
 from stobu.tools.buildchecker import has_build_of
 from stobu.tools.cmdchecker import has_cmd_of
@@ -49,7 +50,8 @@ BUILD_FILENAMES = {
         BuildType.PLOT: 'plot',
         BuildType.SCRIPT: 'script',
         BuildType.STRUCT: 'struct',
-        BuildType.SCENE_INFO: 'sceneinfo',
+        BuildType.SCENE_INFO: 'info_scene',
+        BuildType.STATUS_INFO: 'info_status',
         }
 
 
@@ -103,6 +105,13 @@ def build_project(args: Namespace) -> bool:
                 output_contents_data.cloned(), actions_data, tags, is_comment)
         if not outputs or not _output_data(BuildType.SCENE_INFO, outputs):
             logger.error(msg.PROC_FAILED.format(proc=f"scene info in {PROC}"))
+            return False
+
+    if has_build_of(args, BuildType.STATUS_INFO):
+        outputs = _conv_build_statusinfo_outputs(
+                output_contents_data.cloned(), actions_data, tags, is_comment)
+        if not outputs or not _output_data(BuildType.STATUS_INFO, outputs):
+            logger.error(msg.PROC_FAILED.format(proc=f"status info in {PROC}"))
             return False
 
     if has_build_of(args, BuildType.SCRIPT):
@@ -220,6 +229,27 @@ def _conv_build_script_outputs(contents: OutputsData, actions_data: ActionsData,
         return None
 
     return contents + outputs_data_from_scripts_data(scripts, tags, is_comment)
+
+
+def _conv_build_statusinfo_outputs(contents: OutputsData, actions_data: ActionsData,
+        tags: dict, is_comment: bool) -> OutputsData:
+    assert isinstance(contents, OutputsData)
+    assert isinstance(actions_data, ActionsData)
+    assert isinstance(tags, dict)
+    assert isinstance(is_comment, bool)
+
+    _PROC = f"{PROC}: build status info"
+    logger.debug(msg.PROC_START.format(proc=_PROC))
+
+    infos = status_infos_data_from(actions_data, tags)
+    if not infos or not infos.has_data():
+        logger.error(msg.ERR_FAIL_INVALID_DATA.format(data=f"status info data in {_PROC}"))
+        return None
+
+    outputs = contents + outputs_data_from_status_infos_data(infos, tags, is_comment)
+
+    logger.debug(msg.PROC_SUCCESS.format(proc=_PROC))
+    return outputs
 
 
 def _conv_build_struct_outputs(contents: OutputsData, actions_data: ActionsData,
